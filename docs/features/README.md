@@ -8,6 +8,7 @@ Dokumentasi lengkap untuk semua fitur yang telah diimplementasikan dalam project
 
 1. [URL Query Parameters](#url-query-parameters)
 2. [Navigation Enhancements](#navigation-enhancements)
+3. [Authentication System](#authentication-system) - **NEW**
 
 ---
 
@@ -106,6 +107,51 @@ Implementasi breadcrumb navigation dan floating action buttons untuk UX yang leb
 - Performance-optimized scroll detection
 
 **[📖 Read Full Documentation →](./navigation-enhancements.md)**
+
+---
+
+## 🔐 Authentication System
+
+Sistem autentikasi lengkap dengan SQLite database dan Prisma ORM untuk bootstrap phase.
+
+**File**: [authentication-system.md](./authentication-system.md)
+
+### Overview
+- SQLite database untuk development
+- Prisma ORM untuk type-safe operations
+- Zod validation untuk input
+- bcryptjs untuk password hashing
+- HTTP-only cookies untuk session management
+
+### Key Features
+- ✅ **Secure password hashing** dengan bcryptjs
+- ✅ **Type-safe database operations** dengan Prisma
+- ✅ **Input validation** dengan Zod
+- ✅ **Session management** dengan HTTP-only cookies
+- ✅ **Role-based access** (admin, user)
+- ✅ **SQLite bootstrap** untuk development
+
+### API Endpoints
+- `POST /api/auth/login` - Login dengan username/password
+- `POST /api/auth/register` - Registrasi user baru
+- `POST /api/auth/logout` - Logout dan clear session
+- `GET /api/auth/me` - Get current user info
+- `POST /api/auth/create-admin` - Create default admin
+
+### Default Credentials
+- **Username**: `admin`
+- **Password**: `admin123`
+- **Email**: `admin@school.local`
+- **Role**: `admin`
+
+### Security Features
+- Password hashing dengan salt rounds 12
+- HTTP-only cookies untuk XSS protection
+- Input validation dan sanitization
+- SQL injection protection dengan Prisma
+- Session expiration (7 hari)
+
+**[📖 Read Full Documentation →](./authentication-system.md)**
 
 ---
 

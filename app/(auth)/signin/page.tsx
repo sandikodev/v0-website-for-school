@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { isAuthenticated } from "@/lib/auth"
 
 export default function LoginPage() {
   const [username, setUsername] = useState("")
@@ -18,11 +17,20 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
-  // Redirect if already authenticated
+  // Check if user is already authenticated
   useEffect(() => {
-    if (isAuthenticated()) {
-      router.push("/admin/dashboard")
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        if (response.ok) {
+          router.push("/admin/dashboard")
+        }
+      } catch (error) {
+        // User not authenticated, stay on login page
+      }
     }
+    
+    checkAuth()
   }, [router])
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -37,29 +45,28 @@ export default function LoginPage() {
       return
     }
 
-    // Simulate API call
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      if (username === "admin" && password === "admin123") {
-        // Set login status in localStorage
-        localStorage.setItem("isLoggedIn", "true")
-        localStorage.setItem(
-          "adminUser",
-          JSON.stringify({
-            username: "admin",
-            name: "Administrator",
-            role: "admin",
-            loginTime: new Date().toISOString(),
-          }),
-        )
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: username.trim(),
+          password: password.trim(),
+        }),
+      })
 
+      const data = await response.json()
+
+      if (data.success) {
         // Redirect to dashboard
         router.push("/admin/dashboard")
       } else {
-        setError("Username atau password salah")
+        setError(data.message || "Username atau password salah")
       }
     } catch (error) {
+      console.error('Login error:', error)
       setError("Terjadi kesalahan saat login. Silakan coba lagi.")
     } finally {
       setIsLoading(false)
