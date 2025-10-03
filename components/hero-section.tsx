@@ -7,8 +7,7 @@ export function HeroSection() {
     <div className="relative">
       {/* Hero Banner */}
       <div className="relative bg-gradient-to-br from-primary/10 via-primary/5 to-background min-h-[600px] md:min-h-[700px] flex items-center">
-        {/* Background pattern instead of image */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
+        <div className="absolute inset-0 bg-[url('/islamic-school-building-with-students.png')] bg-cover bg-center opacity-10"></div>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">

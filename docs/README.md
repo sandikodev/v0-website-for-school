@@ -8,6 +8,7 @@
 - [Future Technology](./architecture/future-technology.md) - Astro, Qwik, and next-gen roadmap
 - [WordPress CMS Integration](./architecture/wordpress-cms-integration.md) - Hybrid architecture with WordPress
 - [WordPress Integration Strategy](./architecture/wordpress-integration-strategy.md) - **NEW** Complete hybrid strategy with plugin development
+- [WordPress Plugin Development Roadmap](./architecture/wordpress-plugin-development-roadmap.md) - **NEW** Comprehensive plugin development strategy
 
 ## 🚀 Deployment & Infrastructure
 - [Deployment Documentation](./deployment/README.md) - **NEW** Complete Docker deployment guide with multiple environments

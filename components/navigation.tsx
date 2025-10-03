@@ -10,11 +10,9 @@ export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
-    setMounted(true)
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10)
     }
@@ -37,15 +35,6 @@ export function Navigation() {
     { href: "/admissions", label: "SPMB" },
     { href: "/contact", label: "Kontak" },
   ]
-
-  // Use static className to prevent hydration mismatch
-  const getLinkClassName = () => {
-    return "px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-accent/50 hover:scale-105 text-foreground hover:text-primary"
-  }
-
-  const getMobileLinkClassName = () => {
-    return "block px-4 py-3 rounded-md font-medium transition-all duration-200 hover:bg-accent/50 hover:translate-x-2 text-foreground hover:text-primary"
-  }
 
   return (
     <nav
@@ -72,7 +61,9 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={getLinkClassName()}
+                className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-accent/50 hover:scale-105 ${
+                  pathname === item.href ? "text-primary bg-accent/30" : "text-foreground hover:text-primary"
+                }`}
               >
                 {item.label}
               </Link>
@@ -128,7 +119,11 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={getMobileLinkClassName()}
+                className={`block px-4 py-3 rounded-md font-medium transition-all duration-200 hover:bg-accent/50 hover:translate-x-2 ${
+                  pathname === item.href
+                    ? "text-primary bg-accent/30 border-l-4 border-primary"
+                    : "text-foreground hover:text-primary"
+                }`}
                 style={{ animationDelay: `${index * 50}ms` }}
                 onClick={() => setIsOpen(false)}
               >

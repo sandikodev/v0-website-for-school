@@ -27,45 +27,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${geist.variable} ${manrope.variable} antialiased`}>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                function addEnvironmentIndicator() {
-                  const url = window.location.href;
-                  let environment = 'development';
-                  let label = 'DEV';
-                  let className = 'dev';
-                  
-                  if (url.includes('/websekolah-staging/')) {
-                    environment = 'staging';
-                    label = 'STAGING';
-                    className = 'staging';
-                  } else if (url.includes('/websekolah/')) {
-                    environment = 'production';
-                    label = 'PROD';
-                    className = 'production';
-                  }
-                  
-                  const indicator = document.createElement('div');
-                  indicator.className = 'environment-indicator ' + className;
-                  indicator.textContent = label;
-                  indicator.title = environment.charAt(0).toUpperCase() + environment.slice(1) + ' Environment';
-                  
-                  document.body.appendChild(indicator);
-                }
-                
-                if (document.readyState === 'loading') {
-                  document.addEventListener('DOMContentLoaded', addEnvironmentIndicator);
-                } else {
-                  addEnvironmentIndicator();
-                }
-              })();
-            `,
-          }}
-        />
-      </head>
       <body className="font-sans">
         <div className="min-h-dvh pb-16 md:pb-0">{children}</div>
         <MobileBottomNav />
