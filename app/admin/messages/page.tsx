@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Search, Mail, MailOpen, Trash2, Eye } from "lucide-react"
+import { toast } from "sonner"
 
 interface Message {
   id: string
@@ -82,10 +83,14 @@ export default function MessagesPage() {
       })
 
       if (response.ok) {
+        toast.success('Pesan ditandai sebagai dibaca')
         fetchMessages()
+      } else {
+        toast.error('Gagal menandai pesan')
       }
     } catch (error) {
       console.error('Error marking message as read:', error)
+      toast.error('Terjadi kesalahan')
     }
   }
 
@@ -100,10 +105,14 @@ export default function MessagesPage() {
       })
 
       if (response.ok) {
+        toast.success('Pesan berhasil dihapus')
         fetchMessages()
+      } else {
+        toast.error('Gagal menghapus pesan')
       }
     } catch (error) {
       console.error('Error deleting message:', error)
+      toast.error('Terjadi kesalahan')
     }
   }
 

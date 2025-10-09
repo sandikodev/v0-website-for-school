@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Save } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { toast } from "sonner"
 
 export default function NewStudentPage() {
   const router = useRouter()
@@ -64,9 +65,11 @@ export default function NewStudentPage() {
       const data = await response.json()
 
       if (response.ok) {
+        toast.success('Siswa berhasil ditambahkan!')
         router.push('/admin/students')
       } else {
         setError(data.message || 'Gagal menambahkan siswa')
+        toast.error(data.message || 'Gagal menambahkan siswa')
       }
     } catch (error) {
       setError('Terjadi kesalahan saat menambahkan siswa')

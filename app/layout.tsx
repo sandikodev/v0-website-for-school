@@ -5,6 +5,7 @@ import { GeistSans } from "geist/font/sans";
 import { Manrope } from "next/font/google"
 import "./globals.css"
 import { MobileBottomNav } from "@/components/site/mobile-nav"
+import { ToastProvider } from "@/components/providers/toast-provider"
 
 const geist = GeistSans
 
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="id" className={`${geist.variable} ${manrope.variable} antialiased`}>
       <body className="font-sans">
+        <ToastProvider />
         <div className="min-h-dvh pb-16 md:pb-0">{children}</div>
         <MobileBottomNav />
       </body>

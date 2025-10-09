@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Plus, Search, MoreVertical, Edit, Trash, Eye } from "lucide-react"
+import { toast } from "sonner"
 
 interface Student {
   id: string
@@ -116,14 +117,15 @@ export default function StudentsPage() {
       })
 
       if (response.ok) {
+        toast.success(`Siswa "${studentName}" berhasil dihapus`)
         // Refresh students list
         fetchStudents()
       } else {
-        alert('Gagal menghapus siswa')
+        toast.error('Gagal menghapus siswa')
       }
     } catch (error) {
       console.error('Error deleting student:', error)
-      alert('Terjadi kesalahan saat menghapus siswa')
+      toast.error('Terjadi kesalahan saat menghapus siswa')
     } finally {
       setDeleteLoading(null)
     }

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, CheckCircle, XCircle, Clock } from "lucide-react"
+import { toast } from "sonner"
 
 interface Application {
   id: string
@@ -90,10 +91,15 @@ export default function AdmissionsPage() {
       })
 
       if (response.ok) {
+        const statusText = newStatus === 'approved' ? 'diterima' : 'ditolak'
+        toast.success(`Pendaftar berhasil ${statusText}`)
         fetchApplications()
+      } else {
+        toast.error('Gagal memperbarui status')
       }
     } catch (error) {
       console.error('Error updating status:', error)
+      toast.error('Terjadi kesalahan saat memperbarui status')
     }
   }
 
