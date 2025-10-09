@@ -1,6 +1,6 @@
 {
   "name": "school-website-builder",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "A modern, open-source platform for building beautiful school websites with integrated academic management features",
   "keywords": [
     "school",
@@ -46,7 +46,13 @@
     "test:coverage": "jest --coverage",
     "analyze": "cross-env ANALYZE=true next build",
     "prepare": "husky install",
-    "postinstall": "echo 'Skipping prisma generate'"
+    "postinstall": "echo 'Skipping prisma generate'",
+    "db:generate": "npx prisma generate",
+    "db:push": "npx prisma db push",
+    "db:studio": "npx prisma studio",
+    "db:seed": "node scripts/seed-database.js",
+    "db:seed:admin": "node scripts/seed-admin.js",
+    "db:reset": "npx prisma db push --force-reset && npm run db:seed && npm run db:seed:admin"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
