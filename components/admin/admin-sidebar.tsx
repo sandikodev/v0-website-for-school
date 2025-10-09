@@ -14,8 +14,14 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+
+interface AdminSidebarProps {
+  isOpen?: boolean
+  onClose?: () => void
+}
 
 const menuItems = [
   {
@@ -55,7 +61,7 @@ const menuItems = [
   },
 ]
 
-export function AdminSidebar() {
+export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
   const pathname = usePathname()
   const [isCollapsed, setIsCollapsed] = useState(false)
 
@@ -63,9 +69,21 @@ export function AdminSidebar() {
     <aside
       className={cn(
         "fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white border-r transition-all duration-300 z-40",
+        "lg:translate-x-0", // Always visible on desktop
+        isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0", // Slide in/out on mobile
         isCollapsed ? "w-16" : "w-64"
       )}
     >
+      {/* Close button for mobile */}
+      <div className="lg:hidden absolute right-4 top-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClose}
+        >
+          <X className="h-5 w-5" />
+        </Button>
+      </div>
       {/* Collapse Toggle */}
       <div className="absolute -right-3 top-6 z-50">
         <Button

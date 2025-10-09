@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Bell, User, LogOut, Settings, ChevronDown } from "lucide-react"
+import { Bell, User, LogOut, Settings, ChevronDown, Menu } from "lucide-react"
 
 interface AdminNavbarProps {
   user?: {
@@ -20,9 +20,10 @@ interface AdminNavbarProps {
     email?: string
     role?: string
   }
+  onMenuClick?: () => void
 }
 
-export function AdminNavbar({ user }: AdminNavbarProps) {
+export function AdminNavbar({ user, onMenuClick }: AdminNavbarProps) {
   const router = useRouter()
   const [isScrolled, setIsScrolled] = useState(false)
 
@@ -59,6 +60,16 @@ export function AdminNavbar({ user }: AdminNavbarProps) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden"
+            onClick={onMenuClick}
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
+
           {/* Logo & Brand */}
           <div className="flex items-center space-x-4">
             <Link href="/admin/dashboard" className="flex items-center space-x-2">
