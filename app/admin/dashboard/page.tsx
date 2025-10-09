@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AdminLayout } from "@/components/admin/admin-layout"
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 const mockSchoolData = {
   profile: {
@@ -50,6 +51,10 @@ export default function AdminDashboard() {
     totalApplications: 0,
     totalMessages: 0,
   })
+  const [chartData, setChartData] = useState<any>({
+    applications: [],
+    studentsByGrade: [],
+  })
   const [editingSection, setEditingSection] = useState<string | null>(null)
   const router = useRouter()
 
@@ -85,6 +90,24 @@ export default function AdminDashboard() {
       console.error('Error fetching stats:', error)
     }
   }
+
+  const fetchChartData = async () => {
+    try {
+      const response = await fetch('/api/dashboard/charts')
+      if (response.ok) {
+        const data = await response.json()
+        setChartData(data.data)
+      }
+    } catch (error) {
+      console.error('Error fetching chart data:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (user) {
+      fetchChartData()
+    }
+  }, [user])
 
   // Show loading while checking auth
   if (!user) {
@@ -206,6 +229,57 @@ export default function AdminDashboard() {
             </button>
           </div>
         </div>
+
+        {/* Charts Section */}
+        {(chartData.applications.length > 0 || chartData.studentsByGrade.length > 0) && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* Applications Chart */}
+            {chartData.applications.length > 0 && (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Trend Pendaftar</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={chartData.applications}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="pending" stroke="#eab308" name="Pending" strokeWidth={2} />
+                    <Line type="monotone" dataKey="approved" stroke="#10b981" name="Diterima" strokeWidth={2} />
+                    <Line type="monotone" dataKey="rejected" stroke="#ef4444" name="Ditolak" strokeWidth={2} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+
+            {/* Students by Grade Chart */}
+            {chartData.studentsByGrade.length > 0 && (
+              <div className="bg-white rounded-lg shadow p-6">
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">Siswa per Jenjang</h2>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={chartData.studentsByGrade}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, value }) => `${name}: ${value}`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {chartData.studentsByGrade.map((entry: any, index: number) => (
+                        <Cell key={`cell-${index}`} fill={['#10b981', '#3b82f6', '#8b5cf6'][index % 3]} />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* School Info */}
         <div className="bg-white rounded-lg shadow p-6">
