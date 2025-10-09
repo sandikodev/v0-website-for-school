@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { isAuthenticated } from "@/lib/auth"
 
 const mockSchoolData = {
   profile: {
@@ -48,11 +47,21 @@ export default function AdminDashboard() {
   const router = useRouter()
 
   useEffect(() => {
-    if (isAuthenticated()) {
-      router.replace("/dashboard")
-    } else {
-      router.replace("/signin")
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        if (!response.ok) {
+          router.replace("/signin")
+        } else {
+          const data = await response.json()
+          setUser(data.user)
+        }
+      } catch (error) {
+        router.replace("/signin")
+      }
     }
+    
+    checkAuth()
   }, [router])
 
   return null
