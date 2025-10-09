@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { isAuthenticated } from "@/lib/auth"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,8 +21,16 @@ export function Navigation() {
 
   useEffect(() => {
     setIsOpen(false)
-    // Check authentication status
-    setIsLoggedIn(isAuthenticated())
+    // Check authentication status by checking API
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        setIsLoggedIn(response.ok)
+      } catch (error) {
+        setIsLoggedIn(false)
+      }
+    }
+    checkAuth()
   }, [pathname])
 
   const navItems = [
