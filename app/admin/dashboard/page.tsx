@@ -44,6 +44,12 @@ const mockSchoolData = {
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null)
   const [schoolData, setSchoolData] = useState(mockSchoolData)
+  const [stats, setStats] = useState({
+    totalStudents: 0,
+    totalTeachers: 0,
+    totalApplications: 0,
+    totalMessages: 0,
+  })
   const [editingSection, setEditingSection] = useState<string | null>(null)
   const router = useRouter()
 
@@ -56,6 +62,9 @@ export default function AdminDashboard() {
         } else {
           const data = await response.json()
           setUser(data.user)
+          
+          // Fetch dashboard stats
+          fetchStats()
         }
       } catch (error) {
         router.replace("/signin")
@@ -64,6 +73,18 @@ export default function AdminDashboard() {
     
     checkAuth()
   }, [router])
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/dashboard/stats')
+      if (response.ok) {
+        const data = await response.json()
+        setStats(data.data)
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error)
+    }
+  }
 
   // Show loading while checking auth
   if (!user) {
@@ -97,7 +118,7 @@ export default function AdminDashboard() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Total Siswa</dt>
-                  <dd className="text-lg font-semibold text-gray-900">1,234</dd>
+                  <dd className="text-lg font-semibold text-gray-900">{stats.totalStudents.toLocaleString()}</dd>
                 </dl>
               </div>
             </div>
@@ -113,7 +134,7 @@ export default function AdminDashboard() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Total Guru</dt>
-                  <dd className="text-lg font-semibold text-gray-900">45</dd>
+                  <dd className="text-lg font-semibold text-gray-900">{stats.totalTeachers.toLocaleString()}</dd>
                 </dl>
               </div>
             </div>
@@ -129,7 +150,7 @@ export default function AdminDashboard() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Pendaftar Baru</dt>
-                  <dd className="text-lg font-semibold text-gray-900">87</dd>
+                  <dd className="text-lg font-semibold text-gray-900">{stats.totalApplications.toLocaleString()}</dd>
                 </dl>
               </div>
             </div>
@@ -145,7 +166,7 @@ export default function AdminDashboard() {
               <div className="ml-5 w-0 flex-1">
                 <dl>
                   <dt className="text-sm font-medium text-gray-500 truncate">Pesan Baru</dt>
-                  <dd className="text-lg font-semibold text-gray-900">12</dd>
+                  <dd className="text-lg font-semibold text-gray-900">{stats.totalMessages.toLocaleString()}</dd>
                 </dl>
               </div>
             </div>
