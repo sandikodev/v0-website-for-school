@@ -37,6 +37,7 @@ export default function StudentsPage() {
   const [students, setStudents] = useState<Student[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [isLoading, setIsLoading] = useState(true)
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -100,6 +101,31 @@ export default function StudentsPage() {
         return 'bg-amber-100 text-amber-800'
       default:
         return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const handleDelete = async (studentId: string, studentName: string) => {
+    if (!confirm(`Apakah Anda yakin ingin menghapus siswa "${studentName}"? Tindakan ini tidak dapat dibatalkan.`)) {
+      return
+    }
+
+    setDeleteLoading(studentId)
+    try {
+      const response = await fetch(`/api/students/${studentId}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        // Refresh students list
+        fetchStudents()
+      } else {
+        alert('Gagal menghapus siswa')
+      }
+    } catch (error) {
+      console.error('Error deleting student:', error)
+      alert('Terjadi kesalahan saat menghapus siswa')
+    } finally {
+      setDeleteLoading(null)
     }
   }
 
@@ -208,9 +234,13 @@ export default function StudentsPage() {
                           <Edit className="h-4 w-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem 
+                          className="text-red-600"
+                          onClick={() => handleDelete(student.id, student.name)}
+                          disabled={deleteLoading === student.id}
+                        >
                           <Trash className="h-4 w-4 mr-2" />
-                          Hapus
+                          {deleteLoading === student.id ? 'Menghapus...' : 'Hapus'}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
