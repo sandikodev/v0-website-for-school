@@ -543,14 +543,15 @@ export default function FormulirOnlinePage() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-2">
+                <div className="bg-emerald-50/50 border-2 border-emerald-100 rounded-lg p-4 hover:bg-emerald-50 transition-colors">
+                  <div className="flex items-start space-x-3">
                     <Checkbox
                       id="persetujuan"
                       checked={formData.persetujuan}
                       onCheckedChange={(checked) => handleInputChange("persetujuan", checked as boolean)}
+                      className="mt-0.5"
                     />
-                    <Label htmlFor="persetujuan" className="text-sm leading-relaxed">
+                    <Label htmlFor="persetujuan" className="text-sm leading-relaxed font-medium text-gray-700 cursor-pointer">
                       Saya menyatakan bahwa data yang saya masukkan adalah benar dan dapat dipertanggungjawabkan. Saya
                       bersedia mengikuti seluruh proses seleksi dan mematuhi peraturan yang berlaku di SMP IT Masjid
                       Syuhada.
