@@ -41,6 +41,7 @@ import {
   FileText
 } from "lucide-react"
 import { useTabParam } from "@/hooks"
+import { WhatsAppSettings } from "@/components/dashboard/whatsapp-settings"
 
 export default function ContactPage() {
   const { current, setTab } = useTabParam("contact")
@@ -51,6 +52,7 @@ export default function ContactPage() {
         <ul className="flex items-center gap-1">
           {[
             { key: "contact", label: "Kontak" },
+            { key: "whatsapp", label: "WhatsApp Center" },
             { key: "hours", label: "Jam Operasional" },
             { key: "social", label: "Media Sosial" },
             { key: "location", label: "Lokasi" },
@@ -146,6 +148,11 @@ export default function ContactPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* WhatsApp Center */}
+        <TabsContent value="whatsapp">
+          <WhatsAppSettings />
         </TabsContent>
 
         {/* Jam Operasional */}

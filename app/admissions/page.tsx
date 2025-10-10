@@ -131,7 +131,7 @@ export default function SMPBPage() {
                   <a href="https://wa.me/6285878958029" target="_blank" rel="noopener noreferrer">
                     <Button variant="outline">
                       <Phone className="h-4 w-4 mr-2" />
-                      Hubungi Kami
+                      Bantuan: 0858 7895 8029
                     </Button>
                   </a>
                 </div>
@@ -429,43 +429,12 @@ export default function SMPBPage() {
               </Card>
             </div>
 
-            {/* Contact & Registration */}
-            <Card className="bg-emerald-50 border-emerald-200">
-              <CardHeader>
-                <CardTitle className="text-center text-emerald-800">Cara Pendaftaran</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center space-y-4">
-                  <div className="space-y-2">
-                    <p className="text-sm text-emerald-700">
-                      1. Transfer biaya formulir Rp 100.000 ke rekening sekolah
-                    </p>
-                    <p className="text-sm text-emerald-700">
-                      2. Konfirmasi pembayaran ke WA Center untuk mendapatkan nomor dan kode pendaftaran
-                    </p>
-                    <p className="text-sm text-emerald-700">
-                      3. Isi formulir pendaftaran online menggunakan kode yang diberikan
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
-                      <Link href="/signup">
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Formulir Online
-                      </Link>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      className="border-emerald-600 text-emerald-600 hover:bg-emerald-50 bg-transparent"
-                    >
-                      <Phone className="h-4 w-4 mr-2" />
-                      Bantuan: 085878958029
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Quick Action Reminder */}
+            <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-blue-50 rounded-lg border border-emerald-200">
+              <p className="text-center text-sm text-gray-700">
+                💡 <strong>Siap mendaftar?</strong> Klik tombol <span className="text-emerald-600 font-semibold">"Daftar Baru"</span> di atas untuk memulai pendaftaran online, atau hubungi tim kami untuk bantuan.
+              </p>
+            </div>
           </TabsContent>
 
           {/* FAQ */}
@@ -686,50 +655,33 @@ export default function SMPBPage() {
           </TabsContent>
         </Tabs>
 
-        {/* Contact Information */}
-        <Card className="mt-8 bg-emerald-600 text-white">
-          <CardHeader>
-            <CardTitle className="text-center text-white">Informasi Kontak</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-6 text-center">
-              <div className="space-y-3">
-                <div className="flex items-center justify-center gap-2">
-                  <Phone className="h-5 w-5" />
-                  <span className="font-semibold">WA Center</span>
-                </div>
-                <p>085878958029</p>
-                <Button variant="secondary" className="w-full">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Chat WhatsApp
-                </Button>
+        {/* Contact Information - Compact */}
+        <Card className="mt-8 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white">
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="text-center md:text-left">
+                <h3 className="font-bold text-lg mb-1">Butuh Bantuan?</h3>
+                <p className="text-emerald-100 text-sm">Tim kami siap membantu Anda</p>
               </div>
-              <div className="space-y-3">
-                <div className="flex items-center justify-center gap-2">
-                  <MapPin className="h-5 w-5" />
-                  <span className="font-semibold">Alamat Sekolah</span>
-                </div>
-                <p className="text-sm">SMP IT Masjid Syuhada Yogyakarta</p>
-                <Button variant="secondary" className="w-full">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  Lihat di Maps
+              
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <a href="https://wa.me/6285878958029" target="_blank" rel="noopener noreferrer">
+                  <Button variant="secondary" size="lg" className="shadow-lg">
+                    <Phone className="h-4 w-4 mr-2" />
+                    WA: 0858 7895 8029
+                  </Button>
+                </a>
+                <Button variant="outline" size="lg" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
+                  <MapPin className="h-4 w-4 mr-2" />
+                  Lokasi Sekolah
                 </Button>
               </div>
             </div>
-
-            <div className="mt-6 pt-6 border-t border-emerald-500 text-center space-y-2">
-              <p className="text-emerald-100">Media Sosial Kami:</p>
-              <div className="flex justify-center gap-4">
-                <Button variant="ghost" size="sm" className="text-white hover:bg-emerald-700">
-                  YouTube
-                </Button>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-emerald-700">
-                  TikTok
-                </Button>
-                <Button variant="ghost" size="sm" className="text-white hover:bg-emerald-700">
-                  Facebook
-                </Button>
-              </div>
+            
+            <div className="mt-4 pt-4 border-t border-emerald-500/30 text-center">
+              <p className="text-emerald-100 text-xs">
+                📱 Follow: <span className="text-white font-medium">YouTube</span> • <span className="text-white font-medium">TikTok</span> • <span className="text-white font-medium">Facebook</span>
+              </p>
             </div>
           </CardContent>
         </Card>
