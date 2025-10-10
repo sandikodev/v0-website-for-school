@@ -36,9 +36,11 @@ model School {
   updatedAt   DateTime @updatedAt
   
   // Relations
-  students      Student[]
-  applications  Application[]
-  messages      Message[]
+  students           Student[]
+  applications       Application[]
+  messages           Message[]
+  formConfigurations FormConfiguration[]
+  formSubmissions    FormSubmission[]
   
   @@map("schools")
 }
@@ -94,4 +96,70 @@ model Message {
   createdAt DateTime @default(now())
   
   @@map("messages")
+}
+
+// Dynamic Form Builder Models
+model FormConfiguration {
+  id          String   @id @default(cuid())
+  name        String   // "Formulir Pendaftaran 2025/2026"
+  description String?
+  isActive    Boolean  @default(false)
+  schema      String   @default("{}") // JSON string of form schema
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  schoolId    String
+  school      School   @relation(fields: [schoolId], references: [id])
+  
+  @@map("form_configurations")
+}
+
+model FormSubmission {
+  id                   String    @id @default(cuid())
+  registrationNumber   String    @unique // "SPMB-2025-001"
+  
+  // Data Siswa
+  namaLengkap          String
+  tempatLahir          String?
+  tanggalLahir         String?   // Store as string for flexibility
+  jenisKelamin         String?
+  alamatLengkap        String?
+  noHP                 String?
+  email                String?
+  
+  // Data Orangtua
+  namaAyah             String?
+  pekerjaanAyah        String?
+  namaIbu              String?
+  pekerjaanIbu         String?
+  noHPOrangtua         String?
+  
+  // Data Sekolah
+  asalSekolah          String?
+  alamatSekolah        String?
+  
+  // Data Tambahan
+  prestasi             String?
+  jalurPendaftaran     String?
+  gelombangPendaftaran String?
+  
+  // Files
+  uploadedFiles        String?   // JSON array of file URLs
+  
+  // Raw Data (untuk custom fields di masa depan)
+  rawData              String?   // JSON string
+  
+  // Status & Review
+  status               String    @default("pending") // pending, reviewed, approved, rejected
+  notes                String?
+  reviewedBy           String?
+  reviewedAt           DateTime?
+  
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  
+  schoolId             String
+  school               School    @relation(fields: [schoolId], references: [id])
+  
+  @@map("form_submissions")
 }
