@@ -23,9 +23,8 @@ interface ContactSetting {
 
 export function WhatsAppSettings() {
   const [callCenter, setCallCenter] = React.useState<ContactSetting | null>(null)
-  const [admissions, setAdmissions] = React.useState<ContactSetting | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
-  const [isSaving, setIsSaving] = React.useState<string | null>(null)
+  const [isSaving, setIsSaving] = React.useState(false)
 
   // Fetch settings on mount
   React.useEffect(() => {
@@ -34,35 +33,29 @@ export function WhatsAppSettings() {
 
   const fetchSettings = async () => {
     try {
-      const response = await fetch('/api/settings/contact')
+      const response = await fetch('/api/settings/contact/call_center')
       const { data } = await response.json()
       
-      const callCenterData = data.find((s: ContactSetting) => s.type === 'call_center')
-      const admissionsData = data.find((s: ContactSetting) => s.type === 'admissions')
-      
-      setCallCenter(callCenterData || null)
-      setAdmissions(admissionsData || null)
+      setCallCenter(data || null)
     } catch (error) {
-      console.error('Error fetching contact settings:', error)
+      console.error('Error fetching call center settings:', error)
       toast.error('Gagal memuat pengaturan')
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleSave = async (type: 'call_center' | 'admissions') => {
-    setIsSaving(type)
+  const handleSave = async () => {
+    setIsSaving(true)
     try {
-      const data = type === 'call_center' ? callCenter : admissions
-      
-      const response = await fetch(`/api/settings/contact/${type}`, {
+      const response = await fetch('/api/settings/contact/call_center', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(callCenter),
       })
 
       if (response.ok) {
-        toast.success('Pengaturan berhasil disimpan!')
+        toast.success('Pengaturan Call Center berhasil disimpan!')
       } else {
         toast.error('Gagal menyimpan pengaturan')
       }
@@ -70,7 +63,7 @@ export function WhatsAppSettings() {
       console.error('Error saving settings:', error)
       toast.error('Terjadi kesalahan')
     } finally {
-      setIsSaving(null)
+      setIsSaving(false)
     }
   }
 
@@ -176,11 +169,11 @@ export function WhatsAppSettings() {
 
           <div className="flex items-center gap-3 pt-4 border-t">
             <Button
-              onClick={() => handleSave('call_center')}
-              disabled={isSaving === 'call_center'}
+              onClick={handleSave}
+              disabled={isSaving}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              {isSaving === 'call_center' ? (
+              {isSaving ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                   Menyimpan...
@@ -215,124 +208,6 @@ export function WhatsAppSettings() {
         </CardContent>
       </Card>
 
-      {/* Admissions/SPMB Settings */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-emerald-600" />
-                Bantuan SPMB - Pendaftaran
-              </CardTitle>
-              <CardDescription>
-                Nomor WhatsApp khusus untuk bantuan pendaftaran dan penerimaan peserta didik baru
-              </CardDescription>
-            </div>
-            <Badge variant={admissions?.isActive ? "default" : "secondary"}>
-              {admissions?.isActive ? "Aktif" : "Nonaktif"}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="adm-phone">Nomor WhatsApp</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="adm-phone"
-                  value={admissions?.phoneNumber || ''}
-                  onChange={(e) => setAdmissions(prev => prev ? {...prev, phoneNumber: e.target.value} : null)}
-                  placeholder="6285878958029"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => copyToClipboard(admissions?.phoneNumber || '', 'Nomor')}
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground">Format: 628xxx (dengan kode negara)</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="adm-label">Label</Label>
-              <Input
-                id="adm-label"
-                value={admissions?.label || ''}
-                onChange={(e) => setAdmissions(prev => prev ? {...prev, label: e.target.value} : null)}
-                placeholder="Bantuan SPMB"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="adm-description">Deskripsi Layanan</Label>
-            <Textarea
-              id="adm-description"
-              value={admissions?.description || ''}
-              onChange={(e) => setAdmissions(prev => prev ? {...prev, description: e.target.value} : null)}
-              placeholder="Layanan bantuan khusus pendaftaran dan penerimaan peserta didik baru"
-              rows={2}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="adm-template">Template Pesan WhatsApp</Label>
-            <Textarea
-              id="adm-template"
-              value={admissions?.waTemplate || ''}
-              onChange={(e) => setAdmissions(prev => prev ? {...prev, waTemplate: e.target.value} : null)}
-              placeholder="Halo Tim SPMB SMP IT Masjid Syuhada.&#10;Saya ingin bertanya terkait pendaftaran siswa baru.&#10;&#10;Nama : &#10;Nomor Pendaftaran (jika ada) : &#10;Pertanyaan : "
-              rows={6}
-              className="font-mono text-sm"
-            />
-            <p className="text-xs text-muted-foreground">
-              Template ini akan otomatis muncul saat calon pendaftar klik tombol bantuan SPMB
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 pt-4 border-t">
-            <Button
-              onClick={() => handleSave('admissions')}
-              disabled={isSaving === 'admissions'}
-              className="bg-emerald-600 hover:bg-emerald-700"
-            >
-              {isSaving === 'admissions' ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Menyimpan...
-                </>
-              ) : (
-                <>
-                  <CheckCircle2 className="h-4 w-4 mr-2" />
-                  Simpan Pengaturan
-                </>
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => testWhatsApp(admissions?.phoneNumber || '', admissions?.waTemplate || '')}
-              disabled={!admissions?.phoneNumber}
-            >
-              <ExternalLink className="h-4 w-4 mr-2" />
-              Test WhatsApp
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => copyToClipboard(
-                generateWhatsAppUrl(admissions?.phoneNumber || '', admissions?.waTemplate || ''),
-                'Link WhatsApp'
-              )}
-              disabled={!admissions?.phoneNumber}
-            >
-              <Copy className="h-4 w-4 mr-2" />
-              Salin Link
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Info Card */}
       <Card className="bg-blue-50 border-blue-200">
         <CardContent className="p-6">
@@ -341,13 +216,14 @@ export function WhatsAppSettings() {
               <Phone className="h-5 w-5 text-blue-600" />
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-blue-900 mb-2">Cara Menggunakan WhatsApp Center:</h4>
+              <h4 className="font-semibold text-blue-900 mb-2">Cara Menggunakan Call Center WhatsApp:</h4>
               <ul className="space-y-1 text-sm text-blue-800">
-                <li>• <strong>Call Center</strong>: Untuk pertanyaan umum sekolah, digunakan di halaman Contact Us</li>
-                <li>• <strong>Bantuan SPMB</strong>: Untuk bantuan pendaftaran, digunakan di halaman Admissions</li>
+                <li>• <strong>Call Center</strong>: Untuk pertanyaan umum sekolah (Orang Tua, Wali Murid, Tamu)</li>
+                <li>• Nomor ini akan digunakan di halaman <strong>Contact Us</strong> dan footer website</li>
                 <li>• Template pesan akan otomatis muncul saat pengguna klik tombol WhatsApp</li>
                 <li>• Gunakan tombol "Test WhatsApp" untuk melihat preview pesan</li>
                 <li>• Nomor harus dalam format internasional (628xxx...)</li>
+                <li>• Untuk <strong>Bantuan SPMB</strong>, silakan atur di menu <strong>Dashboard → Admissions → WhatsApp</strong></li>
               </ul>
             </div>
           </div>

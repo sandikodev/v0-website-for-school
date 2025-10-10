@@ -39,6 +39,7 @@ import {
   MessageSquare
 } from "lucide-react"
 import { useTabParam } from "@/hooks"
+import { AdmissionsWhatsApp } from "@/components/dashboard/admissions-whatsapp"
 
 // Mock data untuk pendaftar
 const mockApplicants = [
@@ -85,6 +86,7 @@ export default function SPMBPage() {
           {[
             { key: "forms", label: "Formulir" },
             { key: "applicants", label: "Pendaftar" },
+            { key: "whatsapp", label: "WhatsApp" },
             { key: "settings", label: "Pengaturan" },
             { key: "reports", label: "Laporan" },
           ].map((item) => {
@@ -313,6 +315,11 @@ export default function SPMBPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* WhatsApp SPMB */}
+        <TabsContent value="whatsapp">
+          <AdmissionsWhatsApp />
         </TabsContent>
 
         {/* Pengaturan SPMB */}
