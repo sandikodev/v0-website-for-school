@@ -99,13 +99,35 @@ export default function FormulirOnlinePage() {
   const handleSubmit = async () => {
     setIsSubmitting(true)
 
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/forms/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        setSubmitSuccess(true)
+        // Store registration number for display
+        sessionStorage.setItem('registrationNumber', result.data.registrationNumber)
+      } else {
+        alert(result.message || 'Gagal mengirim pendaftaran')
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      alert('Terjadi kesalahan saat mengirim pendaftaran')
+    } finally {
       setIsSubmitting(false)
-      setSubmitSuccess(true)
-    }, 2000)
+    }
   }
 
   if (submitSuccess) {
+    const registrationNumber = sessionStorage.getItem('registrationNumber') || 'N/A'
+    
     return (
       <div className="flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center">
@@ -119,7 +141,8 @@ export default function FormulirOnlinePage() {
             </p>
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
               <p className="text-sm font-medium text-gray-900">Nomor Pendaftaran</p>
-              <p className="text-lg font-bold text-emerald-600">SPMB-2025-001</p>
+              <p className="text-lg font-bold text-emerald-600">{registrationNumber}</p>
+              <p className="text-xs text-gray-500 mt-2">Simpan nomor ini untuk referensi Anda</p>
             </div>
             <Button
               onClick={() => (window.location.href = "/admissions")}
