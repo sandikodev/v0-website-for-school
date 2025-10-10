@@ -17,11 +17,13 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
+      // SQLite doesn't support case-insensitive mode, so we search as-is
+      // The frontend should uppercase registration numbers
       where.OR = [
-        { namaLengkap: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { registrationNumber: { contains: search, mode: 'insensitive' } },
-        { noHPOrangtua: { contains: search, mode: 'insensitive' } },
+        { namaLengkap: { contains: search } },
+        { email: { contains: search } },
+        { registrationNumber: { contains: search } },
+        { noHPOrangtua: { contains: search } },
       ]
     }
 
