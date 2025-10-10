@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { generateWhatsAppUrl } from "@/lib/whatsapp"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -25,6 +26,23 @@ import { Breadcrumb, FloatingActions } from "@/components/navigation-components"
 
 export default function SMPBPage() {
   const { current, setTab } = useTabParam("gelombang")
+  const [admissionsWA, setAdmissionsWA] = React.useState<{ phoneNumber: string; waUrl: string; label: string } | null>(null)
+
+  React.useEffect(() => {
+    // Fetch admissions WhatsApp settings
+    fetch('/api/settings/contact/admissions')
+      .then(res => res.json())
+      .then(({ data }) => {
+        if (data) {
+          setAdmissionsWA({
+            phoneNumber: data.phoneNumber,
+            waUrl: generateWhatsAppUrl(data.phoneNumber, data.waTemplate),
+            label: data.label
+          })
+        }
+      })
+      .catch(err => console.error('Error fetching admissions contact:', err))
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-white">
@@ -128,10 +146,10 @@ export default function SMPBPage() {
                       Daftar Baru
                     </Button>
                   </Link>
-                  <a href="https://wa.me/6285878958029" target="_blank" rel="noopener noreferrer">
+                  <a href={admissionsWA?.waUrl || "https://wa.me/6285878958029"} target="_blank" rel="noopener noreferrer">
                     <Button variant="outline">
                       <Phone className="h-4 w-4 mr-2" />
-                      Bantuan: 0858 7895 8029
+                      {admissionsWA?.label || "Bantuan: 0858 7895 8029"}
                     </Button>
                   </a>
                 </div>
@@ -665,10 +683,10 @@ export default function SMPBPage() {
               </div>
               
               <div className="flex flex-wrap items-center justify-center gap-3">
-                <a href="https://wa.me/6285878958029" target="_blank" rel="noopener noreferrer">
+                <a href={admissionsWA?.waUrl || "https://wa.me/6285878958029"} target="_blank" rel="noopener noreferrer">
                   <Button variant="secondary" size="lg" className="shadow-lg">
                     <Phone className="h-4 w-4 mr-2" />
-                    WA: 0858 7895 8029
+                    {admissionsWA?.label || "WA: 0858 7895 8029"}
                   </Button>
                 </a>
                 <Button variant="outline" size="lg" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
