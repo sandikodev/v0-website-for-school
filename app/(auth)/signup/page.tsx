@@ -543,7 +543,7 @@ export default function FormulirOnlinePage() {
                   </div>
                 </div>
 
-                <div className="bg-emerald-50/50 border-2 border-emerald-100 rounded-lg p-4 hover:bg-emerald-50 transition-colors">
+                <div className="relative bg-emerald-50/50 border-2 border-emerald-100 rounded-lg p-4 hover:bg-emerald-50 transition-colors animate-pulse-glow">
                   <div className="flex items-start space-x-3">
                     <Checkbox
                       id="persetujuan"
