@@ -211,15 +211,38 @@ export default function FormulirOnlinePage() {
           <p className="text-gray-600">SMP IT Masjid Syuhada - Tahun Pelajaran 2025/2026</p>
         </div>
 
-        {/* Progress Bar */}
+        {/* Enhanced Progress Steps */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">
-              Langkah {currentStep} dari {totalSteps}
-            </span>
-            <span className="text-sm font-medium text-gray-700">{Math.round(progress)}%</span>
+          <div className="flex items-center justify-between mb-4">
+            {[1, 2, 3, 4].map((step) => (
+              <div key={step} className="flex-1 flex items-center">
+                <div className="flex flex-col items-center flex-1">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm mb-2 transition-all ${
+                    step < currentStep 
+                      ? 'bg-emerald-500 text-white shadow-md' 
+                      : step === currentStep
+                        ? 'bg-emerald-600 text-white shadow-lg ring-4 ring-emerald-200'
+                        : 'bg-gray-200 text-gray-500'
+                  }`}>
+                    {step < currentStep ? '✓' : step}
+                  </div>
+                  <span className={`text-xs font-medium hidden sm:block text-center ${
+                    step <= currentStep ? 'text-emerald-700' : 'text-gray-400'
+                  }`}>
+                    {step === 1 && 'Data Siswa'}
+                    {step === 2 && 'Orangtua'}
+                    {step === 3 && 'Sekolah'}
+                    {step === 4 && 'Konfirmasi'}
+                  </span>
+                </div>
+                {step < 4 && (
+                  <div className={`h-1 flex-1 mx-2 rounded transition-all ${
+                    step < currentStep ? 'bg-emerald-500' : 'bg-gray-200'
+                  }`} />
+                )}
+              </div>
+            ))}
           </div>
-          <Progress value={progress} className="h-2" />
         </div>
 
         <Card>
