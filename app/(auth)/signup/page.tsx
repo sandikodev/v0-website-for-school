@@ -177,20 +177,23 @@ export default function FormulirOnlinePage() {
                 💡 <strong>Penting:</strong> Simpan nomor ini untuk melacak status pendaftaran Anda
               </p>
             </div>
-            <div className="space-y-3 mb-6">
+            <div className="space-y-3">
               <Button
                 onClick={() => (window.location.href = `/registrar?id=${registrationNumber}`)}
-                variant="outline"
-                className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-lg py-6 shadow-lg hover:shadow-xl transition-all"
               >
-                <Search className="h-4 w-4 mr-2" />
-                Cek Status Pendaftaran
+                <Search className="h-5 w-5 mr-2" />
+                Pantau Status Pendaftaran Saya
               </Button>
+              <p className="text-xs text-gray-500 text-center px-4">
+                Klik tombol di atas untuk melihat status pendaftaran Anda secara real-time
+              </p>
               <Button
                 onClick={() => (window.location.href = "/admissions")}
-                className="w-full bg-emerald-600 hover:bg-emerald-700"
+                variant="outline"
+                className="w-full border-gray-300 text-gray-600 hover:bg-gray-50"
               >
-                Kembali ke SPMB
+                Kembali ke Halaman SPMB
               </Button>
             </div>
           </CardContent>
