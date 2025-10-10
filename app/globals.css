@@ -272,11 +272,11 @@
   }
 }
 
-/* Print styles - A4 size optimized */
+/* Print styles - A4 size optimized - COMPACT */
 @media print {
   @page {
     size: A4;
-    margin: 1.5cm;
+    margin: 1cm;
   }
 
   /* Hide navigation and non-essential elements */
@@ -292,9 +292,11 @@
   body {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
+    font-size: 11pt !important;
+    line-height: 1.3 !important;
   }
 
-  /* Optimize content for print */
+  /* Optimize content for print - COMPACT */
   main {
     padding: 0 !important;
     margin: 0 !important;
@@ -306,17 +308,60 @@
     text-shadow: none !important;
   }
 
-  /* Ensure cards are visible */
+  /* Compact cards for print */
   .print-card {
     border: 1px solid #e5e7eb !important;
     page-break-inside: avoid;
-    margin-bottom: 1rem;
+    margin-bottom: 0.4rem !important;
+    padding: 0.5rem !important;
+  }
+
+  /* Compact card headers */
+  .print-card h3,
+  .print-card h2 {
+    font-size: 11pt !important;
+    margin-bottom: 0.3rem !important;
+    font-weight: 600 !important;
+  }
+
+  /* Compact card content */
+  .print-card > div {
+    padding: 0.4rem !important;
+  }
+
+  /* Compact text */
+  p, div, span {
+    font-size: 10pt !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Compact labels */
+  .text-sm,
+  .text-xs {
+    font-size: 9pt !important;
+  }
+
+  /* Compact grids */
+  .grid {
+    gap: 0.4rem !important;
+  }
+
+  /* Compact spacing */
+  .space-y-4 > * + *,
+  .space-y-3 > * + * {
+    margin-top: 0.3rem !important;
+  }
+
+  .space-y-6 > * + * {
+    margin-top: 0.5rem !important;
   }
 
   /* Optimize badges for print */
   .print-badge {
     border: 1px solid currentColor !important;
     background-color: transparent !important;
+    padding: 0.1rem 0.3rem !important;
+    font-size: 9pt !important;
   }
 
   /* Keep important colors */
@@ -362,5 +407,33 @@
   /* Hide action buttons except print trigger */
   .print-hide {
     display: none !important;
+  }
+
+  /* Compact header */
+  .print-header {
+    margin-bottom: 0.5rem !important;
+    padding-bottom: 0.3rem !important;
+  }
+
+  .print-header h1 {
+    font-size: 14pt !important;
+    margin-bottom: 0.1rem !important;
+  }
+
+  .print-header p {
+    font-size: 9pt !important;
+  }
+
+  /* Compact footer */
+  .print-footer {
+    margin-top: 0.5rem !important;
+    padding-top: 0.3rem !important;
+    font-size: 8pt !important;
+  }
+
+  /* Icons smaller */
+  svg {
+    width: 12px !important;
+    height: 12px !important;
   }
 }

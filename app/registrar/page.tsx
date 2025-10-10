@@ -207,16 +207,13 @@ export default function RegistrarStatusPage() {
         {result && !isLoading && (
           <div className="space-y-6">
             {/* Print Header - Only visible when printing */}
-            <div className="hidden print:block mb-6">
-              <div className="text-center border-b-2 border-gray-300 pb-4 mb-4">
-                <h1 className="text-2xl font-bold text-gray-900">SMP IT Masjid Syuhada</h1>
-                <p className="text-sm text-gray-600">Bukti Pendaftaran SPMB</p>
-                <p className="text-xs text-gray-500 mt-1">Tanggal Cetak: {new Date().toLocaleDateString('id-ID', { 
-                  year: 'numeric', 
-                  month: 'long', 
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
+            <div className="hidden print:block print-header">
+              <div className="text-center border-b border-gray-400">
+                <h1 className="font-bold text-gray-900">SMP IT Masjid Syuhada</h1>
+                <p className="text-gray-600">Bukti Pendaftaran SPMB - {new Date().toLocaleDateString('id-ID', { 
+                  day: '2-digit', 
+                  month: 'short', 
+                  year: 'numeric'
                 })}</p>
               </div>
             </div>
@@ -262,16 +259,16 @@ export default function RegistrarStatusPage() {
               </CardContent>
             </Card>
 
-            {/* Data Pendaftar */}
+            {/* Data Lengkap - Combined for print efficiency */}
             <Card className="print-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
-                  Data Pendaftar
+                  Data Lengkap Pendaftar
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <div>
                     <p className="text-sm text-gray-500">Nama Lengkap</p>
                     <p className="font-medium text-gray-900">{result.namaLengkap}</p>
@@ -281,7 +278,7 @@ export default function RegistrarStatusPage() {
                     <p className="font-medium text-gray-900">{result.jenisKelamin || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Tempat, Tanggal Lahir</p>
+                    <p className="text-sm text-gray-500">TTL</p>
                     <p className="font-medium text-gray-900">{result.tempatLahir}, {result.tanggalLahir}</p>
                   </div>
                   <div>
@@ -292,35 +289,17 @@ export default function RegistrarStatusPage() {
                     <p className="text-sm text-gray-500">Email</p>
                     <p className="font-medium text-gray-900">{result.email || '-'}</p>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Data Sekolah & Jalur */}
-            <Card className="print-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <School className="h-5 w-5" />
-                  Informasi Pendaftaran
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-500">Asal Sekolah</p>
                     <p className="font-medium text-gray-900">{result.asalSekolah || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500">Jalur Pendaftaran</p>
+                    <p className="text-sm text-gray-500">Jalur</p>
                     <p className="font-medium text-gray-900">{result.jalurPendaftaran || '-'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Gelombang</p>
                     <p className="font-medium text-gray-900">{result.gelombangPendaftaran || '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Tanggal Daftar</p>
-                    <p className="font-medium text-gray-900">{new Date(result.createdAt).toLocaleDateString('id-ID')}</p>
                   </div>
                 </div>
               </CardContent>
@@ -379,12 +358,9 @@ export default function RegistrarStatusPage() {
             </div>
 
             {/* Print Footer - Only visible when printing */}
-            <div className="hidden print:block mt-8 pt-4 border-t border-gray-300">
-              <p className="text-xs text-gray-600 text-center">
-                Dokumen ini dicetak dari sistem SPMB SMP IT Masjid Syuhada
-              </p>
-              <p className="text-xs text-gray-500 text-center mt-1">
-                Untuk verifikasi, kunjungi: https://smpit-syuhada.sch.id/registrar
+            <div className="hidden print:block print-footer border-t border-gray-400">
+              <p className="text-gray-600 text-center">
+                Dokumen resmi SPMB SMP IT Masjid Syuhada · Verifikasi: smpit-syuhada.sch.id/registrar
               </p>
             </div>
           </div>
