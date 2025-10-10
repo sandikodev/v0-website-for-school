@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Search, CheckCircle, Clock, XCircle, Eye, Calendar, User, School, FileText } from "lucide-react"
+import { Search, CheckCircle, Clock, XCircle, Eye, Calendar, User, School, FileText, Home, FileSearch, Printer } from "lucide-react"
 
 interface SubmissionDetail {
   id: string
@@ -119,6 +119,27 @@ export default function RegistrarStatusPage() {
   return (
     <main className="container mx-auto px-4 py-12 pb-20 md:pb-12">
       <div className="max-w-3xl mx-auto">
+        {/* Back Navigation - Desktop */}
+        <div className="hidden md:flex items-center gap-2 mb-6 no-print">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/')}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            ← Beranda
+          </Button>
+          <span className="text-gray-300">|</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => router.push('/admissions')}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            Informasi SPMB
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-8 no-print">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Cek Status Pendaftaran</h1>
@@ -335,8 +356,8 @@ export default function RegistrarStatusPage() {
               </Card>
             )}
 
-            {/* Actions */}
-            <div className="flex gap-3 print-hide">
+            {/* Actions - Desktop */}
+            <div className="hidden md:flex gap-3 print-hide">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -347,6 +368,20 @@ export default function RegistrarStatusPage() {
                 className="flex-1"
               >
                 Cari Nomor Lain
+              </Button>
+              <Button
+                onClick={() => router.push('/')}
+                variant="outline"
+                className="flex-1"
+              >
+                Beranda
+              </Button>
+              <Button
+                onClick={() => router.push('/admissions')}
+                variant="outline"
+                className="flex-1"
+              >
+                Info SPMB
               </Button>
               <Button
                 onClick={() => window.print()}
@@ -362,6 +397,54 @@ export default function RegistrarStatusPage() {
               <p className="text-gray-600 text-center">
                 Dokumen resmi SPMB SMP IT Masjid Syuhada · Verifikasi: smpit-syuhada.sch.id/registrar
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile/Tablet Bottom Navigation - Only when result is shown */}
+        {result && !isLoading && (
+          <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg print-hide z-50">
+            <div className="grid grid-cols-4 gap-1 p-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setQuery('')
+                  setResult(null)
+                  router.push('/registrar')
+                }}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-1"
+              >
+                <FileSearch className="h-5 w-5" />
+                <span className="text-xs">Cari Lagi</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/')}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-1"
+              >
+                <Home className="h-5 w-5" />
+                <span className="text-xs">Beranda</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push('/admissions')}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-1"
+              >
+                <FileText className="h-5 w-5" />
+                <span className="text-xs">SPMB</span>
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => window.print()}
+                className="flex flex-col items-center gap-1 h-auto py-2 px-1"
+              >
+                <Printer className="h-5 w-5" />
+                <span className="text-xs">Cetak</span>
+              </Button>
             </div>
           </div>
         )}
