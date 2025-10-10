@@ -45,6 +45,11 @@ const menuItems = [
     icon: FileText,
   },
   {
+    title: "Pendaftar",
+    href: "/admin/submissions",
+    icon: FileText,
+  },
+  {
     title: "Pesan",
     href: "/admin/messages",
     icon: MessageSquare,
