@@ -271,3 +271,96 @@
     padding-right: 2rem;
   }
 }
+
+/* Print styles - A4 size optimized */
+@media print {
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+
+  /* Hide navigation and non-essential elements */
+  nav,
+  header,
+  footer,
+  .no-print,
+  button:not(.print-button) {
+    display: none !important;
+  }
+
+  /* Ensure body takes full page */
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Optimize content for print */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Remove shadows and adjust colors for print */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Ensure cards are visible */
+  .print-card {
+    border: 1px solid #e5e7eb !important;
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+  }
+
+  /* Optimize badges for print */
+  .print-badge {
+    border: 1px solid currentColor !important;
+    background-color: transparent !important;
+  }
+
+  /* Keep important colors */
+  .text-emerald-600,
+  .text-green-700 {
+    color: #059669 !important;
+  }
+
+  .text-red-700 {
+    color: #b91c1c !important;
+  }
+
+  .text-blue-700 {
+    color: #1d4ed8 !important;
+  }
+
+  .text-yellow-700 {
+    color: #a16207 !important;
+  }
+
+  /* Ensure text is readable */
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700,
+  .text-gray-900 {
+    color: #000 !important;
+  }
+
+  /* Remove background colors that don't print well */
+  .bg-emerald-50,
+  .bg-green-50,
+  .bg-red-50,
+  .bg-blue-50,
+  .bg-yellow-50 {
+    background-color: transparent !important;
+  }
+
+  /* Page breaks */
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  /* Hide action buttons except print trigger */
+  .print-hide {
+    display: none !important;
+  }
+}

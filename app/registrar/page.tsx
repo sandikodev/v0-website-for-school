@@ -120,13 +120,13 @@ export default function RegistrarStatusPage() {
     <main className="container mx-auto px-4 py-12 pb-20 md:pb-12">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-8 no-print">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Cek Status Pendaftaran</h1>
           <p className="text-gray-600">Masukkan nomor pendaftaran SPMB untuk melihat status Anda</p>
         </div>
 
         {/* Search Card */}
-        <Card className="mb-6">
+        <Card className="mb-6 no-print">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Search className="h-5 w-5" />
@@ -160,7 +160,7 @@ export default function RegistrarStatusPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <Card>
+          <Card className="no-print">
             <CardContent className="p-8 text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
               <p className="text-gray-600">Mencari data pendaftaran...</p>
@@ -170,7 +170,7 @@ export default function RegistrarStatusPage() {
 
         {/* Not Found */}
         {regNumberParam && notFound && !isLoading && (
-          <Card className="border-red-200 bg-red-50/50">
+          <Card className="border-red-200 bg-red-50/50 no-print">
             <CardContent className="p-6">
               <div className="flex items-start gap-3">
                 <XCircle className="h-6 w-6 text-red-600 flex-shrink-0 mt-0.5" />
@@ -206,8 +206,23 @@ export default function RegistrarStatusPage() {
         {/* Result Found */}
         {result && !isLoading && (
           <div className="space-y-6">
+            {/* Print Header - Only visible when printing */}
+            <div className="hidden print:block mb-6">
+              <div className="text-center border-b-2 border-gray-300 pb-4 mb-4">
+                <h1 className="text-2xl font-bold text-gray-900">SMP IT Masjid Syuhada</h1>
+                <p className="text-sm text-gray-600">Bukti Pendaftaran SPMB</p>
+                <p className="text-xs text-gray-500 mt-1">Tanggal Cetak: {new Date().toLocaleDateString('id-ID', { 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}</p>
+              </div>
+            </div>
+
             {/* Status Card */}
-            <Card className={`border-2 ${
+            <Card className={`print-card border-2 ${
               result.status === 'approved' ? 'border-green-200 bg-green-50/50' :
               result.status === 'rejected' ? 'border-red-200 bg-red-50/50' :
               result.status === 'reviewed' ? 'border-blue-200 bg-blue-50/50' :
@@ -248,7 +263,7 @@ export default function RegistrarStatusPage() {
             </Card>
 
             {/* Data Pendaftar */}
-            <Card>
+            <Card className="print-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5" />
@@ -282,7 +297,7 @@ export default function RegistrarStatusPage() {
             </Card>
 
             {/* Data Sekolah & Jalur */}
-            <Card>
+            <Card className="print-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <School className="h-5 w-5" />
@@ -313,7 +328,7 @@ export default function RegistrarStatusPage() {
 
             {/* Timeline */}
             {result.reviewedAt && (
-              <Card>
+              <Card className="print-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="h-5 w-5" />
@@ -342,7 +357,7 @@ export default function RegistrarStatusPage() {
             )}
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 print-hide">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -361,6 +376,16 @@ export default function RegistrarStatusPage() {
               >
                 Cetak
               </Button>
+            </div>
+
+            {/* Print Footer - Only visible when printing */}
+            <div className="hidden print:block mt-8 pt-4 border-t border-gray-300">
+              <p className="text-xs text-gray-600 text-center">
+                Dokumen ini dicetak dari sistem SPMB SMP IT Masjid Syuhada
+              </p>
+              <p className="text-xs text-gray-500 text-center mt-1">
+                Untuk verifikasi, kunjungi: https://smpit-syuhada.sch.id/registrar
+              </p>
             </div>
           </div>
         )}
