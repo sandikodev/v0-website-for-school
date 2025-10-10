@@ -11,7 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
-import { User, GraduationCap, Upload, CheckCircle, AlertCircle, ArrowLeft, ArrowRight } from "lucide-react"
+import { User, GraduationCap, Upload, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Copy, Search } from "lucide-react"
 import { defaultFormSchema, loadFormSchema } from "@/lib/form-schema"
 
 interface FormData {
@@ -128,6 +128,23 @@ export default function FormulirOnlinePage() {
   if (submitSuccess) {
     const registrationNumber = sessionStorage.getItem('registrationNumber') || 'N/A'
     
+    const handleCopyNumber = () => {
+      navigator.clipboard.writeText(registrationNumber)
+        .then(() => {
+          // Show toast or simple alert
+          const btn = document.getElementById('copy-btn')
+          if (btn) {
+            btn.textContent = '✓ Tersalin!'
+            setTimeout(() => {
+              btn.textContent = 'Salin Nomor'
+            }, 2000)
+          }
+        })
+        .catch(err => {
+          console.error('Failed to copy:', err)
+        })
+    }
+    
     return (
       <div className="flex items-center justify-center p-4">
         <Card className="w-full max-w-md text-center">
@@ -139,17 +156,43 @@ export default function FormulirOnlinePage() {
             <p className="text-gray-600 mb-6">
               Terima kasih telah mendaftar. Kami akan menghubungi Anda dalam 1-2 hari kerja untuk proses selanjutnya.
             </p>
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <p className="text-sm font-medium text-gray-900">Nomor Pendaftaran</p>
-              <p className="text-lg font-bold text-emerald-600">{registrationNumber}</p>
-              <p className="text-xs text-gray-500 mt-2">Simpan nomor ini untuk referensi Anda</p>
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border-2 border-emerald-200 rounded-lg p-4 mb-4">
+              <p className="text-sm font-medium text-gray-900 mb-2">Nomor Pendaftaran Anda</p>
+              <div className="relative">
+                <p className="text-2xl font-bold text-emerald-600 font-mono mb-3 select-all">
+                  {registrationNumber}
+                </p>
+                <Button
+                  id="copy-btn"
+                  onClick={handleCopyNumber}
+                  variant="outline"
+                  size="sm"
+                  className="border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-colors"
+                >
+                  <Copy className="h-4 w-4 mr-2" />
+                  Salin Nomor
+                </Button>
+              </div>
+              <p className="text-xs text-gray-600 mt-3 bg-white/50 rounded p-2">
+                💡 <strong>Penting:</strong> Simpan nomor ini untuk melacak status pendaftaran Anda
+              </p>
             </div>
-            <Button
-              onClick={() => (window.location.href = "/admissions")}
-              className="w-full bg-emerald-600 hover:bg-emerald-700"
-            >
-              Kembali ke SPMB
-            </Button>
+            <div className="space-y-3 mb-6">
+              <Button
+                onClick={() => (window.location.href = `/registrar?id=${registrationNumber}`)}
+                variant="outline"
+                className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+              >
+                <Search className="h-4 w-4 mr-2" />
+                Cek Status Pendaftaran
+              </Button>
+              <Button
+                onClick={() => (window.location.href = "/admissions")}
+                className="w-full bg-emerald-600 hover:bg-emerald-700"
+              >
+                Kembali ke SPMB
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
