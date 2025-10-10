@@ -54,7 +54,94 @@ export default function SMPBPage() {
         </div>
       </section>
 
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      {/* Post Registration Info Banner */}
+      <div className="max-w-6xl mx-auto px-4 pt-8 pb-4">
+        <Card className="border-2 border-emerald-200 bg-emerald-50/50">
+          <CardContent className="p-6">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-12 h-12 bg-emerald-600 rounded-full flex items-center justify-center">
+                  <CheckCircle className="h-6 w-6 text-white" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-bold text-gray-900 mb-3">Sudah Mendaftar?</h3>
+                <p className="text-gray-700 mb-4">
+                  Jika Anda telah menyelesaikan pendaftaran online, Anda dapat memantau status pendaftaran Anda kapan saja menggunakan nomor pendaftaran yang telah Anda terima.
+                </p>
+                
+                <div className="bg-white rounded-lg p-4 mb-4 border border-emerald-200">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertCircle className="h-5 w-5 text-emerald-600" />
+                    <p className="font-semibold text-gray-900">Cara Cek Status Pendaftaran:</p>
+                  </div>
+                  <ol className="space-y-2 text-sm text-gray-700 ml-7">
+                    <li>1. Kunjungi halaman <Link href="/registrar" className="text-emerald-600 hover:text-emerald-700 font-semibold underline">Cek Status Pendaftaran</Link></li>
+                    <li>2. Masukkan nomor pendaftaran Anda (contoh: SPMB-2025-XXXX)</li>
+                    <li>3. Lihat status terkini pendaftaran Anda</li>
+                    <li>4. Cetak bukti pendaftaran jika diperlukan</li>
+                  </ol>
+                </div>
+
+                <div className="grid md:grid-cols-3 gap-4 mb-4">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Clock className="h-4 w-4 text-yellow-600" />
+                      <p className="font-semibold text-sm text-yellow-900">Status: Pending</p>
+                    </div>
+                    <p className="text-xs text-yellow-800">
+                      Pendaftaran Anda sedang dalam antrian untuk ditinjau. Harap tunggu 1-2 hari kerja.
+                    </p>
+                  </div>
+
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <p className="font-semibold text-sm text-green-900">Status: Diterima</p>
+                    </div>
+                    <p className="text-xs text-green-800">
+                      Selamat! Anda diterima. Tim kami akan menghubungi untuk proses selanjutnya.
+                    </p>
+                  </div>
+
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <AlertCircle className="h-4 w-4 text-red-600" />
+                      <p className="font-semibold text-sm text-red-900">Status: Ditolak/Masalah</p>
+                    </div>
+                    <p className="text-xs text-red-800">
+                      Jika ada masalah administrasi atau penolakan, lihat catatan di halaman status atau hubungi kami.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-3">
+                  <Link href="/registrar">
+                    <Button className="bg-emerald-600 hover:bg-emerald-700">
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      Cek Status Pendaftaran
+                    </Button>
+                  </Link>
+                  <Link href="/signup">
+                    <Button variant="outline" className="border-emerald-600 text-emerald-600 hover:bg-emerald-50">
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      Daftar Baru
+                    </Button>
+                  </Link>
+                  <a href="https://wa.me/6285878958029" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline">
+                      <Phone className="h-4 w-4 mr-2" />
+                      Hubungi Kami
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 py-8">
         <Tabs value={current} onValueChange={setTab} className="space-y-8">
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="gelombang">Gelombang</TabsTrigger>
@@ -392,6 +479,107 @@ export default function SMPBPage() {
               </CardHeader>
               <CardContent>
                 <Accordion type="single" collapsible className="space-y-2">
+                  <AccordionItem value="item-0a" className="border-emerald-200 bg-emerald-50/30">
+                    <AccordionTrigger className="font-bold text-emerald-900">
+                      📋 Bagaimana cara cek status pendaftaran saya?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-3 text-sm">
+                        <p className="font-semibold text-emerald-900">
+                          Setelah mendaftar online, Anda akan menerima nomor pendaftaran (contoh: SPMB-2025-XXXX):
+                        </p>
+                        <ol className="list-decimal list-inside space-y-2 ml-2">
+                          <li>Kunjungi <Link href="/registrar" className="text-emerald-600 hover:text-emerald-700 font-semibold underline">halaman Cek Status</Link></li>
+                          <li>Masukkan nomor pendaftaran</li>
+                          <li>Lihat status real-time pendaftaran Anda</li>
+                          <li>Baca catatan dari tim jika ada</li>
+                          <li>Cetak bukti untuk arsip</li>
+                        </ol>
+                        <p className="text-emerald-800 bg-emerald-100 p-2 rounded">
+                          💡 <strong>Tips:</strong> Simpan nomor pendaftaran. Cek status berkala setiap 1-2 hari kerja.
+                        </p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="item-0b" className="border-blue-200 bg-blue-50/30">
+                    <AccordionTrigger className="font-bold text-blue-900">
+                      ⏱️ Berapa lama proses verifikasi?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-2 text-sm">
+                        <p><strong>Timeline:</strong></p>
+                        <ul className="list-disc list-inside space-y-1 ml-2">
+                          <li><strong>Hari 1:</strong> Status <span className="text-yellow-600 font-semibold">Pending</span></li>
+                          <li><strong>Hari 1-2:</strong> Status <span className="text-blue-600 font-semibold">Ditinjau</span></li>
+                          <li><strong>Hari 2-3:</strong> Status <span className="text-green-600 font-semibold">Diterima</span>/<span className="text-red-600 font-semibold">Ditolak</span></li>
+                          <li><strong>Hari 3-5:</strong> Tim menghubungi via WA/Email</li>
+                        </ul>
+                        <p className="text-blue-800 bg-blue-100 p-2 rounded mt-2">
+                          📞 Belum ada kabar setelah 3 hari? Hubungi: 0858 7895 8029
+                        </p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="item-0c" className="border-red-200 bg-red-50/30">
+                    <AccordionTrigger className="font-bold text-red-900">
+                      ❌ Jika ditolak, apa yang harus dilakukan?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-3 text-sm">
+                        <p><strong>Alasan Penolakan:</strong></p>
+                        <ul className="list-disc list-inside space-y-1 ml-2 text-gray-700">
+                          <li>Data tidak lengkap/valid</li>
+                          <li>Kuota penuh</li>
+                          <li>Usia tidak sesuai</li>
+                          <li>Dokumen tidak sesuai</li>
+                        </ul>
+                        
+                        <p className="font-semibold mt-3">Solusi:</p>
+                        <ol className="list-decimal list-inside space-y-1 ml-2">
+                          <li>Baca catatan di <Link href="/registrar" className="text-red-600 font-semibold underline">halaman tracking</Link></li>
+                          <li>Hubungi WA: 0858 7895 8029 untuk klarifikasi</li>
+                          <li>Perbaiki data dan daftar ulang jika memungkinkan</li>
+                          <li>Daftar gelombang berikutnya jika kuota penuh</li>
+                        </ol>
+
+                        <p className="text-red-800 bg-red-100 p-2 rounded mt-2">
+                          💬 Setiap penolakan ada catatannya. Anda bisa perbaiki dan daftar lagi!
+                        </p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
+                  <AccordionItem value="item-0d" className="border-yellow-200 bg-yellow-50/30">
+                    <AccordionTrigger className="font-bold text-yellow-900">
+                      ⚠️ Ada masalah dengan data pendaftaran?
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-3 text-sm">
+                        <p><strong>Masalah Umum:</strong></p>
+                        <ul className="list-disc list-inside space-y-1 ml-2">
+                          <li>Nomor HP/Email tidak aktif</li>
+                          <li>Data orangtua tidak lengkap</li>
+                          <li>Dokumen tidak terbaca</li>
+                          <li>Alamat tidak jelas</li>
+                        </ul>
+                        
+                        <p className="font-semibold mt-3">Cara Mengatasi:</p>
+                        <ol className="list-decimal list-inside space-y-1 ml-2">
+                          <li>Cek catatan tim di <Link href="/registrar" className="text-yellow-700 font-semibold underline">halaman status</Link></li>
+                          <li>Hubungi WA: 0858 7895 8029</li>
+                          <li>Siapkan data/dokumen perbaikan</li>
+                          <li>Tim bantu update atau instruksi daftar ulang</li>
+                        </ol>
+
+                        <p className="text-yellow-800 bg-yellow-100 p-2 rounded mt-2">
+                          ✅ Solusi cepat: Masalah biasanya selesai dalam 1 hari kerja!
+                        </p>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+
                   <AccordionItem value="item-1">
                     <AccordionTrigger>Bagaimana tata cara pendaftaran siswa baru?</AccordionTrigger>
                     <AccordionContent>
