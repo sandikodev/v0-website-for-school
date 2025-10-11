@@ -24,24 +24,63 @@ import {
 import { useTabParam } from "@/hooks"
 import { Breadcrumb, FloatingActions } from "@/components/navigation-components"
 
+interface SPMBSettings {
+  academicYear: string
+  registrationOpen: boolean
+  heroTitle: string
+  heroSubtitle: string
+  heroDescription: string | null
+  gelombangData: any[]
+  jalurData: any[]
+  biayaData: any
+  syaratData: string[]
+  wawancaraData: any
+  schoolAddress: string | null
+  schoolPhone: string | null
+  schoolEmail: string | null
+}
+
+const getColorClasses = (color: string) => {
+  const colorMap: Record<string, { border: string; bg: string; text: string }> = {
+    emerald: { border: 'border-emerald-200', bg: 'bg-emerald-600', text: 'text-emerald-600' },
+    blue: { border: 'border-blue-200', bg: 'bg-blue-600', text: 'text-blue-600' },
+    orange: { border: 'border-orange-200', bg: 'bg-orange-600', text: 'text-orange-600' },
+    red: { border: 'border-red-200', bg: 'bg-red-600', text: 'text-red-600' },
+    yellow: { border: 'border-yellow-200', bg: 'bg-yellow-600', text: 'text-yellow-600' },
+    green: { border: 'border-green-200', bg: 'bg-green-600', text: 'text-green-600' },
+  }
+  return colorMap[color] || colorMap.emerald
+}
+
 export default function SMPBPage() {
   const { current, setTab } = useTabParam("gelombang")
   const [admissionsWA, setAdmissionsWA] = React.useState<{ phoneNumber: string; waUrl: string; label: string } | null>(null)
+  const [spmb, setSpmb] = React.useState<SPMBSettings | null>(null)
+  const [isLoading, setIsLoading] = React.useState(true)
 
   React.useEffect(() => {
-    // Fetch admissions WhatsApp settings
-    fetch('/api/settings/contact/admissions')
-      .then(res => res.json())
-      .then(({ data }) => {
-        if (data) {
+    // Fetch all data
+    Promise.all([
+      fetch('/api/settings/contact/admissions').then(res => res.json()),
+      fetch('/api/spmb/settings').then(res => res.json())
+    ])
+      .then(([waData, spmbData]) => {
+        // Set WhatsApp contact
+        if (waData.data) {
           setAdmissionsWA({
-            phoneNumber: data.phoneNumber,
-            waUrl: generateWhatsAppUrl(data.phoneNumber, data.waTemplate),
-            label: data.label
+            phoneNumber: waData.data.phoneNumber,
+            waUrl: generateWhatsAppUrl(waData.data.phoneNumber, waData.data.waTemplate),
+            label: waData.data.label
           })
         }
+        
+        // Set SPMB settings
+        if (spmbData.data) {
+          setSpmb(spmbData.data)
+        }
       })
-      .catch(err => console.error('Error fetching admissions contact:', err))
+      .catch(err => console.error('Error fetching data:', err))
+      .finally(() => setIsLoading(false))
   }, [])
 
   return (
@@ -58,16 +97,24 @@ export default function SMPBPage() {
       <section className="bg-emerald-600 text-white py-16">
         <div className="max-w-6xl mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">SPMB SMP IT MASJID SYUHADA</h1>
-            <p className="text-xl mb-2">TAHUN PELAJARAN 2025/2026</p>
-            <p className="text-emerald-100 mb-6">Assalaamu'alaikum warahmatullaahi wabarakaatuh</p>
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 max-w-4xl mx-auto">
-              <p className="text-lg leading-relaxed">
-                Selamat datang di laman informasi Penerimaan Peserta Didik Baru (PPDB) SMP IT Masjid Syuhada. Kami
-                melayani pendaftaran secara online maupun offline dan{" "}
-                <strong>TIDAK MEMBERLAKUKAN SISTEM ZONASI WILAYAH</strong>.
-              </p>
-            </div>
+            {isLoading ? (
+              <div className="animate-pulse space-y-4">
+                <div className="h-10 bg-white/20 rounded w-3/4 mx-auto"></div>
+                <div className="h-6 bg-white/20 rounded w-1/2 mx-auto"></div>
+                <div className="h-20 bg-white/10 rounded w-full max-w-4xl mx-auto"></div>
+              </div>
+            ) : (
+              <>
+                <h1 className="text-4xl font-bold mb-4">{spmb?.heroTitle || 'SPMB SMP IT MASJID SYUHADA'}</h1>
+                <p className="text-xl mb-2">{spmb?.heroSubtitle || 'TAHUN PELAJARAN 2025/2026'}</p>
+                <p className="text-emerald-100 mb-6">Assalaamu'alaikum warahmatullaahi wabarakaatuh</p>
+                <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 max-w-4xl mx-auto">
+                  <p className="text-lg leading-relaxed">
+                    {spmb?.heroDescription || 'Selamat datang di laman informasi Penerimaan Peserta Didik Baru (PPDB) SMP IT Masjid Syuhada. Kami melayani pendaftaran secara online maupun offline dan TIDAK MEMBERLAKUKAN SISTEM ZONASI WILAYAH.'}
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -182,51 +229,37 @@ export default function SMPBPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <Card className="border-2 border-emerald-200">
-                    <CardHeader className="pb-3">
-                      <Badge className="w-fit bg-emerald-600">Gelombang Inden</Badge>
-                      <CardTitle className="text-lg">September 2024</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 mb-2">Potongan maksimal</p>
-                      <p className="font-semibold text-emerald-600">Dana pengembangan hanya Rp 1.000.000</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 border-blue-200">
-                    <CardHeader className="pb-3">
-                      <Badge className="w-fit bg-blue-600">Gelombang 1</Badge>
-                      <CardTitle className="text-lg">01 Okt - 31 Jan 2025</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 mb-2">Potongan 50%</p>
-                      <p className="font-semibold text-blue-600">Dana pengembangan Rp 2.500.000</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 border-orange-200">
-                    <CardHeader className="pb-3">
-                      <Badge className="w-fit bg-orange-600">Gelombang 2</Badge>
-                      <CardTitle className="text-lg">01 Feb - 30 Apr 2025</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 mb-2">Potongan 25%</p>
-                      <p className="font-semibold text-orange-600">Dana pengembangan Rp 3.750.000</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="border-2 border-red-200">
-                    <CardHeader className="pb-3">
-                      <Badge className="w-fit bg-red-600">Gelombang 3</Badge>
-                      <CardTitle className="text-lg">01 Mei - Juli 2025</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 mb-2">Tanpa potongan</p>
-                      <p className="font-semibold text-red-600">Dana pengembangan Rp 5.000.000</p>
-                    </CardContent>
-                  </Card>
-                </div>
+                {isLoading ? (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className="animate-pulse">
+                        <div className="h-40 bg-gray-200 rounded-lg"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {spmb?.gelombangData && spmb.gelombangData.length > 0 ? (
+                      spmb.gelombangData.map((gelombang: any) => {
+                        const colors = getColorClasses(gelombang.color)
+                        return (
+                          <Card key={gelombang.id} className={`border-2 ${colors.border}`}>
+                            <CardHeader className="pb-3">
+                              <Badge className={`w-fit ${colors.bg}`}>{gelombang.badge}</Badge>
+                              <CardTitle className="text-lg">{gelombang.period}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-sm text-gray-600 mb-2">{gelombang.discount}</p>
+                              <p className={`font-semibold ${colors.text}`}>{gelombang.description}</p>
+                            </CardContent>
+                          </Card>
+                        )
+                      })
+                    ) : (
+                      <p className="col-span-4 text-center text-gray-500">Belum ada data gelombang pendaftaran</p>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

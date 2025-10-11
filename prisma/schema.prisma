@@ -183,3 +183,40 @@ model ContactSetting {
   
   @@map("contact_settings")
 }
+
+// SPMB Settings & Content
+model SPMBSetting {
+  id                String   @id @default(cuid())
+  
+  // Academic Year
+  academicYear      String   @default("2025/2026") // "2025/2026"
+  registrationOpen  Boolean  @default(true)
+  
+  // Hero Section
+  heroTitle         String   @default("SPMB SMP IT MASJID SYUHADA")
+  heroSubtitle      String   @default("TAHUN PELAJARAN 2025/2026")
+  heroDescription   String?
+  
+  // Gelombang Data (JSON)
+  gelombangData     String   @default("[]") // JSON array of gelombang
+  
+  // Jalur Data (JSON)
+  jalurData         String   @default("[]") // JSON array of jalur
+  
+  // Biaya Data (JSON)
+  biayaData         String   @default("{}") // JSON object of biaya
+  
+  // Syarat & Process (JSON)
+  syaratData        String   @default("[]") // JSON array of syarat
+  wawancaraData     String   @default("{}") // JSON object of wawancara info
+  
+  // Contact
+  schoolAddress     String?
+  schoolPhone       String?
+  schoolEmail       String?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("spmb_settings")
+}
