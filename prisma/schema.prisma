@@ -220,3 +220,26 @@ model SPMBSetting {
   
   @@map("spmb_settings")
 }
+
+// Contact Messages from website contact form
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String   @db.Text
+  status    String   @default("new") // "new" | "read" | "replied" | "archived"
+  category  String?  // "pendaftaran" | "kunjungan" | "beasiswa" | "umum"
+  priority  String   @default("normal") // "low" | "normal" | "high"
+  notes     String?  @db.Text // Admin notes
+  repliedAt DateTime?
+  repliedBy String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("contact_messages")
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+}

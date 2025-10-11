@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import mockMessages from "@/data/mock-messages.json"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
@@ -199,20 +198,32 @@ export default function MessagesPanel() {
     })
   }
 
-  React.useEffect(() => {
+  // Fetch messages from API
+  const fetchMessages = React.useCallback(async () => {
     try {
-      // Always load fresh mock data for development
-      // Remove localStorage check to avoid cache issues during testing
-      setMessages(mockMessages as ContactMessage[])
-      setSelectedId(null)
-    } catch {
+      const params = new URLSearchParams()
+      if (status !== 'all') params.set('status', status)
+      if (query) params.set('search', query)
+      params.set('limit', maxRows.toString())
+      
+      const response = await fetch(`/api/contact/messages?${params}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setMessages(data.data || [])
+      } else {
+        console.error('Failed to fetch messages:', data.error)
+        setMessages([])
+      }
+    } catch (error) {
+      console.error('Error fetching messages:', error)
       setMessages([])
-      setSelectedId(null)
     }
+  }, [status, query, maxRows])
 
-    // Column settings are now loaded in useState initializer
-    // No need to load them again in useEffect
-  }, [])
+  React.useEffect(() => {
+    fetchMessages()
+  }, [fetchMessages])
 
   React.useEffect(() => {
     try {
@@ -230,23 +241,56 @@ export default function MessagesPanel() {
     }
   }, [columnWidths])
 
-  function persist(next: ContactMessage[]) {
-    // Skip localStorage persistence for development
-    // Data will always be fresh from mockMessages
-    setMessages(next)
-    if (selectedId && !next.find((m) => m.id === selectedId)) {
-      setSelectedId(next[0]?.id ?? null)
+  async function toggleRead(id: string) {
+    const message = messages.find((m) => m.id === id)
+    if (!message) return
+    
+    const newStatus = message.status === "new" ? "read" : "new"
+    
+    try {
+      const response = await fetch(`/api/contact/messages/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      })
+      
+      if (response.ok) {
+        // Update local state optimistically
+        setMessages(messages.map((m) => 
+          m.id === id ? { ...m, status: newStatus } : m
+        ))
+      } else {
+        console.error('Failed to update message status')
+      }
+    } catch (error) {
+      console.error('Error updating message:', error)
     }
   }
 
-  function toggleRead(id: string) {
-    const next = messages.map((m) => (m.id === id ? { ...m, status: m.status === "new" ? "read" as const : "new" as const } : m))
-    persist(next)
-  }
-
-  function remove(id: string) {
-    const next = messages.filter((m) => m.id !== id)
-    persist(next)
+  async function remove(id: string) {
+    if (!confirm('Apakah Anda yakin ingin menghapus pesan ini?')) {
+      return
+    }
+    
+    try {
+      const response = await fetch(`/api/contact/messages/${id}`, {
+        method: 'DELETE'
+      })
+      
+      if (response.ok) {
+        // Remove from local state
+        setMessages(messages.filter((m) => m.id !== id))
+        if (selectedId === id) {
+          setSelectedId(null)
+        }
+      } else {
+        console.error('Failed to delete message')
+        alert('Gagal menghapus pesan')
+      }
+    } catch (error) {
+      console.error('Error deleting message:', error)
+      alert('Terjadi kesalahan saat menghapus pesan')
+    }
   }
 
   const filtered = messages.filter((m) => {

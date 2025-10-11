@@ -7,17 +7,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
 
-type ContactMessage = {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  subject?: string
-  message: string
-  createdAt: string
-  status: "new" | "read"
-}
-
 export default function ContactForm() {
   const { toast } = useToast()
   const [loading, setLoading] = React.useState(false)
@@ -28,19 +17,6 @@ export default function ContactForm() {
     subject: "",
     message: "",
   })
-
-  function loadMessages(): ContactMessage[] {
-    try {
-      const raw = localStorage.getItem("contact_messages")
-      return raw ? (JSON.parse(raw) as ContactMessage[]) : []
-    } catch {
-      return []
-    }
-  }
-
-  function saveMessages(messages: ContactMessage[]) {
-    localStorage.setItem("contact_messages", JSON.stringify(messages))
-  }
 
   function handleChange<K extends keyof typeof form>(key: K, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -54,23 +30,42 @@ export default function ContactForm() {
     }
     setLoading(true)
     try {
-      const messages = loadMessages()
-      const msg: ContactMessage = {
-        id: `${Date.now()}`,
-        name: form.name.trim(),
-        email: form.email.trim(),
-        phone: form.phone.trim(),
-        subject: form.subject.trim(),
-        message: form.message.trim(),
-        createdAt: new Date().toISOString(),
-        status: "new",
+      const response = await fetch('/api/contact/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim() || null,
+          subject: form.subject.trim() || null,
+          message: form.message.trim(),
+        }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setForm({ name: "", email: "", phone: "", subject: "", message: "" })
+        toast({ 
+          title: "Pesan Terkirim", 
+          description: "Terima kasih! Pesan Anda sudah kami terima dan akan segera ditinjau." 
+        })
+      } else {
+        toast({ 
+          title: "Gagal Mengirim", 
+          description: data.error || "Terjadi kesalahan. Coba lagi.", 
+          variant: "destructive" as any 
+        })
       }
-      messages.unshift(msg)
-      saveMessages(messages)
-      setForm({ name: "", email: "", phone: "", subject: "", message: "" })
-      toast({ title: "Pesan Terkirim", description: "Terima kasih! Pesan Anda sudah kami terima." })
-    } catch {
-      toast({ title: "Gagal Mengirim", description: "Terjadi kesalahan. Coba lagi.", variant: "destructive" as any })
+    } catch (error) {
+      console.error('Error submitting form:', error)
+      toast({ 
+        title: "Gagal Mengirim", 
+        description: "Terjadi kesalahan koneksi. Coba lagi.", 
+        variant: "destructive" as any 
+      })
     } finally {
       setLoading(false)
     }
