@@ -41,43 +41,46 @@ import {
 import { useTabParam } from "@/hooks"
 import { AdmissionsWhatsApp } from "@/components/dashboard/admissions-whatsapp"
 
-// Mock data untuk pendaftar
-const mockApplicants = [
-  {
-    id: "1",
-    name: "Ahmad Fauzi",
-    email: "ahmad@example.com",
-    phone: "081234567890",
-    school: "SD Negeri 1 Yogyakarta",
-    status: "pending",
-    submittedAt: "2024-01-15T10:30:00Z",
-    documents: ["KTP", "Ijazah", "Foto"]
-  },
-  {
-    id: "2",
-    name: "Siti Rahma",
-    email: "siti@example.com", 
-    phone: "081234567891",
-    school: "SD Muhammadiyah 1",
-    status: "approved",
-    submittedAt: "2024-01-14T14:20:00Z",
-    documents: ["KTP", "Ijazah", "Foto", "SKHUN"]
-  },
-  {
-    id: "3",
-    name: "Budi Setiawan",
-    email: "budi@example.com",
-    phone: "081234567892", 
-    school: "SD Islam Terpadu",
-    status: "rejected",
-    submittedAt: "2024-01-13T09:15:00Z",
-    documents: ["KTP", "Ijazah"]
-  }
-]
-
 export default function SPMBPage() {
   const { current, setTab } = useTabParam("forms")
-  const [applicants] = React.useState(mockApplicants)
+  const [applicants, setApplicants] = React.useState<any[]>([])
+  const [isLoading, setIsLoading] = React.useState(false)
+  const [searchQuery, setSearchQuery] = React.useState("")
+  const [statusFilter, setStatusFilter] = React.useState("all")
+
+  const fetchApplicants = React.useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const params = new URLSearchParams()
+      if (searchQuery) params.append('search', searchQuery)
+      if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter)
+
+      const response = await fetch(`/api/forms/submissions?${params}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setApplicants(data.data || [])
+      } else {
+        setApplicants([])
+      }
+    } catch (error) {
+      console.error('Error fetching applicants:', error)
+      setApplicants([])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [searchQuery, statusFilter])
+
+  // Debounced search
+  React.useEffect(() => {
+    if (current !== "applicants") return
+    
+    const timer = setTimeout(() => {
+      fetchApplicants()
+    }, 300) // 300ms debounce
+
+    return () => clearTimeout(timer)
+  }, [current, searchQuery, statusFilter, fetchApplicants])
 
   return (
     <div className="space-y-6">
@@ -231,11 +234,20 @@ export default function SPMBPage() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
                     <Search className="h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Cari pendaftar..." className="w-64" />
+                    <Input 
+                      placeholder="Cari pendaftar..." 
+                      className="w-64"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                   </div>
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4 text-muted-foreground" />
-                    <select className="p-2 border rounded-md">
+                    <select 
+                      className="p-2 border rounded-md"
+                      value={statusFilter}
+                      onChange={(e) => setStatusFilter(e.target.value)}
+                    >
                       <option value="all">Semua Status</option>
                       <option value="pending">Menunggu</option>
                       <option value="approved">Disetujui</option>
@@ -259,54 +271,104 @@ export default function SPMBPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {applicants.map((applicant, index) => (
-                        <tr key={applicant.id}>
-                          <td className="border border-gray-200 p-3">{index + 1}</td>
-                          <td className="border border-gray-200 p-3 font-medium">{applicant.name}</td>
-                          <td className="border border-gray-200 p-3">{applicant.email}</td>
-                          <td className="border border-gray-200 p-3">{applicant.phone}</td>
-                          <td className="border border-gray-200 p-3">{applicant.school}</td>
-                          <td className="border border-gray-200 p-3">
-                            <Badge 
-                              variant={applicant.status === "approved" ? "default" : 
-                                      applicant.status === "rejected" ? "destructive" : "secondary"}
-                            >
-                              {applicant.status === "approved" ? "Disetujui" :
-                               applicant.status === "rejected" ? "Ditolak" : "Menunggu"}
-                            </Badge>
-                          </td>
-                          <td className="border border-gray-200 p-3">
-                            {new Date(applicant.submittedAt).toLocaleDateString('id-ID')}
-                          </td>
-                          <td className="border border-gray-200 p-3">
-                            <div className="flex items-center gap-1">
-                              <Button size="sm" variant="outline">
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button size="sm" variant="outline">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                      {isLoading ? (
+                        <tr>
+                          <td colSpan={8} className="border border-gray-200 p-8 text-center">
+                            <div className="flex items-center justify-center gap-2 text-gray-500">
+                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-emerald-600"></div>
+                              <span>Memuat data pendaftar...</span>
                             </div>
                           </td>
                         </tr>
-                      ))}
+                      ) : !Array.isArray(applicants) || applicants.length === 0 ? (
+                        <tr>
+                          <td colSpan={8} className="border border-gray-200 p-8 text-center text-gray-500">
+                            Belum ada data pendaftar
+                          </td>
+                        </tr>
+                      ) : (
+                        applicants.map((applicant, index) => (
+                          <tr key={applicant.id} className="hover:bg-gray-50 transition-colors">
+                            <td className="border border-gray-200 p-3">{index + 1}</td>
+                            <td className="border border-gray-200 p-3">
+                              <div className="font-medium">{applicant.namaLengkap}</div>
+                              <div className="text-xs text-gray-500">{applicant.registrationNumber}</div>
+                            </td>
+                            <td className="border border-gray-200 p-3 text-sm">{applicant.email || '-'}</td>
+                            <td className="border border-gray-200 p-3 text-sm">{applicant.noHP || '-'}</td>
+                            <td className="border border-gray-200 p-3 text-sm">{applicant.asalSekolah || '-'}</td>
+                            <td className="border border-gray-200 p-3">
+                              <Badge 
+                                variant={applicant.status === "approved" ? "default" : 
+                                        applicant.status === "rejected" ? "destructive" : "secondary"}
+                              >
+                                {applicant.status === "approved" ? "Disetujui" :
+                                 applicant.status === "rejected" ? "Ditolak" : "Menunggu"}
+                              </Badge>
+                            </td>
+                            <td className="border border-gray-200 p-3 text-sm">
+                              {new Date(applicant.createdAt).toLocaleDateString('id-ID', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                              })}
+                            </td>
+                            <td className="border border-gray-200 p-3">
+                              <div className="flex items-center gap-1">
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => window.location.href = `/admin/submissions/${applicant.id}`}
+                                  title="Lihat Detail"
+                                >
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  onClick={() => window.location.href = `/admin/submissions/${applicant.id}`}
+                                  title="Edit"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline"
+                                  title="Hapus"
+                                >
+                                  <Trash2 className="h-4 w-4 text-red-600" />
+                                </Button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
 
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-muted-foreground">
-                    Menampilkan {applicants.length} dari {applicants.length} pendaftar
+                    {isLoading ? (
+                      'Memuat data...'
+                    ) : (
+                      `Menampilkan ${Array.isArray(applicants) ? applicants.length : 0} pendaftar`
+                    )}
                   </p>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      disabled={isLoading || !Array.isArray(applicants) || applicants.length === 0}
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Export Excel
                     </Button>
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      disabled={isLoading || !Array.isArray(applicants) || applicants.length === 0}
+                    >
                       <Download className="h-4 w-4 mr-2" />
                       Export PDF
                     </Button>
