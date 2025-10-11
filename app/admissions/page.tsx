@@ -55,6 +55,7 @@ const getColorClasses = (color: string) => {
 export default function SMPBPage() {
   const { current, setTab } = useTabParam("gelombang")
   const [admissionsWA, setAdmissionsWA] = React.useState<{ phoneNumber: string; waUrl: string; label: string } | null>(null)
+  const [callCenterWA, setCallCenterWA] = React.useState<{ phoneNumber: string; waUrl: string; label: string } | null>(null)
   const [spmb, setSpmb] = React.useState<SPMBSettings | null>(null)
   const [isLoading, setIsLoading] = React.useState(true)
 
@@ -62,15 +63,25 @@ export default function SMPBPage() {
     // Fetch all data
     Promise.all([
       fetch('/api/settings/contact/admissions').then(res => res.json()),
+      fetch('/api/settings/contact/call_center').then(res => res.json()),
       fetch('/api/spmb/settings').then(res => res.json())
     ])
-      .then(([waData, spmbData]) => {
-        // Set WhatsApp contact
-        if (waData.data) {
+      .then(([admissionsData, callCenterData, spmbData]) => {
+        // Set Admissions WhatsApp contact
+        if (admissionsData.data) {
           setAdmissionsWA({
-            phoneNumber: waData.data.phoneNumber,
-            waUrl: generateWhatsAppUrl(waData.data.phoneNumber, waData.data.waTemplate),
-            label: waData.data.label
+            phoneNumber: admissionsData.data.phoneNumber,
+            waUrl: generateWhatsAppUrl(admissionsData.data.phoneNumber, admissionsData.data.waTemplate),
+            label: admissionsData.data.label
+          })
+        }
+        
+        // Set Call Center WhatsApp contact
+        if (callCenterData.data) {
+          setCallCenterWA({
+            phoneNumber: callCenterData.data.phoneNumber,
+            waUrl: generateWhatsAppUrl(callCenterData.data.phoneNumber, callCenterData.data.waTemplate),
+            label: callCenterData.data.label
           })
         }
         
@@ -183,12 +194,12 @@ export default function SMPBPage() {
                     <Button 
                       variant="outline" 
                       size="lg"
-                      className="w-full sm:w-auto hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-md"
+                      className="w-full sm:w-auto border-blue-600 text-blue-600 hover:bg-blue-50 hover:border-blue-700 hover:text-blue-700 transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-md"
                       suppressHydrationWarning
                     >
                       <Phone className="h-4 w-4 mr-2" />
                       <span suppressHydrationWarning>
-                        {isLoading ? "Loading..." : (admissionsWA?.label || "Bantuan")}
+                        {isLoading ? "Loading..." : (admissionsWA?.label || "Bantuan SPMB")}
                       </span>
                     </Button>
                   </a>
@@ -710,7 +721,7 @@ export default function SMPBPage() {
               
               <div className="flex flex-wrap items-center justify-center gap-3">
                 <a 
-                  href={admissionsWA?.waUrl || "#"} 
+                  href={callCenterWA?.waUrl || "#"} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   suppressHydrationWarning
@@ -723,7 +734,7 @@ export default function SMPBPage() {
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     <span suppressHydrationWarning>
-                      {isLoading ? "Loading..." : (admissionsWA?.label || "Bantuan")}
+                      {isLoading ? "Loading..." : (callCenterWA?.label || "Call Center")}
                     </span>
                   </Button>
                 </a>
