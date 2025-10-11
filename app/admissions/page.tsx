@@ -153,9 +153,9 @@ export default function SMPBPage() {
                   <Link href="/signup" className="order-1">
                     <Button 
                       size="lg"
-                      className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-subtle"
+                      className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-subtle hover:scale-105 active:scale-95"
                     >
-                      <ExternalLink className="h-5 w-5 mr-2" />
+                      <ExternalLink className="h-5 w-5 mr-2 transition-transform group-hover:translate-x-0.5" />
                       <span className="font-semibold">Daftar Sekarang</span>
                     </Button>
                   </Link>
@@ -165,7 +165,7 @@ export default function SMPBPage() {
                     <Button 
                       variant="outline" 
                       size="lg"
-                      className="w-full sm:w-auto border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+                      className="w-full sm:w-auto border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50 hover:border-emerald-700 hover:text-emerald-700 transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-md"
                     >
                       <CheckCircle className="h-4 w-4 mr-2" />
                       Cek Status
@@ -183,7 +183,7 @@ export default function SMPBPage() {
                     <Button 
                       variant="outline" 
                       size="lg"
-                      className="w-full sm:w-auto"
+                      className="w-full sm:w-auto hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-md"
                       suppressHydrationWarning
                     >
                       <Phone className="h-4 w-4 mr-2" />
@@ -718,7 +718,7 @@ export default function SMPBPage() {
                   <Button 
                     variant="secondary" 
                     size="lg" 
-                    className="shadow-lg"
+                    className="shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
                     suppressHydrationWarning
                   >
                     <Phone className="h-4 w-4 mr-2" />
@@ -727,7 +727,11 @@ export default function SMPBPage() {
                     </span>
                   </Button>
                 </a>
-                <Button variant="outline" size="lg" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="bg-white/10 border-white/30 text-white hover:bg-white/20 hover:border-white/50 transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg"
+                >
                   <MapPin className="h-4 w-4 mr-2" />
                   Lokasi Sekolah
                 </Button>
