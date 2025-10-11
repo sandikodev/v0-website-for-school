@@ -5,6 +5,7 @@
 - [Component Architecture](./architecture/component-architecture.md) - Component design patterns and structure
 - [Database Schema](./architecture/database-schema.md) - Data models and relationships
 - [API Documentation](./architecture/api-documentation.md) - API endpoints and usage
+- [**Layout System Evaluation**](./LAYOUT_EVALUATION.md) - ⚠️ **PENDING TEAM REVIEW** - Comparison of `/admin` vs `/dashboard` layouts with migration recommendations
 - [Future Technology](./architecture/future-technology.md) - Astro, Qwik, and next-gen roadmap
 - [WordPress CMS Integration](./architecture/wordpress-cms-integration.md) - Hybrid architecture with WordPress
 - [WordPress Integration Strategy](./architecture/wordpress-integration-strategy.md) - **NEW** Complete hybrid strategy with plugin development
