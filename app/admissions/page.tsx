@@ -143,41 +143,9 @@ export default function SMPBPage() {
                   <ol className="space-y-2 text-sm text-gray-700 ml-7">
                     <li>1. Kunjungi halaman <Link href="/registrar" className="text-emerald-600 hover:text-emerald-700 font-semibold underline">Cek Status Pendaftaran</Link></li>
                     <li>2. Masukkan nomor pendaftaran Anda (contoh: SPMB-2025-XXXX)</li>
-                    <li>3. Lihat status terkini pendaftaran Anda</li>
+                    <li>3. Lihat status terkini pendaftaran Anda dan keterangan lengkap</li>
                     <li>4. Cetak bukti pendaftaran jika diperlukan</li>
                   </ol>
-                </div>
-
-                <div className="grid md:grid-cols-3 gap-4 mb-4">
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Clock className="h-4 w-4 text-yellow-600" />
-                      <p className="font-semibold text-sm text-yellow-900">Status: Pending</p>
-                    </div>
-                    <p className="text-xs text-yellow-800">
-                      Pendaftaran Anda sedang dalam antrian untuk ditinjau. Harap tunggu 1-2 hari kerja.
-                    </p>
-                  </div>
-
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <p className="font-semibold text-sm text-green-900">Status: Diterima</p>
-                    </div>
-                    <p className="text-xs text-green-800">
-                      Selamat! Anda diterima. Tim kami akan menghubungi untuk proses selanjutnya.
-                    </p>
-                  </div>
-
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <AlertCircle className="h-4 w-4 text-red-600" />
-                      <p className="font-semibold text-sm text-red-900">Status: Ditolak/Masalah</p>
-                    </div>
-                    <p className="text-xs text-red-800">
-                      Jika ada masalah administrasi atau penolakan, lihat catatan di halaman status atau hubungi kami.
-                    </p>
-                  </div>
                 </div>
 
                 <div className="flex flex-wrap gap-3">
