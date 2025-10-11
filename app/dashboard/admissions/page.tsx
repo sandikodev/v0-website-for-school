@@ -41,6 +41,7 @@ import {
 import { useTabParam } from "@/hooks"
 import { AdmissionsWhatsApp } from "@/components/dashboard/admissions-whatsapp"
 import { SubmissionDetailModal } from "@/components/dashboard/submission-detail-modal"
+import InterviewManagement from "@/components/dashboard/interview-management"
 import { useSearchParams, useRouter } from "next/navigation"
 
 export default function SPMBPage() {
@@ -134,6 +135,7 @@ export default function SPMBPage() {
           {[
             { key: "overview", label: "Overview" },
             { key: "applicants", label: "Pendaftar" },
+            { key: "interview", label: "Interview" },
             { key: "reports", label: "Laporan" },
             { key: "forms", label: "Formulir" },
             { key: "whatsapp", label: "WhatsApp" },
@@ -741,6 +743,11 @@ export default function SPMBPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        {/* Interview Management */}
+        <TabsContent value="interview">
+          <InterviewManagement />
         </TabsContent>
 
         {/* Laporan */}

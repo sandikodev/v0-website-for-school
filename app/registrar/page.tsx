@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Search, CheckCircle, Clock, XCircle, Eye, Calendar, User, School, FileText, Home, FileSearch, Printer } from "lucide-react"
+import InterviewNotification from "@/components/registrar/interview-notification"
 
 interface SubmissionDetail {
   id: string
@@ -312,6 +313,9 @@ export default function RegistrarStatusPage() {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Interview Notifications */}
+            <InterviewNotification submissionId={result.id} />
 
             {/* Data Lengkap - Combined for print efficiency */}
             <Card className="print-card">

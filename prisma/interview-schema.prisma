@@ -1,0 +1,75 @@
+// Interview System Schema - untuk integrasi Google Forms
+
+model InterviewType {
+  id          String   @id @default(cuid())
+  name        String   // "Interview Diniyah", "Interview Akademik", dll
+  description String?
+  googleFormUrl String // URL ke Google Form
+  isRequired  Boolean  @default(true)
+  maxScore    Int?     // Skor maksimal (jika ada)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  sessions    InterviewSession[]
+  results     InterviewResult[]
+
+  @@map("interview_types")
+}
+
+model InterviewSession {
+  id              String   @id @default(cuid())
+  submissionId    String   // Link ke FormSubmission
+  interviewTypeId String
+  status          InterviewStatus @default(PENDING)
+  scheduledDate   DateTime?
+  completedDate   DateTime?
+  googleFormId    String?  // ID dari Google Forms response
+  notes           String?  // Catatan admin
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  submission      FormSubmission @relation(fields: [submissionId], references: [id])
+  interviewType   InterviewType @relation(fields: [interviewTypeId], references: [id])
+  result          InterviewResult?
+
+  @@map("interview_sessions")
+}
+
+model InterviewResult {
+  id              String   @id @default(cuid())
+  sessionId       String   @unique
+  score           Int?     // Skor numerik
+  grade           String?  // Grade (A, B, C, dll)
+  feedback        String?  // Feedback dari interviewer
+  strengths       String?  // Kekuatan yang teridentifikasi
+  weaknesses      String?  // Area yang perlu diperbaiki
+  recommendation  String?  // Rekomendasi (Diterima, Ditolak, dll)
+  reviewerId      String?  // ID admin yang menilai
+  reviewedAt      DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  session         InterviewSession @relation(fields: [sessionId], references: [id])
+
+  @@map("interview_results")
+}
+
+enum InterviewStatus {
+  PENDING         // Belum dimulai
+  IN_PROGRESS     // Sedang berlangsung
+  COMPLETED       // Selesai (tunggu review)
+  REVIEWED        // Sudah direview admin
+  FAILED          // Tidak lulus
+  RESCHEDULED     // Diundur
+}
+
+// Update FormSubmission untuk link ke interview
+model FormSubmission {
+  // ... existing fields ...
+  
+  // Relations
+  interviews      InterviewSession[]
+}
