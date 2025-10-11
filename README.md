@@ -17,6 +17,22 @@
 
 ---
 
+## ⚠️ IMPORTANT: Team Review Required
+
+> 📋 **Layout System Evaluation**  
+> We have two layout systems running in parallel (`/admin` and `/dashboard`). A comprehensive evaluation document has been created to help the team make an informed decision about system architecture.
+> 
+> **Action Required:** Please review [docs/LAYOUT_EVALUATION.md](docs/LAYOUT_EVALUATION.md)  
+> **Priority:** High | **Impact:** High | **Decision By:** [Set deadline]
+>
+> Key findings:
+> - Dashboard system scores 88.5% vs Admin 52.5%
+> - Potential 5-year savings: Rp 895 juta
+> - Performance improvement: <200ms vs 2-4s page loads
+> - **Recommendation:** Full migration to `/dashboard` system
+
+---
+
 ## 🌟 What is School Website Builder?
 
 **School Website Builder** is a modern, open-source platform designed specifically for educational institutions. Built with Next.js 14 and TypeScript, it provides everything schools need to create professional, SEO-optimized websites with integrated academic management features.
