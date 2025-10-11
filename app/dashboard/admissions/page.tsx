@@ -56,10 +56,12 @@ export default function SPMBPage() {
       if (statusFilter && statusFilter !== 'all') params.append('status', statusFilter)
 
       const response = await fetch(`/api/forms/submissions?${params}`)
-      const data = await response.json()
+      const result = await response.json()
       
-      if (data.success) {
-        setApplicants(data.data || [])
+      if (result.success && result.data) {
+        // API returns { success, data: { submissions, stats } }
+        const submissions = result.data.submissions || []
+        setApplicants(submissions)
       } else {
         setApplicants([])
       }
