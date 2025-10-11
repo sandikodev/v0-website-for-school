@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { User, School, Users, FileText, CheckCircle, XCircle, Clock, Calendar, ExternalLink } from "lucide-react"
+import { User, School, Users, FileText, CheckCircle, XCircle, Clock, Calendar, ExternalLink, Eye } from "lucide-react"
 import { toast } from "sonner"
 
 interface SubmissionDetailModalProps {
