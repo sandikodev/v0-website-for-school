@@ -40,14 +40,47 @@ import {
 } from "lucide-react"
 import { useTabParam } from "@/hooks"
 import { AdmissionsWhatsApp } from "@/components/dashboard/admissions-whatsapp"
+import { SubmissionDetailModal } from "@/components/dashboard/submission-detail-modal"
+import { useSearchParams, useRouter } from "next/navigation"
 
 export default function SPMBPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const { current, setTab } = useTabParam("overview")
   const [applicants, setApplicants] = React.useState<any[]>([])
   const [stats, setStats] = React.useState<any>(null)
   const [isLoading, setIsLoading] = React.useState(false)
   const [searchQuery, setSearchQuery] = React.useState("")
   const [statusFilter, setStatusFilter] = React.useState("all")
+  const [selectedApplicantId, setSelectedApplicantId] = React.useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = React.useState(false)
+
+  // Handle applicant query parameter
+  React.useEffect(() => {
+    const applicantId = searchParams.get('applicant')
+    if (applicantId) {
+      setSelectedApplicantId(applicantId)
+      setIsModalOpen(true)
+    }
+  }, [searchParams])
+
+  const openModal = (applicantId: string) => {
+    setSelectedApplicantId(applicantId)
+    setIsModalOpen(true)
+    // Update URL with query parameter
+    const params = new URLSearchParams(window.location.search)
+    params.set('applicant', applicantId)
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setSelectedApplicantId(null)
+    // Remove query parameter
+    const params = new URLSearchParams(window.location.search)
+    params.delete('applicant')
+    router.push(`?${params.toString()}`, { scroll: false })
+  }
 
   const fetchApplicants = React.useCallback(async () => {
     setIsLoading(true)
@@ -225,7 +258,7 @@ export default function SPMBPage() {
                       <div 
                         key={applicant.id}
                         className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => window.location.href = `/admin/submissions/${applicant.id}`}
+                        onClick={() => openModal(applicant.id)}
                       >
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
@@ -576,7 +609,7 @@ export default function SPMBPage() {
                                 <Button 
                                   size="sm" 
                                   variant="outline"
-                                  onClick={() => window.location.href = `/admin/submissions/${applicant.id}`}
+                                  onClick={() => openModal(applicant.id)}
                                   title="Lihat Detail"
                                 >
                                   <Eye className="h-4 w-4" />
@@ -584,7 +617,7 @@ export default function SPMBPage() {
                                 <Button 
                                   size="sm" 
                                   variant="outline"
-                                  onClick={() => window.location.href = `/admin/submissions/${applicant.id}`}
+                                  onClick={() => openModal(applicant.id)}
                                   title="Edit"
                                 >
                                   <Edit className="h-4 w-4" />
@@ -806,6 +839,14 @@ export default function SPMBPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Submission Detail Modal */}
+      <SubmissionDetailModal
+        submissionId={selectedApplicantId}
+        open={isModalOpen}
+        onOpenChange={closeModal}
+        onUpdate={fetchApplicants}
+      />
     </div>
   )
 }
