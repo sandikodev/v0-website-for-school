@@ -148,23 +148,48 @@ export default function SMPBPage() {
                   </ol>
                 </div>
 
-                <div className="flex flex-wrap gap-3">
-                  <Link href="/registrar">
-                    <Button className="bg-emerald-600 hover:bg-emerald-700">
+                <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+                  {/* Primary CTA - Daftar Baru (with pulse animation) */}
+                  <Link href="/signup" className="order-1">
+                    <Button 
+                      size="lg"
+                      className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white shadow-lg hover:shadow-xl transition-all duration-300 animate-pulse-subtle"
+                    >
+                      <ExternalLink className="h-5 w-5 mr-2" />
+                      <span className="font-semibold">Daftar Sekarang</span>
+                    </Button>
+                  </Link>
+
+                  {/* Secondary CTAs */}
+                  <Link href="/registrar" className="order-2">
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="w-full sm:w-auto border-2 border-emerald-600 text-emerald-600 hover:bg-emerald-50"
+                    >
                       <CheckCircle className="h-4 w-4 mr-2" />
-                      Cek Status Pendaftaran
+                      Cek Status
                     </Button>
                   </Link>
-                  <Link href="/signup">
-                    <Button variant="outline" className="border-emerald-600 text-emerald-600 hover:bg-emerald-50">
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Daftar Baru
-                    </Button>
-                  </Link>
-                  <a href={admissionsWA?.waUrl || "https://wa.me/6285878958029"} target="_blank" rel="noopener noreferrer">
-                    <Button variant="outline">
+
+                  {/* WhatsApp Contact - Fix hydration with suppressHydrationWarning */}
+                  <a 
+                    href={admissionsWA?.waUrl || "#"} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="order-3"
+                    suppressHydrationWarning
+                  >
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="w-full sm:w-auto"
+                      suppressHydrationWarning
+                    >
                       <Phone className="h-4 w-4 mr-2" />
-                      {admissionsWA?.label || "Bantuan: 0858 7895 8029"}
+                      <span suppressHydrationWarning>
+                        {isLoading ? "Loading..." : (admissionsWA?.label || "Bantuan")}
+                      </span>
                     </Button>
                   </a>
                 </div>
@@ -684,10 +709,22 @@ export default function SMPBPage() {
               </div>
               
               <div className="flex flex-wrap items-center justify-center gap-3">
-                <a href={admissionsWA?.waUrl || "https://wa.me/6285878958029"} target="_blank" rel="noopener noreferrer">
-                  <Button variant="secondary" size="lg" className="shadow-lg">
+                <a 
+                  href={admissionsWA?.waUrl || "#"} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  suppressHydrationWarning
+                >
+                  <Button 
+                    variant="secondary" 
+                    size="lg" 
+                    className="shadow-lg"
+                    suppressHydrationWarning
+                  >
                     <Phone className="h-4 w-4 mr-2" />
-                    {admissionsWA?.label || "WA: 0858 7895 8029"}
+                    <span suppressHydrationWarning>
+                      {isLoading ? "Loading..." : (admissionsWA?.label || "Bantuan")}
+                    </span>
                   </Button>
                 </a>
                 <Button variant="outline" size="lg" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
