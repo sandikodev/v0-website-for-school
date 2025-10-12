@@ -27,7 +27,8 @@ import {
   TestTube,
   Shield,
   BookOpen,
-  GraduationCap
+  GraduationCap,
+  Upload
 } from "lucide-react"
 import { toast } from "sonner"
 import { useTabParam } from "@/hooks"
@@ -54,6 +55,7 @@ export default function SettingsPage() {
   const [googleClientSecret, setGoogleClientSecret] = React.useState("")
   const [googleRedirectUri, setGoogleRedirectUri] = React.useState("http://localhost:3000/api/auth/google/callback")
   const [isConnectingGoogle, setIsConnectingGoogle] = React.useState(false)
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
 
   // WordPress Integration State
   const [wordpressStatus, setWordpressStatus] = React.useState<IntegrationStatus>({
@@ -143,6 +145,64 @@ export default function SettingsPage() {
   }
 
   // Google Integration Functions
+  const handleUploadCredentialsJson = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.name.endsWith('.json')) {
+      toast.error("File harus berformat JSON")
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result as string
+        const json = JSON.parse(content)
+
+        // Extract credentials from JSON
+        let credentials: any
+        
+        // Support both "web" and "installed" app types
+        if (json.web) {
+          credentials = json.web
+        } else if (json.installed) {
+          credentials = json.installed
+        } else {
+          throw new Error("Format JSON tidak valid. Pastikan file dari Google Cloud Console.")
+        }
+
+        // Set the credentials
+        if (credentials.client_id) {
+          setGoogleClientId(credentials.client_id)
+        }
+        if (credentials.client_secret) {
+          setGoogleClientSecret(credentials.client_secret)
+        }
+        if (credentials.redirect_uris && credentials.redirect_uris[0]) {
+          setGoogleRedirectUri(credentials.redirect_uris[0])
+        }
+
+        toast.success("Credentials berhasil dimuat dari file JSON!")
+      } catch (error) {
+        console.error('Error parsing JSON:', error)
+        toast.error("Gagal membaca file JSON. Pastikan format file benar.")
+      }
+    }
+
+    reader.onerror = () => {
+      toast.error("Gagal membaca file")
+    }
+
+    reader.readAsText(file)
+    
+    // Reset input untuk allow upload ulang
+    if (event.target) {
+      event.target.value = ''
+    }
+  }
+
   const handleConnectGoogle = async () => {
     setIsConnectingGoogle(true)
     try {
@@ -597,8 +657,53 @@ export default function SettingsPage() {
                         <li>Aktifkan Google Drive API dan Google Sheets API</li>
                         <li>Buat OAuth 2.0 Client ID di "Credentials"</li>
                         <li>Tambahkan Redirect URI: <code className="bg-white px-2 py-0.5 rounded">{googleRedirectUri}</code></li>
-                        <li>Copy Client ID dan Client Secret</li>
+                        <li><strong>Download JSON</strong> file atau copy Client ID dan Client Secret</li>
                       </ol>
+                    </div>
+
+                    {/* Upload JSON Option */}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-dashed border-blue-300 rounded-lg p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <div>
+                          <h4 className="font-medium text-blue-900 flex items-center gap-2">
+                            <Upload className="h-4 w-4" />
+                            Upload Credentials JSON (Rekomendasi)
+                          </h4>
+                          <p className="text-sm text-blue-700 mt-1">
+                            Upload file JSON yang di-download dari Google Cloud Console
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".json"
+                        onChange={handleUploadCredentialsJson}
+                        className="hidden"
+                      />
+                      
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        variant="outline"
+                        className="w-full border-blue-400 hover:bg-blue-100"
+                      >
+                        <Upload className="h-4 w-4 mr-2" />
+                        Pilih File JSON
+                      </Button>
+                      
+                      <p className="text-xs text-blue-600 mt-2 text-center">
+                        File: client_secret_*.json
+                      </p>
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <span className="w-full border-t" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white px-2 text-gray-500">atau input manual</span>
+                      </div>
                     </div>
 
                     <div className="space-y-4">
