@@ -31,6 +31,7 @@ import {
 } from "lucide-react"
 import { toast } from "sonner"
 import { useTabParam } from "@/hooks"
+import { useSearchParams } from "next/navigation"
 
 interface IntegrationStatus {
   connected: boolean
@@ -42,6 +43,7 @@ interface IntegrationStatus {
 
 export default function SettingsPage() {
   const { current, setTab } = useTabParam("google")
+  const searchParams = useSearchParams()
   
   // Google Integration State
   const [googleStatus, setGoogleStatus] = React.useState<IntegrationStatus>({
@@ -72,6 +74,33 @@ export default function SettingsPage() {
   const [academicApiKey, setAcademicApiKey] = React.useState("")
   const [academicSchoolCode, setAcademicSchoolCode] = React.useState("")
   const [isConnectingAcademic, setIsConnectingAcademic] = React.useState(false)
+
+  // Handle OAuth callback success/error
+  React.useEffect(() => {
+    const success = searchParams.get('success')
+    const error = searchParams.get('error')
+
+    if (success === 'true') {
+      toast.success("Google berhasil terhubung!")
+      // Update status
+      setGoogleStatus({
+        connected: true,
+        lastSync: new Date(),
+        accountEmail: searchParams.get('email') || "user@gmail.com"
+      })
+      // Clear URL parameters
+      window.history.replaceState({}, '', '/dashboard/settings?tab=google')
+    } else if (error) {
+      const errorMessages: { [key: string]: string } = {
+        'no_code': 'Kode authorization tidak ditemukan',
+        'callback_failed': 'Gagal memproses callback dari Google',
+        'access_denied': 'Akses ditolak oleh pengguna'
+      }
+      toast.error(errorMessages[error] || `Error: ${error}`)
+      // Clear URL parameters
+      window.history.replaceState({}, '', '/dashboard/settings?tab=google')
+    }
+  }, [searchParams])
 
   // Load saved settings
   React.useEffect(() => {
