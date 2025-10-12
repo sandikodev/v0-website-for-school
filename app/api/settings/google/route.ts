@@ -5,12 +5,12 @@ let googleConfig = {
   clientId: "",
   clientSecret: "",
   redirectUri: "http://localhost:3000/api/auth/google/callback",
-  accessToken: null,
-  refreshToken: null,
+  accessToken: null as string | null,
+  refreshToken: null as string | null,
   status: {
     connected: false,
-    lastSync: null,
-    accountEmail: null
+    lastSync: null as Date | null,
+    accountEmail: null as string | null
   }
 }
 

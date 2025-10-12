@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { updateGoogleConnectionStatus } from '../../settings/google/route'
 
 export async function GET(request: NextRequest) {
   try {
@@ -60,9 +61,13 @@ export async function GET(request: NextRequest) {
     console.log('Google OAuth callback received with code:', code.substring(0, 20) + '...')
     console.log('Scopes granted:', searchParams.get('scope'))
 
+    // Update connection status di mock storage
+    const email = searchParams.get('authuser') || 'user@gmail.com'
+    updateGoogleConnectionStatus(true, email)
+
     // Redirect ke settings dengan success message
     return NextResponse.redirect(
-      new URL('/dashboard/settings?tab=google&success=true', request.url)
+      new URL(`/dashboard/settings?tab=google&success=true&email=${encodeURIComponent(email)}`, request.url)
     )
   } catch (error) {
     console.error('Error handling Google OAuth callback:', error)
