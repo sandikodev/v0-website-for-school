@@ -14,6 +14,15 @@ let googleConfig = {
   }
 }
 
+// Export function untuk update status dari callback
+export function updateGoogleConnectionStatus(connected: boolean, email: string) {
+  googleConfig.status = {
+    connected,
+    lastSync: connected ? new Date() : null,
+    accountEmail: connected ? email : null
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()

@@ -85,13 +85,18 @@ export default function SettingsPage() {
     if (success === 'true') {
       toast.success("Google berhasil terhubung!")
       // Update status
+      const email = searchParams.get('email') || "user@gmail.com"
       setGoogleStatus({
         connected: true,
         lastSync: new Date(),
-        accountEmail: searchParams.get('email') || "user@gmail.com"
+        accountEmail: email
       })
       // Clear URL parameters
       window.history.replaceState({}, '', '/dashboard/settings?tab=google')
+      // Reload settings from server
+      setTimeout(() => {
+        loadSettings()
+      }, 500)
     } else if (error) {
       const errorMessages: { [key: string]: string } = {
         'no_code': 'Kode authorization tidak ditemukan',
