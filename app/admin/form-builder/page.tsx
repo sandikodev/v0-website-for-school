@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Settings, Save, Eye, Plus, Trash2, GripVertical } from "lucide-react"
+import { Settings, Save, Eye, GripVertical } from "lucide-react"
 import { toast } from "sonner"
 
 export default function FormBuilderPage() {
@@ -20,7 +20,7 @@ export default function FormBuilderPage() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000))
       toast.success("Form configuration saved successfully!")
-    } catch (error) {
+    } catch {
       toast.error("Failed to save form configuration")
     } finally {
       setIsSaving(false)

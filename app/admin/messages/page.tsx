@@ -50,7 +50,7 @@ export default function MessagesPage() {
           setUser(data.user)
           fetchMessages()
         }
-      } catch (error) {
+      } catch {
         router.replace("/signin")
       }
     }

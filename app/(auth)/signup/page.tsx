@@ -10,7 +10,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Progress } from "@/components/ui/progress"
 import { User, GraduationCap, Upload, CheckCircle, AlertCircle, ArrowLeft, ArrowRight, Copy, Search } from "lucide-react"
 import { defaultFormSchema, loadFormSchema } from "@/lib/form-schema"
 
@@ -75,7 +74,6 @@ export default function FormulirOnlinePage() {
   }, [])
 
   const totalSteps = 4
-  const progress = (currentStep / totalSteps) * 100
 
   const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData((prev) => ({

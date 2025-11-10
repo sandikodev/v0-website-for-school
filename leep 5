@@ -1,5 +1,0 @@
-[33m1bb2526[m[33m ([m[1;36mHEAD -> [m[1;32mfeature/dynamic-form-builder[m[33m)[m feat(admin): add submissions management page
-[33mb3529e4[m feat(signup): integrate form submission with API
-[33m25b7213[m feat(api): add form submission API endpoints
-[33m97c374f[m feat(db): add FormConfiguration and FormSubmission models
-[33mc64f3e9[m chore: update database state before feature development

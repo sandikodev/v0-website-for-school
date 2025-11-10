@@ -25,7 +25,7 @@ export default function LoginPage() {
         if (response.ok) {
           router.push("/admin/dashboard")
         }
-      } catch (error) {
+      } catch {
         // User not authenticated, stay on login page
       }
     }

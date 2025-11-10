@@ -26,7 +26,6 @@ interface School {
 export default function SchoolPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
-  const [school, setSchool] = useState<School | null>(null)
   const [formData, setFormData] = useState<School>({
     id: "",
     name: "",
@@ -52,7 +51,7 @@ export default function SchoolPage() {
           setUser(data.user)
           fetchSchool()
         }
-      } catch (error) {
+      } catch {
         router.replace("/signin")
       }
     }
@@ -65,7 +64,6 @@ export default function SchoolPage() {
       const response = await fetch('/api/schools/first')
       if (response.ok) {
         const data = await response.json()
-        setSchool(data.data)
         setFormData(data.data)
       }
     } catch (error) {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { updateGoogleConnectionStatus } from '../../settings/google/route'
+import { updateGoogleConnectionStatus } from '@/app/api/settings/google/route'
 
 export async function GET(request: NextRequest) {
   try {

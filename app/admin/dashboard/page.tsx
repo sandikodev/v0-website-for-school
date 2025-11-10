@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AdminLayout } from "@/components/admin/admin-layout"
-import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 const mockSchoolData = {
   profile: {
@@ -44,7 +44,7 @@ const mockSchoolData = {
 
 export default function AdminDashboard() {
   const [user, setUser] = useState<any>(null)
-  const [schoolData, setSchoolData] = useState(mockSchoolData)
+  const [schoolData] = useState(mockSchoolData)
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalTeachers: 0,
@@ -55,7 +55,6 @@ export default function AdminDashboard() {
     applications: [],
     studentsByGrade: [],
   })
-  const [editingSection, setEditingSection] = useState<string | null>(null)
   const router = useRouter()
 
   useEffect(() => {
@@ -71,7 +70,7 @@ export default function AdminDashboard() {
           // Fetch dashboard stats
           fetchStats()
         }
-      } catch (error) {
+      } catch {
         router.replace("/signin")
       }
     }

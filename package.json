@@ -31,7 +31,6 @@
     "node": ">=18.0.0",
     "pnpm": ">=7.0.0"
   },
-  "packageManager": "pnpm@8.0.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -118,6 +117,8 @@
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.16",
     "husky": "^9.1.7",
     "postcss": "^8.5",
     "prisma": "^5.22.0",

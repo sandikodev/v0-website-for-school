@@ -73,6 +73,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  console.log('DELETE request received:', request)
   try {
     // Reset konfigurasi
     googleConfig = {
@@ -102,6 +103,7 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  console.log('GET request received:', request)
   try {
     return NextResponse.json({
       success: true,
