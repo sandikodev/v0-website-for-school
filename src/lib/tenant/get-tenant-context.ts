@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
  * Get tenant context from request headers or session
  * 
  * Priority:
- * 1. Headers from proxy.ts (x-tenant-id, x-tenant-slug)
+ * 1. Headers from middleware.ts (x-tenant-id, x-tenant-slug)
  * 2. User session tenant
  * 3. First tenant (fallback for development)
  */
@@ -61,7 +61,7 @@ export async function getTenantContext() {
  */
 export async function getTenantTheme() {
   const tenant = await getTenantContext();
-  
+
   if (!tenant) {
     return {
       primaryColor: "#10b981",

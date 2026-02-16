@@ -28,7 +28,7 @@ export default async function PlatformLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Get current pathname from headers (set by proxy.ts)
+  // Get current pathname from headers (set by middleware.ts)
   const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '';
 

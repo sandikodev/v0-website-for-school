@@ -25,7 +25,7 @@ import type { Metadata } from "next";
 
 export async function generateMetadata(): Promise<Metadata> {
   const tenant = await getTenantContext();
-  
+
   return {
     title: tenant?.name || "Sekolah",
     description: `Website resmi ${tenant?.name || "sekolah"} - Informasi pendaftaran, program, dan fasilitas`,
@@ -40,7 +40,7 @@ export default async function TenantLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Get tenant context from headers (set by proxy)
+  // Get tenant context from headers (set by middleware)
   const tenant = await getTenantContext();
   const theme = await getTenantTheme();
   const schoolConfig = await getSchoolConfig();

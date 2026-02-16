@@ -1,7 +1,11 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import path from 'path';
 import bcrypt from 'bcryptjs';
 
-const prisma = new PrismaClient();
+const url = path.resolve(process.cwd(), 'prisma/dev.db');
+const adapter = new PrismaBetterSqlite3({ url });
+const prisma = new PrismaClient({ adapter });
 
 async function seedSMPN1Srandakan() {
   console.log('🌱 Seeding SMP N 1 Srandakan...');
