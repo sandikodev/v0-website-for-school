@@ -14,6 +14,7 @@ config/
 ## 🔧 Usage
 
 ### Copy Environment Files
+
 ```bash
 # Development
 cp config/env.dev.example .env.dev
@@ -26,6 +27,7 @@ cp config/env.prod.example .env.prod
 ```
 
 ### Edit Environment Variables
+
 ```bash
 # Edit development environment
 nano .env.dev
@@ -40,6 +42,7 @@ nano .env.prod
 ## 📋 Environment Variables
 
 ### Development Environment
+
 - `NODE_ENV=development`
 - `DATABASE_URL=postgresql://school_user:dev_password@postgres:5432/school_db_dev`
 - `REDIS_URL=redis://redis:6379`
@@ -47,6 +50,7 @@ nano .env.prod
 - `NEXTAUTH_URL=http://localhost:3000`
 
 ### Staging Environment
+
 - `NODE_ENV=staging`
 - `DOMAIN=staging.your-domain.com`
 - `EMAIL=admin@your-domain.com`
@@ -56,6 +60,7 @@ nano .env.prod
 - `NEXTAUTH_URL=https://staging.your-domain.com`
 
 ### Production Environment
+
 - `NODE_ENV=production`
 - `DOMAIN=your-domain.com`
 - `EMAIL=admin@your-domain.com`
@@ -74,6 +79,7 @@ nano .env.prod
 ## 📚 Documentation
 
 For detailed documentation, see:
+
 - [Development Deployment](../../docs/deployment/development-deployment.md)
 - [Staging Deployment](../../docs/deployment/staging-deployment.md)
 - [Production Deployment](../../docs/deployment/production-deployment.md)

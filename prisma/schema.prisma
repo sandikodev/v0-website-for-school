@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
 }
 
 model User {
@@ -15,12 +14,53 @@ model User {
   username  String   @unique
   password  String
   email     String?  @unique
-  role      String   @default("user") // admin, user
+  role      String   @default("user") // admin, user, tenant_admin
   isActive  Boolean  @default(true)
+  tenantId  String?
+  tenant    Tenant?  @relation(fields: [tenantId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([tenantId])
+  @@index([tenantId, role])
   @@map("users")
+}
+
+model Tenant {
+  id     String  @id @default(cuid())
+  name   String // Nama instansi/sekolah/kampus
+  slug   String  @unique // Identifier untuk subdomain/path
+  domain String? @unique // Custom domain (contoh: smp-syuhada.sch.id)
+
+  // Branding
+  logo           String? // URL logo tenant
+  favicon        String? // URL favicon tenant
+  primaryColor   String? // Hex color untuk branding
+  secondaryColor String? // Hex color untuk branding
+
+  // Tenant Info
+  email   String?
+  phone   String?
+  address String?
+  website String?
+
+  // Domain Configuration
+  domainStatus     String    @default("pending") // pending, active, suspended
+  domainVerified   Boolean   @default(false)
+  domainVerifiedAt DateTime?
+
+  // Tenant Status
+  status        String   @default("active") // active, inactive, suspended, banned
+  statusReason  String? // Reason for suspension/ban
+  isActive      Boolean  @default(true) // Legacy field, use status instead
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users   User[]
+  schools School[]
+
+  @@map("tenants")
 }
 
 model School {
@@ -32,39 +72,57 @@ model School {
   email       String?
   website     String?
   logo        String?
+  tenantId    String?
+  tenant      Tenant?  @relation(fields: [tenantId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
+
   // Relations
   students           Student[]
   applications       Application[]
   messages           Message[]
   formConfigurations FormConfiguration[]
   formSubmissions    FormSubmission[]
-  
+
+  @@index([tenantId])
   @@map("schools")
 }
 
+model SchoolConfig {
+  id           String   @id @default("school-config-default")
+  schoolName   String
+  academicYear String
+  address      String?
+  contactEmail String?
+  logoUrl      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("school_config")
+}
+
 model Student {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
-  email       String   @unique
+  email       String    @unique
   phone       String?
-  grade       String   // SD, SMP, SMA
+  grade       String // SD, SMP, SMA
   birthDate   DateTime?
   parentName  String?
   parentPhone String?
   address     String?
-  status      String   @default("active") // active, inactive, graduated
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  status      String    @default("active") // active, inactive, graduated
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
   // Relations
   schoolId     String
-  school       School   @relation(fields: [schoolId], references: [id])
+  school       School        @relation(fields: [schoolId], references: [id])
   applications Application[]
   messages     Message[]
-  
+
+  @@index([schoolId])
+  @@index([schoolId, status])
   @@map("students")
 }
 
@@ -74,12 +132,14 @@ model Application {
   student   Student  @relation(fields: [studentId], references: [id])
   schoolId  String
   school    School   @relation(fields: [schoolId], references: [id])
-  program   String   // Reguler, Unggulan, Internasional
+  program   String // Reguler, Unggulan, Internasional
   status    String   @default("pending") // pending, approved, rejected
   notes     String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
+  @@index([schoolId])
+  @@index([schoolId, status])
   @@map("applications")
 }
 
@@ -94,152 +154,317 @@ model Message {
   type      String   @default("info") // info, warning, urgent
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
-  
+
+  @@index([schoolId])
+  @@index([schoolId, read])
   @@map("messages")
 }
 
 // Dynamic Form Builder Models
 model FormConfiguration {
   id          String   @id @default(cuid())
-  name        String   // "Formulir Pendaftaran 2025/2026"
+  name        String // "Formulir Pendaftaran 2025/2026"
   description String?
   isActive    Boolean  @default(false)
   schema      String   @default("{}") // JSON string of form schema
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
-  schoolId    String
-  school      School   @relation(fields: [schoolId], references: [id])
-  
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  @@index([schoolId])
   @@map("form_configurations")
 }
 
 model FormSubmission {
-  id                   String    @id @default(cuid())
-  registrationNumber   String    @unique // "SPMB-2025-001"
-  
+  id                 String @id @default(cuid())
+  registrationNumber String @unique // "SPMB-2025-001"
+
   // Data Siswa
-  namaLengkap          String
-  tempatLahir          String?
-  tanggalLahir         String?   // Store as string for flexibility
-  jenisKelamin         String?
-  alamatLengkap        String?
-  noHP                 String?
-  email                String?
-  
+  namaLengkap   String
+  tempatLahir   String?
+  tanggalLahir  String? // Store as string for flexibility
+  jenisKelamin  String?
+  alamatLengkap String?
+  noHP          String?
+  email         String?
+
   // Data Orangtua
-  namaAyah             String?
-  pekerjaanAyah        String?
-  namaIbu              String?
-  pekerjaanIbu         String?
-  noHPOrangtua         String?
-  
+  namaAyah      String?
+  pekerjaanAyah String?
+  namaIbu       String?
+  pekerjaanIbu  String?
+  noHPOrangtua  String?
+
   // Data Sekolah
-  asalSekolah          String?
-  alamatSekolah        String?
-  
+  asalSekolah   String?
+  alamatSekolah String?
+
   // Data Tambahan
   prestasi             String?
   jalurPendaftaran     String?
   gelombangPendaftaran String?
-  
+
   // Files
-  uploadedFiles        String?   // JSON array of file URLs
-  
+  uploadedFiles String? // JSON array of file URLs
+
   // Raw Data (untuk custom fields di masa depan)
-  rawData              String?   // JSON string
-  
+  rawData String? // JSON string
+
   // Status & Review
-  status               String    @default("pending") // pending, reviewed, approved, rejected
-  notes                String?
-  reviewedBy           String?
-  reviewedAt           DateTime?
-  
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  
-  schoolId             String
-  school               School    @relation(fields: [schoolId], references: [id])
-  
+  status     String    @default("pending") // pending, reviewed, approved, rejected
+  notes      String?
+  reviewedBy String?
+  reviewedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  schoolId String
+  school   School @relation(fields: [schoolId], references: [id])
+
+  // Relations
+  interviews InterviewSession[]
+
   @@map("form_submissions")
 }
 
 // Contact & WhatsApp Settings
 model ContactSetting {
-  id          String   @id @default(cuid())
-  type        String   @unique // "call_center" or "admissions"
-  
+  id   String @id @default(cuid())
+  type String @unique // "call_center" or "admissions"
+
   // Contact Info
-  phoneNumber String   // 6289649246450 or 085878958029
-  label       String   // "Call Center" or "Bantuan SPMB"
-  description String?  // Description of service
-  
+  phoneNumber String // 6289649246450 or 085878958029
+  label       String // "Call Center" or "Bantuan SPMB"
+  description String? // Description of service
+
   // WhatsApp Template
-  waTemplate  String   @default("") // Template message for wa.me link
-  isActive    Boolean  @default(true)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
+  waTemplate String  @default("") // Template message for wa.me link
+  isActive   Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("contact_settings")
 }
 
 // SPMB Settings & Content
 model SPMBSetting {
-  id                String   @id @default(cuid())
-  
+  id String @id @default(cuid())
+
   // Academic Year
-  academicYear      String   @default("2025/2026") // "2025/2026"
-  registrationOpen  Boolean  @default(true)
-  
+  academicYear     String  @default("2025/2026") // "2025/2026"
+  registrationOpen Boolean @default(true)
+
   // Hero Section
-  heroTitle         String   @default("SPMB SMP IT MASJID SYUHADA")
-  heroSubtitle      String   @default("TAHUN PELAJARAN 2025/2026")
-  heroDescription   String?
-  
+  heroTitle       String  @default("SPMB SMP IT MASJID SYUHADA")
+  heroSubtitle    String  @default("TAHUN PELAJARAN 2025/2026")
+  heroDescription String?
+
   // Gelombang Data (JSON)
-  gelombangData     String   @default("[]") // JSON array of gelombang
-  
+  gelombangData String @default("[]") // JSON array of gelombang
+
   // Jalur Data (JSON)
-  jalurData         String   @default("[]") // JSON array of jalur
-  
+  jalurData String @default("[]") // JSON array of jalur
+
   // Biaya Data (JSON)
-  biayaData         String   @default("{}") // JSON object of biaya
-  
+  biayaData String @default("{}") // JSON object of biaya
+
   // Syarat & Process (JSON)
-  syaratData        String   @default("[]") // JSON array of syarat
-  wawancaraData     String   @default("{}") // JSON object of wawancara info
-  
+  syaratData    String @default("[]") // JSON array of syarat
+  wawancaraData String @default("{}") // JSON object of wawancara info
+
   // Contact
-  schoolAddress     String?
-  schoolPhone       String?
-  schoolEmail       String?
-  
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  
+  schoolAddress String?
+  schoolPhone   String?
+  schoolEmail   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("spmb_settings")
 }
 
 // Contact Messages from website contact form
 model ContactMessage {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   email     String
   phone     String?
   subject   String?
-  message   String   @db.Text
-  status    String   @default("new") // "new" | "read" | "replied" | "archived"
-  category  String?  // "pendaftaran" | "kunjungan" | "beasiswa" | "umum"
-  priority  String   @default("normal") // "low" | "normal" | "high"
-  notes     String?  @db.Text // Admin notes
+  message   String
+  status    String    @default("new") // "new" | "read" | "replied" | "archived"
+  category  String? // "pendaftaran" | "kunjungan" | "beasiswa" | "umum"
+  priority  String    @default("normal") // "low" | "normal" | "high"
+  notes     String? // Admin notes
   repliedAt DateTime?
   repliedBy String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@map("contact_messages")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
   @@index([status])
   @@index([createdAt])
   @@index([email])
+  @@map("contact_messages")
+}
+
+// Interview System Models
+model InterviewType {
+  id            String   @id @default(cuid())
+  name          String // "Interview Diniyah", "Interview Akademik", dll
+  description   String?
+  googleFormUrl String // URL ke Google Form
+  isRequired    Boolean  @default(true)
+  maxScore      Int? // Skor maksimal (jika ada)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  defaultFormId String?            @unique
+  defaultForm   InterviewForm?     @relation("TypeDefaultForm", fields: [defaultFormId], references: [id])
+  forms         InterviewForm[]    @relation("TypeForms")
+  sessions      InterviewSession[]
+
+  @@map("interview_types")
+}
+
+model InterviewSession {
+  id              String          @id @default(cuid())
+  submissionId    String // Link ke FormSubmission
+  interviewTypeId String
+  status          InterviewStatus @default(PENDING)
+  scheduledDate   DateTime?
+  completedDate   DateTime?
+  googleFormId    String? // ID dari Google Forms response
+  notes           String? // Catatan admin
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relations
+  submission    FormSubmission   @relation(fields: [submissionId], references: [id])
+  interviewType InterviewType    @relation(fields: [interviewTypeId], references: [id])
+  result        InterviewResult?
+
+  @@map("interview_sessions")
+}
+
+model InterviewResult {
+  id             String    @id @default(cuid())
+  sessionId      String    @unique
+  score          Int? // Skor numerik
+  grade          String? // Grade (A, B, C, dll)
+  feedback       String? // Feedback dari interviewer
+  strengths      String? // Kekuatan yang teridentifikasi
+  weaknesses     String? // Area yang perlu diperbaiki
+  recommendation String? // Rekomendasi (Diterima, Ditolak, dll)
+  reviewerId     String? // ID admin yang menilai
+  reviewedAt     DateTime?
+  responseData   Json? // Jawaban lengkap interview
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Relations
+  session InterviewSession @relation(fields: [sessionId], references: [id])
+
+  @@map("interview_results")
+}
+
+model InterviewForm {
+  id              String              @id @default(cuid())
+  title           String
+  description     String?
+  slug            String              @unique
+  status          InterviewFormStatus @default(DRAFT)
+  version         Int                 @default(1)
+  interviewTypeId String?
+  metadata        Json?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  interviewType  InterviewType?     @relation("TypeForms", fields: [interviewTypeId], references: [id])
+  defaultForType InterviewType?     @relation("TypeDefaultForm")
+  sections       InterviewSection[]
+
+  @@map("interview_forms")
+}
+
+model InterviewSection {
+  id          String              @id @default(cuid())
+  formId      String
+  title       String
+  description String?
+  position    Int
+  questions   InterviewQuestion[]
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  form InterviewForm @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@index([formId, position])
+  @@map("interview_sections")
+}
+
+model InterviewQuestion {
+  id          String                @id @default(cuid())
+  sectionId   String
+  title       String
+  description String?
+  helperText  String?
+  type        InterviewQuestionType
+  required    Boolean               @default(false)
+  position    Int
+  settings    Json?
+  options     InterviewOption[]
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+
+  section InterviewSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+
+  @@index([sectionId, position])
+  @@map("interview_questions")
+}
+
+model InterviewOption {
+  id          String   @id @default(cuid())
+  questionId  String
+  label       String
+  value       String
+  description String?
+  position    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  question InterviewQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId, position])
+  @@map("interview_options")
+}
+
+enum InterviewStatus {
+  PENDING // Belum dimulai
+  IN_PROGRESS // Sedang berlangsung
+  COMPLETED // Selesai (tunggu review)
+  REVIEWED // Sudah direview admin
+  FAILED // Tidak lulus
+  RESCHEDULED // Diundur
+}
+
+enum InterviewFormStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum InterviewQuestionType {
+  SHORT_TEXT
+  LONG_TEXT
+  RADIO
+  CHECKBOX
+  SELECT
+  SCALE
+  DATE
+  TIME
+  FILE
 }
