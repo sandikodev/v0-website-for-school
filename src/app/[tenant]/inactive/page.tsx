@@ -1,5 +1,6 @@
 import { Pause } from "lucide-react";
 import { headers } from "next/headers";
+import Link from "next/link";
 
 export default async function TenantInactivePage() {
   const headersList = await headers();
@@ -33,12 +34,12 @@ export default async function TenantInactivePage() {
         </div>
 
         <div className="pt-4">
-          <a
+          <Link
             href="/"
             className="inline-block px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
           >
             Back to Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from "@jest/globals";
 import { PrismaClient } from "@prisma/client";
-import { applyTenantMiddleware } from "@/lib/prisma-middleware";
+// import { applyTenantMiddleware } from "@/lib/prisma-middleware";
 
 const prisma = new PrismaClient();
 
@@ -121,8 +121,8 @@ describe("Multi-Tenant Data Isolation", () => {
 
   it("should work with tenant middleware", async () => {
     // Create tenant-scoped Prisma client for tenant 1
-    const tenant1Prisma = Object.create(prisma);
-    
+    const _tenant1Prisma = Object.create(prisma);
+
     // Note: Middleware works on User model, not Student
     // For Student, we use schoolId isolation
     // This test demonstrates the pattern

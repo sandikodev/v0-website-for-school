@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { InterviewFormStatus } from "@prisma/client";
 import { ZodError } from "zod";
 import {

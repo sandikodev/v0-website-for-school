@@ -2,9 +2,10 @@ import { PrismaClient } from "@prisma/client";
 import { PrismaLibSql } from "@prisma/adapter-libsql";
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
 import { getQueryLoggingExtension } from "./prisma-logger";
+import path from "path";
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: any;
+  prisma: ReturnType<typeof getBasePrismaClient> | undefined;
 };
 
 const getBasePrismaClient = () => {
@@ -30,7 +31,6 @@ const getBasePrismaClient = () => {
     });
   } else if (url.startsWith("file:") || url.includes(".db") || !url.includes("://")) {
     const dbPath = url.startsWith("file:") ? url.replace("file:", "") : url;
-    const path = require('path');
     const absolutePath = path.isAbsolute(dbPath) ? dbPath : path.resolve(process.cwd(), dbPath);
 
     adapter = new PrismaBetterSqlite3({ url: absolutePath });
@@ -41,7 +41,8 @@ const getBasePrismaClient = () => {
   }
 
   return new PrismaClient({
-    adapter: adapter as any,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    adapter: adapter as any, // Only place keeping 'any' because Prisma adapter types are complex and intentionally used this way in multi-adapter setup
     log: isDev ? ["error", "warn"] : ["error"],
   });
 };

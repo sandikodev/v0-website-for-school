@@ -1,6 +1,7 @@
 import { getUserFromSession } from "@/lib/auth/get-user-from-session";
 import { redirect } from "next/navigation";
 import { ProfileDropdown } from "@/components/dashboard/profile-dropdown";
+import Link from "next/link";
 
 // Force dynamic rendering - admin routes require authentication check on every request
 export const dynamic = 'force-dynamic';
@@ -57,36 +58,36 @@ export default async function AdminDashboardLayout({
         <nav className="mb-6 border-b border-border">
           <ul className="flex space-x-6">
             <li>
-              <a
+              <Link
                 href="/admin/overview"
                 className="inline-block py-2 px-1 border-b-2 border-transparent hover:border-primary text-sm font-medium"
               >
                 Overview
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 href="/admin/tenants"
                 className="inline-block py-2 px-1 border-b-2 border-transparent hover:border-primary text-sm font-medium"
               >
                 Schools
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 href="/admin/users"
                 className="inline-block py-2 px-1 border-b-2 border-transparent hover:border-primary text-sm font-medium"
               >
                 Users
-              </a>
+              </Link>
             </li>
             <li>
-              <a
+              <Link
                 href="/admin/settings"
                 className="inline-block py-2 px-1 border-b-2 border-transparent hover:border-primary text-sm font-medium"
               >
                 Settings
-              </a>
+              </Link>
             </li>
           </ul>
         </nav>

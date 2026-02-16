@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSPMBSettings } from "@/lib/spmb/getSPMBSettings";
 import { withTenantContext } from "@/lib/api/with-tenant-context";

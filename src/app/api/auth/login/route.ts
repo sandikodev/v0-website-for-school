@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     let body;
     try {
       body = await request.json();
-    } catch (e) {
+    } catch {
       return NextResponse.json(
         {
           success: false,
@@ -100,15 +100,15 @@ export async function POST(request: NextRequest) {
     console.log("✅ Login successful for user:", user.username, "role:", user.role);
 
     // Get dashboard URL from environment
-    const dashboardDomain = process.env.NEXT_PUBLIC_DASHBOARD_URL || 
-                           (process.env.NODE_ENV === "production" 
-                             ? "https://dashboard.aksesekolah.id"
-                             : "http://dashboard.aksesekolah.local:3000");
+    const dashboardDomain = process.env.NEXT_PUBLIC_DASHBOARD_URL ||
+      (process.env.NODE_ENV === "production"
+        ? "https://dashboard.aksesekolah.id"
+        : "http://dashboard.aksesekolah.local:3000");
 
     // Determine redirect URL based on user role
     // Redirect to /admin or /tenant (let their layouts handle the entrypoint)
     let redirectUrl = `${dashboardDomain}/tenant`; // Default for tenant users
-    
+
     if (user.role === "admin") {
       // Platform admin → admin dashboard
       redirectUrl = `${dashboardDomain}/admin`;
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
 
     // Set session cookie with tenant ID
     // IMPORTANT: Set domain to share cookie across subdomains
-    const cookieDomain = process.env.NODE_ENV === "production" 
+    const cookieDomain = process.env.NODE_ENV === "production"
       ? ".aksesekolah.id"  // Share across all subdomains in production
       : ".aksesekolah.local"; // Share across all subdomains in development
 

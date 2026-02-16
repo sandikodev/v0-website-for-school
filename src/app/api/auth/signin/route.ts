@@ -68,10 +68,10 @@ export async function POST(request: NextRequest) {
       message: "Login berhasil",
       user: userWithoutPassword,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Signin error:", error);
     return NextResponse.json(
-      { message: error.message || "Terjadi kesalahan saat login" },
+      { message: error instanceof Error ? error.message : "Terjadi kesalahan saat login" },
       { status: 500 }
     );
   }

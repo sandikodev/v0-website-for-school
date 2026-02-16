@@ -15,7 +15,7 @@ interface LoginFormProps {
     redirectTo?: string;
 }
 
-export function LoginForm({ type, schoolName }: LoginFormProps) {
+export function LoginForm({ type, schoolName: _schoolName }: LoginFormProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -50,8 +50,8 @@ export function LoginForm({ type, schoolName }: LoginFormProps) {
                 const fallback = data.user.role === "admin" ? "/admin/overview" : "/tenant/overview";
                 router.push(fallback);
             }
-        } catch (err: any) {
-            setError(err.message || "Terjadi kesalahan saat login");
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Terjadi kesalahan saat login");
         } finally {
             setIsLoading(false);
         }
@@ -92,7 +92,7 @@ export function LoginForm({ type, schoolName }: LoginFormProps) {
 
             <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                    <Label htmlFor="password" name="password" className="text-sm font-medium">
+                    <Label htmlFor="password" className="text-sm font-medium">
                         Password
                     </Label>
                     {isPlatform && (

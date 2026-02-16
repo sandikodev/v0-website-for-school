@@ -3,10 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { AuthService } from "@/lib/auth";
 import { signToken, setAuthCookie } from "@/lib/jwt";
 
-function generateSlug(schoolName: string, subdomain: string): string {
-  // Use subdomain as primary slug
-  return subdomain.toLowerCase().replace(/[^a-z0-9-]/g, "-");
-}
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,7 +21,7 @@ export async function POST(request: NextRequest) {
       adminName,
       adminEmail,
       adminPhone,
-      adminPosition,
+      adminPosition: _adminPosition,
       // Account
       password,
       subdomain,
@@ -142,10 +139,10 @@ export async function POST(request: NextRequest) {
         role: result.user.role,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Registration error:", error);
     return NextResponse.json(
-      { message: error.message || "Terjadi kesalahan saat registrasi" },
+      { message: error instanceof Error ? error.message : "Terjadi kesalahan saat registrasi" },
       { status: 500 }
     );
   }

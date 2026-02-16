@@ -14,7 +14,6 @@ import {
   MessageCircle,
   ArrowRight,
   CheckCircle2,
-  Lock,
   Globe,
   BarChart3,
   Instagram,
@@ -25,12 +24,12 @@ import {
 import { LandingNavbar } from "@/components/landing/LandingNavbar";
 import { cn } from "@/lib/utils";
 
-const fadeIn = {
+const _fadeIn = {
   hidden: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
 };
 
-const staggerContainer = {
+const _staggerContainer = {
   hidden: { opacity: 0 },
   show: { opacity: 1, transition: { staggerChildren: 0.1 } }
 };
@@ -39,7 +38,7 @@ export default function PlatformHomePage() {
   const { scrollYProgress } = useScroll();
   const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.5]);
-  const yShift = useTransform(scrollYProgress, [0, 0.5], [0, 150]);
+  const _yShift = useTransform(scrollYProgress, [0, 0.5], [0, 150]);
 
   return (
     <div className="min-h-screen bg-white overflow-x-hidden font-sans selection:bg-indigo-100 selection:text-indigo-900">
@@ -502,7 +501,7 @@ function TestimonialCard({ quote, author, role, avatar }: { quote: string; autho
         ))}
       </div>
       <p className="text-2xl font-bold text-slate-900 leading-tight italic">
-        <span className="text-indigo-500 text-4xl font-serif">"</span>
+        <span className="text-indigo-500 text-4xl font-serif">&quot;</span>
         {quote}
       </p>
       <div className="flex items-center space-x-5 pt-4">
@@ -531,7 +530,7 @@ function FeatureCard({
   color: string;
   isMain?: boolean;
 }) {
-  const colorMap: any = {
+  const colorMap: Record<string, string> = {
     indigo: "from-indigo-500 to-indigo-700 text-indigo-500 shadow-indigo-500/20",
     purple: "from-purple-500 to-purple-700 text-purple-500 shadow-purple-500/20",
     pink: "from-pink-500 to-pink-700 text-pink-500 shadow-pink-500/20",

@@ -12,14 +12,13 @@ export async function StatsSection({ tenant }: StatsSectionProps) {
   if (!tenant) return null;
 
   // Get real stats from database
-  const [studentsCount, applicationsCount, messagesCount] = await Promise.all([
+  const [studentsCount, applicationsCount] = await Promise.all([
     prisma.student.count({
       where: { schoolId: tenant.schools[0]?.id },
     }),
     prisma.formSubmission.count({
       where: { schoolId: tenant.schools[0]?.id },
     }),
-    prisma.contactMessage.count(),
   ]);
 
   const stats = [
@@ -46,7 +45,7 @@ export async function StatsSection({ tenant }: StatsSectionProps) {
   ];
 
   return (
-    <section 
+    <section
       className="py-16 bg-gradient-to-r from-primary/10 to-secondary/10"
       style={{
         background: `linear-gradient(to right, ${tenant.primaryColor}15, ${tenant.secondaryColor}15)`,
@@ -60,7 +59,7 @@ export async function StatsSection({ tenant }: StatsSectionProps) {
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
               <div className="text-4xl mb-2">{stat.icon}</div>
-              <div 
+              <div
                 className="text-4xl font-bold mb-2"
                 style={{ color: tenant.primaryColor || "#10b981" }}
               >

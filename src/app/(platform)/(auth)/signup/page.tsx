@@ -8,12 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Building2, 
-  Mail, 
-  Lock, 
-  User, 
-  Phone, 
+import {
+  Building2,
+  Mail,
+  Lock,
+  User,
+  Phone,
   Check,
   ArrowRight,
   ArrowLeft,
@@ -32,13 +32,13 @@ interface FormData {
   city: string;
   province: string;
   phone: string;
-  
+
   // Step 2: Admin Info
   adminName: string;
   adminEmail: string;
   adminPhone: string;
   adminPosition: string;
-  
+
   // Step 3: Account
   password: string;
   confirmPassword: string;
@@ -145,8 +145,8 @@ export default function PlatformSignUpPage() {
 
       // Redirect to success page or dashboard
       router.push("/signup/success?subdomain=" + formData.subdomain);
-    } catch (err: any) {
-      setError(err.message || "Terjadi kesalahan saat registrasi");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Terjadi kesalahan saat registrasi");
     } finally {
       setIsLoading(false);
     }

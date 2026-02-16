@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { withTenantContext } from "@/lib/api/with-tenant-context";
 import { getSchoolIdForTenant } from "@/lib/tenant/tenant-isolation";
 

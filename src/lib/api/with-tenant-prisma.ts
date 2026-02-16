@@ -71,7 +71,7 @@ export async function withTenantPrisma(request: NextRequest) {
  * Get admin Prisma client (no tenant filtering)
  * Only for platform admin operations
  */
-export async function withAdminPrisma(request: NextRequest) {
+export async function withAdminPrisma(_request: NextRequest) {
   const user = await getUserFromSession();
 
   if (!user || user.role !== "admin") {

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import {
   deleteInterviewForm,
@@ -8,11 +8,7 @@ import {
 import { interviewFormSchema } from "@/lib/interview/validation";
 import { withOptionalTenantContext } from "@/lib/api/with-tenant-context";
 
-interface RouteContext {
-  params: {
-    id: string;
-  };
-}
+
 
 // Interview forms are global/shared - optional tenant context
 export const GET = withOptionalTenantContext<{ id: string }>(

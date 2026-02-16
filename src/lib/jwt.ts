@@ -10,7 +10,7 @@ export interface JWTPayload {
   email: string;
   role: string;
   tenantId?: string;
-  [key: string]: any; // Index signature for jose compatibility
+  [key: string]: unknown; // Index signature for jose compatibility
 }
 
 export async function signToken(payload: JWTPayload): Promise<string> {
@@ -30,7 +30,7 @@ export async function verifyToken(token: string): Promise<JWTPayload> {
       role: payload.role as string,
       tenantId: payload.tenantId as string | undefined,
     };
-  } catch (error) {
+  } catch {
     throw new Error("Invalid token");
   }
 }

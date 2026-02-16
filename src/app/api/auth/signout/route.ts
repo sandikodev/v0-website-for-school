@@ -8,7 +8,7 @@ export async function POST() {
     return NextResponse.json({
       message: "Logout berhasil",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Signout error:", error);
     return NextResponse.json(
       { message: "Terjadi kesalahan saat logout" },

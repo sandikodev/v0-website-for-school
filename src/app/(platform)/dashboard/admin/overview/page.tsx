@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -110,11 +111,10 @@ export default async function AdminOverviewPage() {
                   </div>
                   <div className="text-right">
                     <span
-                      className={`inline-block px-2 py-1 text-xs rounded ${
-                        school.isActive
+                      className={`inline-block px-2 py-1 text-xs rounded ${school.isActive
                           ? "bg-green-100 text-green-800"
                           : "bg-gray-100 text-gray-800"
-                      }`}
+                        }`}
                     >
                       {school.isActive ? "Active" : "Inactive"}
                     </span>
@@ -136,7 +136,7 @@ export default async function AdminOverviewPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <a
+            <Link
               href="/admin/tenants"
               className="p-4 border border-border rounded-lg hover:bg-accent transition-colors"
             >
@@ -144,8 +144,8 @@ export default async function AdminOverviewPage() {
               <p className="text-sm text-muted-foreground">
                 View and manage all schools
               </p>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/admin/users"
               className="p-4 border border-border rounded-lg hover:bg-accent transition-colors"
             >
@@ -153,7 +153,7 @@ export default async function AdminOverviewPage() {
               <p className="text-sm text-muted-foreground">
                 View and manage all users
               </p>
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

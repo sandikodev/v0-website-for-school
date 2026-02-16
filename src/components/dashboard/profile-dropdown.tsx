@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, Settings, LogOut, Mail, Loader2, ExternalLink } from "lucide-react";
+import { User, Settings, LogOut, Mail, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface UserData {

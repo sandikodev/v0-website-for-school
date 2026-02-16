@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { withTenantContext } from "@/lib/api/with-tenant-context";
 import { validateMessageBelongsToTenant } from "@/lib/tenant/tenant-isolation";
 
