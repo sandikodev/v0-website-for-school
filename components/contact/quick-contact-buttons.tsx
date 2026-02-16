@@ -1,13 +1,18 @@
-"use client"
+"use client";
 
-import { MessageCircle, Mail, ExternalLink } from "lucide-react"
+import { MessageCircle, Mail, ExternalLink } from "lucide-react";
 
 export default function QuickContactButtons() {
   return (
     <div className="grid grid-cols-2 gap-3">
       {/* WhatsApp Quick Contact */}
       <button
-        onClick={() => window.open("https://wa.me/6289649246450?text=Halo%20SMP%20IT%20Masjid%20Syuhada", "_blank")}
+        onClick={() =>
+          window.open(
+            "https://wa.me/6289649246450?text=Halo%20SMP%20IT%20Masjid%20Syuhada",
+            "_blank",
+          )
+        }
         className="group relative overflow-hidden bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
       >
         <div className="flex items-center gap-3">
@@ -26,7 +31,9 @@ export default function QuickContactButtons() {
 
       {/* Email Quick Contact */}
       <button
-        onClick={() => window.location.href = "mailto:info@smpitmasjidsyuhada.sch.id"}
+        onClick={() =>
+          (window.location.href = "mailto:info@smpitmasjidsyuhada.sch.id")
+        }
         className="group relative overflow-hidden bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg p-4 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
       >
         <div className="flex items-center gap-3">
@@ -43,5 +50,5 @@ export default function QuickContactButtons() {
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000" />
       </button>
     </div>
-  )
+  );
 }

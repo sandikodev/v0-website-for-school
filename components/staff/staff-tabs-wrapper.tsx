@@ -1,59 +1,64 @@
-"use client"
-
-import * as React from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import PimpinanTab from "./pimpinan-tab"
-import YasmaTab from "./yasma-tab"
-import WaliKelasTab from "./wali-kelas-tab"
-import PengajarTab from "./pengajar-tab"
-import type { StaffMember, PengurusYasma, WaliKelas, StafPengajar } from "@/types/staff"
+"use client";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PimpinanTab from "./pimpinan-tab";
+import YasmaTab from "./yasma-tab";
+import WaliKelasTab from "./wali-kelas-tab";
+import PengajarTab from "./pengajar-tab";
+import type {
+  StaffMember,
+  PengurusYasma,
+  WaliKelas,
+  StafPengajar,
+} from "@/types/staff";
 
 interface StaffTabsWrapperProps {
-  pimpinanSekolah: StaffMember[]
-  pengurusYasma: PengurusYasma[]
-  waliKelas: WaliKelas[]
-  stafPengajar: StafPengajar[]
+  pimpinanSekolah: StaffMember[];
+  pengurusYasma: PengurusYasma[];
+  waliKelas: WaliKelas[];
+  stafPengajar: StafPengajar[];
 }
 
 const TAB_MAPPING = {
   pimpinan: "pimpinan",
-  yasma: "yasma", 
+  yasma: "yasma",
   wali: "wali",
-  pengajar: "pengajar"
-} as const
+  pengajar: "pengajar",
+} as const;
 
-type TabValue = keyof typeof TAB_MAPPING
+type TabValue = keyof typeof TAB_MAPPING;
 
-export default function StaffTabsWrapper({ 
-  pimpinanSekolah, 
-  pengurusYasma, 
-  waliKelas, 
-  stafPengajar 
+export default function StaffTabsWrapper({
+  pimpinanSekolah,
+  pengurusYasma,
+  waliKelas,
+  stafPengajar,
 }: StaffTabsWrapperProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   // Get tab from URL or default to 'pimpinan'
-  const currentTab = (searchParams.get('tab') as TabValue) || 'pimpinan'
-  
+  const currentTab = (searchParams.get("tab") as TabValue) || "pimpinan";
+
   // Ensure the tab value is valid, fallback to 'pimpinan'
-  const validTab = TAB_MAPPING[currentTab] ? currentTab : 'pimpinan'
+  const validTab = TAB_MAPPING[currentTab] ? currentTab : "pimpinan";
 
   const handleTabChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    
-    if (value === 'pimpinan') {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (value === "pimpinan") {
       // Remove tab param for default tab
-      params.delete('tab')
+      params.delete("tab");
     } else {
-      params.set('tab', value)
+      params.set("tab", value);
     }
-    
+
     // Update URL without page reload
-    const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname
-    router.push(newUrl, { scroll: false })
-  }
+    const newUrl = params.toString()
+      ? `?${params.toString()}`
+      : window.location.pathname;
+    router.push(newUrl, { scroll: false });
+  };
 
   return (
     <Tabs value={validTab} onValueChange={handleTabChange} className="w-full">
@@ -80,5 +85,5 @@ export default function StaffTabsWrapper({
         <PengajarTab stafPengajar={stafPengajar} />
       </TabsContent>
     </Tabs>
-  )
+  );
 }

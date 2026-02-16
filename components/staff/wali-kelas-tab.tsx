@@ -1,9 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Users } from "lucide-react"
-import type { WaliKelas } from "@/types/staff"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users } from "lucide-react";
+import type { WaliKelas } from "@/types/staff";
 
 interface WaliKelasTabProps {
-  waliKelas: WaliKelas[]
+  waliKelas: WaliKelas[];
 }
 
 export default function WaliKelasTab({ waliKelas }: WaliKelasTabProps) {
@@ -22,10 +22,14 @@ export default function WaliKelasTab({ waliKelas }: WaliKelasTabProps) {
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-primary font-bold text-sm">{wali.kelas}</span>
+                    <span className="text-primary font-bold text-sm">
+                      {wali.kelas}
+                    </span>
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-bold text-sm mb-1">Kelas {wali.kelas}</h4>
+                    <h4 className="font-bold text-sm mb-1">
+                      Kelas {wali.kelas}
+                    </h4>
                     <p className="text-muted-foreground text-xs">{wali.nama}</p>
                   </div>
                 </div>
@@ -35,5 +39,5 @@ export default function WaliKelasTab({ waliKelas }: WaliKelasTabProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export function Footer() {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <footer className="bg-primary text-primary-foreground relative">
@@ -20,12 +20,14 @@ export function Footer() {
               </div>
               <div className="flex flex-col">
                 <span className="font-bold text-lg">SMP IT Masjid Syuhada</span>
-                <span className="text-sm opacity-90">Mencetak Generasi Qurani</span>
+                <span className="text-sm opacity-90">
+                  Mencetak Generasi Qurani
+                </span>
               </div>
             </Link>
             <p className="text-primary-foreground/80 mb-4 max-w-md leading-relaxed">
-              Sekolah Menengah Pertama Islam Terpadu yang berkomitmen mewujudkan lulusan yang unggul, cerdas, kreatif,
-              dan berakhlakul karimah.
+              Sekolah Menengah Pertama Islam Terpadu yang berkomitmen mewujudkan
+              lulusan yang unggul, cerdas, kreatif, dan berakhlakul karimah.
             </p>
             <div className="space-y-2 text-sm">
               <div className="flex items-center space-x-2 hover:text-primary-foreground/90 transition-colors">
@@ -45,7 +47,9 @@ export function Footer() {
             <div className="space-y-3 text-sm">
               <div className="flex items-start space-x-2 hover:text-primary-foreground/90 transition-colors group">
                 <span className="text-base mt-0.5 flex-shrink-0">📍</span>
-                <span>Jl. I Dewa Nyoman Oka No. 28, Kotabaru, Yogyakarta 55224</span>
+                <span>
+                  Jl. I Dewa Nyoman Oka No. 28, Kotabaru, Yogyakarta 55224
+                </span>
               </div>
               <a
                 href="tel:(0274)563972"
@@ -113,7 +117,9 @@ export function Footer() {
         </div>
 
         <div className="border-t border-primary-foreground/20 mt-8 pt-6 md:pt-8 flex flex-col sm:flex-row justify-between items-center text-sm gap-4">
-          <p>&copy; 2025 SMP IT Masjid Syuhada Yogyakarta. Semua hak dilindungi.</p>
+          <p>
+            &copy; 2025 SMP IT Masjid Syuhada Yogyakarta. Semua hak dilindungi.
+          </p>
           <Button
             variant="ghost"
             size="sm"
@@ -126,5 +132,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

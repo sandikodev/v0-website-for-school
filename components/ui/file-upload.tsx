@@ -1,18 +1,19 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Upload, X, FileText, Image as ImageIcon, Loader2 } from "lucide-react"
-import { Button } from "./button"
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import Image from "next/image";
+import { Upload, X, FileText, Loader2 } from "lucide-react";
+import { Button } from "./button";
+import { cn } from "@/lib/utils";
 
 interface FileUploadProps {
-  onUpload: (fileUrl: string, fileName: string) => void
-  onRemove?: () => void
-  accept?: string
-  maxSize?: number // in MB
-  currentFile?: string
-  disabled?: boolean
-  className?: string
+  onUpload: (fileUrl: string, fileName: string) => void;
+  onRemove?: () => void;
+  accept?: string;
+  maxSize?: number; // in MB
+  currentFile?: string;
+  disabled?: boolean;
+  className?: string;
 }
 
 export function FileUpload({
@@ -22,76 +23,78 @@ export function FileUpload({
   maxSize = 5,
   currentFile,
   disabled = false,
-  className
+  className,
 }: FileUploadProps) {
-  const [isUploading, setIsUploading] = React.useState(false)
-  const [error, setError] = React.useState<string | null>(null)
-  const [preview, setPreview] = React.useState<string | null>(currentFile || null)
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [isUploading, setIsUploading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [preview, setPreview] = React.useState<string | null>(
+    currentFile || null,
+  );
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    setError(null)
+    setError(null);
 
     // Validate file size
     if (file.size > maxSize * 1024 * 1024) {
-      setError(`File size must be less than ${maxSize}MB`)
-      return
+      setError(`File size must be less than ${maxSize}MB`);
+      return;
     }
 
     // Show preview for images
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader()
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     } else {
-      setPreview('file')
+      setPreview("file");
     }
 
     // Upload file
-    setIsUploading(true)
+    setIsUploading(true);
     try {
-      const formData = new FormData()
-      formData.append('file', file)
+      const formData = new FormData();
+      formData.append("file", file);
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      const response = await fetch("/api/upload", {
+        method: "POST",
         body: formData,
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (result.success) {
-        onUpload(result.data.url, result.data.originalName)
+        onUpload(result.data.url, result.data.originalName);
       } else {
-        setError(result.message || 'Upload failed')
-        setPreview(null)
+        setError(result.message || "Upload failed");
+        setPreview(null);
       }
     } catch (err) {
-      console.error('Upload error:', err)
-      setError('Failed to upload file')
-      setPreview(null)
+      console.error("Upload error:", err);
+      setError("Failed to upload file");
+      setPreview(null);
     } finally {
-      setIsUploading(false)
+      setIsUploading(false);
     }
-  }
+  };
 
   const handleRemove = () => {
-    setPreview(null)
-    setError(null)
+    setPreview(null);
+    setError(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+      fileInputRef.current.value = "";
     }
-    onRemove?.()
-  }
+    onRemove?.();
+  };
 
   const handleClick = () => {
-    fileInputRef.current?.click()
-  }
+    fileInputRef.current?.click();
+  };
 
   return (
     <div className={cn("space-y-2", className)}>
@@ -110,8 +113,9 @@ export function FileUpload({
           className={cn(
             "border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors",
             "hover:border-emerald-500 hover:bg-emerald-50/50",
-            disabled && "opacity-50 cursor-not-allowed hover:border-gray-300 hover:bg-transparent",
-            error && "border-red-300 bg-red-50"
+            disabled &&
+              "opacity-50 cursor-not-allowed hover:border-gray-300 hover:bg-transparent",
+            error && "border-red-300 bg-red-50",
           )}
         >
           <Upload className="h-10 w-10 mx-auto mb-2 text-gray-400" />
@@ -119,23 +123,24 @@ export function FileUpload({
             Click to upload or drag and drop
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            {accept.includes('image') && 'Images'} 
-            {accept.includes('pdf') && ' or PDFs'} 
-            {' '}(max {maxSize}MB)
+            {accept.includes("image") && "Images"}
+            {accept.includes("pdf") && " or PDFs"} (max {maxSize}MB)
           </p>
         </div>
       ) : (
         <div className="border rounded-lg p-4 bg-gray-50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {preview === 'file' ? (
+              {preview === "file" ? (
                 <FileText className="h-10 w-10 text-blue-600" />
               ) : (
                 <div className="relative w-16 h-16 rounded overflow-hidden">
-                  <img
+                  <Image
                     src={preview}
                     alt="Preview"
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="64px"
+                    className="object-cover"
                   />
                 </div>
               )}
@@ -144,8 +149,8 @@ export function FileUpload({
                   File uploaded successfully
                 </p>
                 <p className="text-xs text-gray-500">
-                  {preview !== 'file' && 'Image file'}
-                  {preview === 'file' && 'Document file'}
+                  {preview !== "file" && "Image file"}
+                  {preview === "file" && "Document file"}
                 </p>
               </div>
             </div>
@@ -169,10 +174,7 @@ export function FileUpload({
         </div>
       )}
 
-      {error && (
-        <p className="text-sm text-red-600">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-600">{error}</p>}
     </div>
-  )
+  );
 }
-

@@ -1,34 +1,44 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { User, Info, Phone, FileText, Mail } from "lucide-react"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { User, Info, Phone, FileText, Mail } from "lucide-react";
 
 const items = [
-  { key: "overview", icon: User, label: "Overview", href: "/dashboard/overview" },
+  {
+    key: "overview",
+    icon: User,
+    label: "Overview",
+    href: "/dashboard/overview",
+  },
   { key: "school", icon: Info, label: "Sekolah", href: "/dashboard/school" },
   { key: "contact", icon: Phone, label: "Kontak", href: "/dashboard/contact" },
-  { key: "admissions", icon: FileText, label: "SPMB", href: "/dashboard/admissions" },
+  {
+    key: "admissions",
+    icon: FileText,
+    label: "SPMB",
+    href: "/dashboard/admissions",
+  },
   { key: "messages", icon: Mail, label: "Pesan", href: "/dashboard/messages" },
-] as const
+] as const;
 
 export function DashboardMobileNav() {
-  const pathname = usePathname()
-  if (!pathname?.startsWith("/dashboard")) return null
-  
+  const pathname = usePathname();
+  if (!pathname?.startsWith("/dashboard")) return null;
+
   // Determine current page based on pathname
   const getCurrentPage = () => {
-    if (pathname === "/dashboard/overview") return "overview"
-    if (pathname === "/dashboard/school") return "school"
-    if (pathname === "/dashboard/contact") return "contact"
-    if (pathname === "/dashboard/admissions") return "admissions"
-    if (pathname === "/dashboard/messages") return "messages"
-    if (pathname === "/dashboard") return "overview" // Redirect to overview
-    return "overview"
-  }
-  
-  const current = getCurrentPage()
+    if (pathname === "/dashboard/overview") return "overview";
+    if (pathname === "/dashboard/school") return "school";
+    if (pathname === "/dashboard/contact") return "contact";
+    if (pathname === "/dashboard/admissions") return "admissions";
+    if (pathname === "/dashboard/messages") return "messages";
+    if (pathname === "/dashboard") return "overview"; // Redirect to overview
+    return "overview";
+  };
+
+  const current = getCurrentPage();
 
   return (
     <nav
@@ -37,7 +47,7 @@ export function DashboardMobileNav() {
     >
       <ul className="grid grid-cols-5 h-14">
         {items.map(({ key, icon: Icon, label, href }) => {
-          const isActive = current === key
+          const isActive = current === key;
           return (
             <li key={key}>
               <Link
@@ -52,9 +62,9 @@ export function DashboardMobileNav() {
                 <span className="sr-only">{label}</span>
               </Link>
             </li>
-          )
+          );
         })}
       </ul>
     </nav>
-  )
+  );
 }

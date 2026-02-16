@@ -1,117 +1,148 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { User, School, Users, FileText, CheckCircle, XCircle, Clock, Calendar, ExternalLink, Eye } from "lucide-react"
-import { toast } from "sonner"
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
+  User,
+  School,
+  Users,
+  FileText,
+  CheckCircle,
+  XCircle,
+  Clock,
+  ExternalLink,
+  Eye,
+} from "lucide-react";
+import { toast } from "sonner";
 
 interface SubmissionDetailModalProps {
-  submissionId: string | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onUpdate?: () => void
+  submissionId: string | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onUpdate?: () => void;
 }
 
 export function SubmissionDetailModal({
   submissionId,
   open,
   onOpenChange,
-  onUpdate
+  onUpdate,
 }: SubmissionDetailModalProps) {
-  const [submission, setSubmission] = React.useState<any>(null)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [isSaving, setIsSaving] = React.useState(false)
-  const [notes, setNotes] = React.useState("")
-  const [newStatus, setNewStatus] = React.useState("")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- submission shape from API not typed yet
+  const [submission, setSubmission] = React.useState<any>(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isSaving, setIsSaving] = React.useState(false);
+  const [notes, setNotes] = React.useState("");
+  const [newStatus, setNewStatus] = React.useState("");
 
   React.useEffect(() => {
     if (submissionId && open) {
-      fetchSubmission()
+      fetchSubmission();
     }
-  }, [submissionId, open])
+  }, [submissionId, open]);
 
   const fetchSubmission = async () => {
-    if (!submissionId) return
-    
-    setIsLoading(true)
+    if (!submissionId) return;
+
+    setIsLoading(true);
     try {
-      const response = await fetch(`/api/forms/submissions/${submissionId}`)
-      const data = await response.json()
-      
+      const response = await fetch(`/api/forms/submissions/${submissionId}`);
+      const data = await response.json();
+
       if (data.success) {
-        setSubmission(data.data)
-        setNotes(data.data.notes || "")
-        setNewStatus(data.data.status)
+        setSubmission(data.data);
+        setNotes(data.data.notes || "");
+        setNewStatus(data.data.status);
       } else {
-        toast.error('Gagal memuat data')
+        toast.error("Gagal memuat data");
       }
     } catch (error) {
-      console.error('Error fetching submission:', error)
-      toast.error('Terjadi kesalahan')
+      console.error("Error fetching submission:", error);
+      toast.error("Terjadi kesalahan");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleUpdateStatus = async () => {
-    if (!submissionId) return
-    
-    setIsSaving(true)
+    if (!submissionId) return;
+
+    setIsSaving(true);
     try {
       const response = await fetch(`/api/forms/submissions/${submissionId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status: newStatus,
-          notes: notes
-        })
-      })
+          notes: notes,
+        }),
+      });
 
       if (response.ok) {
-        toast.success('Status berhasil diperbarui!')
-        onUpdate?.()
-        onOpenChange(false)
+        toast.success("Status berhasil diperbarui!");
+        onUpdate?.();
+        onOpenChange(false);
       } else {
-        toast.error('Gagal memperbarui status')
+        toast.error("Gagal memperbarui status");
       }
     } catch (error) {
-      console.error('Error updating:', error)
-      toast.error('Terjadi kesalahan')
+      console.error("Error updating:", error);
+      toast.error("Terjadi kesalahan");
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
-  }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'approved':
-        return <Badge className="bg-green-600"><CheckCircle className="h-3 w-3 mr-1" />Disetujui</Badge>
-      case 'rejected':
-        return <Badge variant="destructive"><XCircle className="h-3 w-3 mr-1" />Ditolak</Badge>
-      case 'reviewed':
-        return <Badge className="bg-blue-600"><Eye className="h-3 w-3 mr-1" />Ditinjau</Badge>
+      case "approved":
+        return (
+          <Badge className="bg-green-600">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Disetujui
+          </Badge>
+        );
+      case "rejected":
+        return (
+          <Badge variant="destructive">
+            <XCircle className="h-3 w-3 mr-1" />
+            Ditolak
+          </Badge>
+        );
+      case "reviewed":
+        return (
+          <Badge className="bg-blue-600">
+            <Eye className="h-3 w-3 mr-1" />
+            Ditinjau
+          </Badge>
+        );
       default:
-        return <Badge variant="secondary"><Clock className="h-3 w-3 mr-1" />Pending</Badge>
+        return (
+          <Badge variant="secondary">
+            <Clock className="h-3 w-3 mr-1" />
+            Pending
+          </Badge>
+        );
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -174,24 +205,29 @@ export function SubmissionDetailModal({
                   <div>
                     <p className="text-gray-600">Tempat, Tanggal Lahir</p>
                     <p className="font-semibold">
-                      {submission.tempatLahir || '-'}, {submission.tanggalLahir || '-'}
+                      {submission.tempatLahir || "-"},{" "}
+                      {submission.tanggalLahir || "-"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Jenis Kelamin</p>
-                    <p className="font-semibold capitalize">{submission.jenisKelamin || '-'}</p>
+                    <p className="font-semibold capitalize">
+                      {submission.jenisKelamin || "-"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">No. HP</p>
-                    <p className="font-semibold">{submission.noHP || '-'}</p>
+                    <p className="font-semibold">{submission.noHP || "-"}</p>
                   </div>
                   <div>
                     <p className="text-gray-600">Email</p>
-                    <p className="font-semibold">{submission.email || '-'}</p>
+                    <p className="font-semibold">{submission.email || "-"}</p>
                   </div>
                   <div>
                     <p className="text-gray-600">Alamat</p>
-                    <p className="font-semibold">{submission.alamatLengkap || '-'}</p>
+                    <p className="font-semibold">
+                      {submission.alamatLengkap || "-"}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -209,23 +245,31 @@ export function SubmissionDetailModal({
                 <div className="grid md:grid-cols-2 gap-3 text-sm">
                   <div>
                     <p className="text-gray-600">Nama Ayah</p>
-                    <p className="font-semibold">{submission.namaAyah || '-'}</p>
+                    <p className="font-semibold">
+                      {submission.namaAyah || "-"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Pekerjaan Ayah</p>
-                    <p className="font-semibold">{submission.pekerjaanAyah || '-'}</p>
+                    <p className="font-semibold">
+                      {submission.pekerjaanAyah || "-"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Nama Ibu</p>
-                    <p className="font-semibold">{submission.namaIbu || '-'}</p>
+                    <p className="font-semibold">{submission.namaIbu || "-"}</p>
                   </div>
                   <div>
                     <p className="text-gray-600">Pekerjaan Ibu</p>
-                    <p className="font-semibold">{submission.pekerjaanIbu || '-'}</p>
+                    <p className="font-semibold">
+                      {submission.pekerjaanIbu || "-"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">No. HP Orangtua</p>
-                    <p className="font-semibold">{submission.noHPOrangtua || '-'}</p>
+                    <p className="font-semibold">
+                      {submission.noHPOrangtua || "-"}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -243,15 +287,21 @@ export function SubmissionDetailModal({
                 <CardContent className="space-y-2 text-sm">
                   <div>
                     <p className="text-gray-600">Nama Sekolah</p>
-                    <p className="font-semibold">{submission.asalSekolah || '-'}</p>
+                    <p className="font-semibold">
+                      {submission.asalSekolah || "-"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Alamat</p>
-                    <p className="font-semibold">{submission.alamatSekolah || '-'}</p>
+                    <p className="font-semibold">
+                      {submission.alamatSekolah || "-"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Prestasi</p>
-                    <p className="font-semibold">{submission.prestasi || '-'}</p>
+                    <p className="font-semibold">
+                      {submission.prestasi || "-"}
+                    </p>
                   </div>
                 </CardContent>
               </Card>
@@ -266,23 +316,28 @@ export function SubmissionDetailModal({
                 <CardContent className="space-y-2 text-sm">
                   <div>
                     <p className="text-gray-600">Jalur</p>
-                    <p className="font-semibold capitalize">{submission.jalurPendaftaran || '-'}</p>
+                    <p className="font-semibold capitalize">
+                      {submission.jalurPendaftaranName || submission.jalurPendaftaran || "-"}
+                    </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Gelombang</p>
                     <p className="font-semibold capitalize">
-                      {submission.gelombangPendaftaran?.replace('gelombang-', 'Gelombang ') || '-'}
+                      {submission.gelombangPendaftaranName || submission.gelombangPendaftaran?.replace(
+                        "gelombang-",
+                        "Gelombang ",
+                      ) || "-"}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-600">Tanggal Daftar</p>
                     <p className="font-semibold">
-                      {new Date(submission.createdAt).toLocaleString('id-ID', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                      {new Date(submission.createdAt).toLocaleString("id-ID", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
                       })}
                     </p>
                   </div>
@@ -300,7 +355,9 @@ export function SubmissionDetailModal({
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Status Pendaftaran</label>
+                    <label className="text-sm font-medium">
+                      Status Pendaftaran
+                    </label>
                     <Select value={newStatus} onValueChange={setNewStatus}>
                       <SelectTrigger>
                         <SelectValue />
@@ -328,7 +385,12 @@ export function SubmissionDetailModal({
                 <div className="flex items-center justify-between pt-4 border-t">
                   <Button
                     variant="outline"
-                    onClick={() => window.open(`/admin/submissions/${submissionId}`, '_blank')}
+                    onClick={() =>
+                      window.open(
+                        `/admin/submissions/${submissionId}`,
+                        "_blank",
+                      )
+                    }
                   >
                     <ExternalLink className="h-4 w-4 mr-2" />
                     Buka di Tab Baru
@@ -345,7 +407,7 @@ export function SubmissionDetailModal({
                       disabled={isSaving}
                       className="bg-emerald-600 hover:bg-emerald-700"
                     >
-                      {isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}
+                      {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
                     </Button>
                   </div>
                 </div>
@@ -355,6 +417,5 @@ export function SubmissionDetailModal({
         )}
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

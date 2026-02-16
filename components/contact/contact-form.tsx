@@ -1,18 +1,33 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/hooks/use-toast"
-import { User, Mail, Phone, Tag, MessageSquare, Send, CheckCircle2, Loader2 } from "lucide-react"
+import * as React from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import {
+  User,
+  Mail,
+  Phone,
+  Tag,
+  MessageSquare,
+  Send,
+  CheckCircle2,
+  Loader2,
+} from "lucide-react";
 
 export default function ContactForm() {
-  const { toast } = useToast()
-  const [loading, setLoading] = React.useState(false)
-  const [success, setSuccess] = React.useState(false)
+  const { toast } = useToast();
+  const [loading, setLoading] = React.useState(false);
+  const [success, setSuccess] = React.useState(false);
   const [form, setForm] = React.useState({
     name: "",
     email: "",
@@ -20,29 +35,32 @@ export default function ContactForm() {
     subject: "",
     message: "",
     category: "",
-  })
-  
-  const MAX_MESSAGE_LENGTH = 500
-  const messageLength = form.message.length
+  });
+
+  const MAX_MESSAGE_LENGTH = 500;
+  const messageLength = form.message.length;
 
   function handleChange<K extends keyof typeof form>(key: K, value: string) {
-    setForm((prev) => ({ ...prev, [key]: value }))
+    setForm((prev) => ({ ...prev, [key]: value }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
-      toast({ title: "Lengkapi Data", description: "Nama, email, dan pesan wajib diisi." })
-      return
+      toast({
+        title: "Lengkapi Data",
+        description: "Nama, email, dan pesan wajib diisi.",
+      });
+      return;
     }
-    setLoading(true)
-    setSuccess(false)
-    
+    setLoading(true);
+    setSuccess(false);
+
     try {
-      const response = await fetch('/api/contact/messages', {
-        method: 'POST',
+      const response = await fetch("/api/contact/messages", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           name: form.name.trim(),
@@ -50,38 +68,46 @@ export default function ContactForm() {
           phone: form.phone.trim() || null,
           subject: form.subject.trim() || null,
           message: form.message.trim(),
-          category: form.category || 'umum',
+          category: form.category || "umum",
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (data.success) {
-        setSuccess(true)
-        setForm({ name: "", email: "", phone: "", subject: "", message: "", category: "" })
-        toast({ 
-          title: "✅ Pesan Terkirim", 
-          description: "Terima kasih! Pesan Anda sudah kami terima dan akan segera ditinjau." 
-        })
-        
+        setSuccess(true);
+        setForm({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+          category: "",
+        });
+        toast({
+          title: "✅ Pesan Terkirim",
+          description:
+            "Terima kasih! Pesan Anda sudah kami terima dan akan segera ditinjau.",
+        });
+
         // Reset success animation after 3 seconds
-        setTimeout(() => setSuccess(false), 3000)
+        setTimeout(() => setSuccess(false), 3000);
       } else {
-        toast({ 
-          title: "Gagal Mengirim", 
-          description: data.error || "Terjadi kesalahan. Coba lagi.", 
-          variant: "destructive" as any 
-        })
+        toast({
+          title: "Gagal Mengirim",
+          description: data.error || "Terjadi kesalahan. Coba lagi.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      console.error('Error submitting form:', error)
-      toast({ 
-        title: "Gagal Mengirim", 
-        description: "Terjadi kesalahan koneksi. Coba lagi.", 
-        variant: "destructive" as any 
-      })
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Gagal Mengirim",
+        description: "Terjadi kesalahan koneksi. Coba lagi.",
+        variant: "destructive",
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -93,7 +119,9 @@ export default function ContactForm() {
           <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0" />
           <div>
             <p className="font-semibold text-green-900">Pesan Terkirim!</p>
-            <p className="text-sm text-green-700">Terima kasih, kami akan segera merespons.</p>
+            <p className="text-sm text-green-700">
+              Terima kasih, kami akan segera merespons.
+            </p>
           </div>
         </div>
       )}
@@ -151,7 +179,10 @@ export default function ContactForm() {
             <Tag className="h-4 w-4 text-muted-foreground" />
             Kategori Pesan
           </Label>
-          <Select value={form.category} onValueChange={(value) => handleChange("category", value)}>
+          <Select
+            value={form.category}
+            onValueChange={(value) => handleChange("category", value)}
+          >
             <SelectTrigger className="w-full focus:border-emerald-500 focus:ring-emerald-500">
               <SelectValue placeholder="Pilih kategori..." />
             </SelectTrigger>
@@ -189,7 +220,9 @@ export default function ContactForm() {
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
             Pesan <span className="text-red-500">*</span>
           </span>
-          <span className={`text-xs ${messageLength > MAX_MESSAGE_LENGTH ? 'text-red-500 font-semibold' : 'text-muted-foreground'}`}>
+          <span
+            className={`text-xs ${messageLength > MAX_MESSAGE_LENGTH ? "text-red-500 font-semibold" : "text-muted-foreground"}`}
+          >
             {messageLength}/{MAX_MESSAGE_LENGTH}
           </span>
         </Label>
@@ -200,24 +233,25 @@ export default function ContactForm() {
           value={form.message}
           onChange={(e) => {
             if (e.target.value.length <= MAX_MESSAGE_LENGTH) {
-              handleChange("message", e.target.value)
+              handleChange("message", e.target.value);
             }
           }}
           required
           className={`focus:border-emerald-500 focus:ring-emerald-500 resize-none ${
-            messageLength > MAX_MESSAGE_LENGTH * 0.9 ? 'border-orange-300' : ''
+            messageLength > MAX_MESSAGE_LENGTH * 0.9 ? "border-orange-300" : ""
           }`}
         />
         <p className="text-xs text-muted-foreground">
-          💡 Tip: Semakin detail pertanyaan Anda, semakin cepat kami dapat membantu.
+          💡 Tip: Semakin detail pertanyaan Anda, semakin cepat kami dapat
+          membantu.
         </p>
       </div>
 
       {/* Submit Button */}
-      <Button 
-        className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]" 
-        size="lg" 
-        type="submit" 
+      <Button
+        className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+        size="lg"
+        type="submit"
         disabled={loading || messageLength > MAX_MESSAGE_LENGTH}
       >
         {loading ? (
@@ -235,9 +269,10 @@ export default function ContactForm() {
 
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-center">
         <p className="text-sm text-blue-900">
-          ⏱️ <span className="font-semibold">Waktu Respons:</span> 1-2 hari kerja
+          ⏱️ <span className="font-semibold">Waktu Respons:</span> 1-2 hari
+          kerja
         </p>
       </div>
     </form>
-  )
+  );
 }

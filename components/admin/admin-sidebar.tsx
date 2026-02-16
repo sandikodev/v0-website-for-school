@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import {
   LayoutDashboard,
   Users,
@@ -15,12 +15,12 @@ import {
   ChevronLeft,
   ChevronRight,
   X,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface AdminSidebarProps {
-  isOpen?: boolean
-  onClose?: () => void
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 const menuItems = [
@@ -64,11 +64,11 @@ const menuItems = [
     href: "/admin/settings",
     icon: Settings,
   },
-]
+];
 
 export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
-  const pathname = usePathname()
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
     <aside
@@ -76,16 +76,12 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
         "fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white border-r transition-all duration-300 z-40",
         "lg:translate-x-0", // Always visible on desktop
         isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0", // Slide in/out on mobile
-        isCollapsed ? "w-16" : "w-64"
+        isCollapsed ? "w-16" : "w-64",
       )}
     >
       {/* Close button for mobile */}
       <div className="lg:hidden absolute right-4 top-4">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-        >
+        <Button variant="ghost" size="icon" onClick={onClose}>
           <X className="h-5 w-5" />
         </Button>
       </div>
@@ -108,24 +104,31 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
       {/* Menu Items */}
       <nav className="p-4 space-y-2">
         {menuItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href
+          const Icon = item.icon;
+          const isActive = pathname === item.href;
 
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors",
+                "group flex items-center rounded-lg px-3 py-2 transition-colors",
+                isCollapsed ? "justify-center" : "gap-3",
                 isActive
                   ? "bg-emerald-50 text-emerald-600 font-medium"
-                  : "text-gray-700 hover:bg-gray-100"
+                  : "text-gray-700 hover:bg-gray-100",
               )}
+              title={isCollapsed ? item.title : undefined}
             >
-              <Icon className="h-5 w-5 flex-shrink-0" />
-              {!isCollapsed && <span>{item.title}</span>}
+              <Icon
+                className={cn(
+                  "h-5 w-5 flex-shrink-0 transition-transform duration-200",
+                  isCollapsed ? "group-hover:scale-110" : "",
+                )}
+              />
+              {!isCollapsed && <span className="truncate">{item.title}</span>}
             </Link>
-          )
+          );
         })}
       </nav>
 
@@ -137,6 +140,5 @@ export function AdminSidebar({ isOpen = false, onClose }: AdminSidebarProps) {
         </div>
       )}
     </aside>
-  )
+  );
 }
-

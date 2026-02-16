@@ -1,11 +1,18 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import useSWR from "swr"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import * as React from "react";
+import useSWR from "swr";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -13,26 +20,28 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 
-type Status = "pending" | "approved" | "declined"
+type Status = "pending" | "approved" | "declined";
+
+type ApplicantDetailsValue = string | number | boolean | null | undefined;
 
 export interface Applicant {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  createdAt: string
-  status: Status
-  details?: Record<string, any>
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  createdAt: string;
+  status: Status;
+  details?: Record<string, ApplicantDetailsValue>;
 }
 
-const STORAGE_KEY = "registrar_applicants"
+const STORAGE_KEY = "registrar_applicants";
 
 const fetcher = async (): Promise<Applicant[]> => {
-  if (typeof window === "undefined") return []
-  const raw = localStorage.getItem(STORAGE_KEY)
+  if (typeof window === "undefined") return [];
+  const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) {
     const seed: Applicant[] = [
       {
@@ -42,7 +51,11 @@ const fetcher = async (): Promise<Applicant[]> => {
         phone: "0812-1111-2222",
         createdAt: new Date().toISOString(),
         status: "pending",
-        details: { sekolahAsal: "SMP 1", alamat: "Jl. Merdeka", nilaiRata: "88" },
+        details: {
+          sekolahAsal: "SMP 1",
+          alamat: "Jl. Merdeka",
+          nilaiRata: "88",
+        },
       },
       {
         id: "REG-2025-0002",
@@ -51,7 +64,11 @@ const fetcher = async (): Promise<Applicant[]> => {
         phone: "0813-3333-4444",
         createdAt: new Date().toISOString(),
         status: "approved",
-        details: { sekolahAsal: "SMP 2", alamat: "Jl. Anggrek", nilaiRata: "91" },
+        details: {
+          sekolahAsal: "SMP 2",
+          alamat: "Jl. Anggrek",
+          nilaiRata: "91",
+        },
       },
       {
         id: "REG-2025-0003",
@@ -60,55 +77,59 @@ const fetcher = async (): Promise<Applicant[]> => {
         phone: "0812-5555-6666",
         createdAt: new Date().toISOString(),
         status: "declined",
-        details: { sekolahAsal: "SMP 3", alamat: "Jl. Melati", nilaiRata: "76" },
+        details: {
+          sekolahAsal: "SMP 3",
+          alamat: "Jl. Melati",
+          nilaiRata: "76",
+        },
       },
-    ]
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(seed))
-    return seed
+    ];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+    return seed;
   }
   try {
-    return JSON.parse(raw)
+    return JSON.parse(raw);
   } catch {
-    return []
+    return [];
   }
-}
+};
 
 const save = (data: Applicant[]) => {
-  if (typeof window === "undefined") return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-}
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+};
 
 export default function ApplicantsTable() {
-  const { data, mutate } = useSWR(STORAGE_KEY, fetcher)
-  const [query, setQuery] = React.useState("")
-  const [selected, setSelected] = React.useState<Applicant | null>(null)
+  const { data, mutate } = useSWR(STORAGE_KEY, fetcher);
+  const [query, setQuery] = React.useState("");
+  const [selected, setSelected] = React.useState<Applicant | null>(null);
 
   const rows = React.useMemo(() => {
-    if (!data) return []
-    if (!query) return data
-    const q = query.toLowerCase()
+    if (!data) return [];
+    if (!query) return data;
+    const q = query.toLowerCase();
     return data.filter(
       (a) =>
         a.id.toLowerCase().includes(q) ||
         a.name.toLowerCase().includes(q) ||
         a.email.toLowerCase().includes(q) ||
         (a.phone || "").toLowerCase().includes(q),
-    )
-  }, [data, query])
+    );
+  }, [data, query]);
 
   const updateStatus = (id: string, status: Status) => {
-    if (!data) return
-    const next = data.map((a) => (a.id === id ? { ...a, status } : a))
-    save(next)
-    mutate(next, { revalidate: false })
-  }
+    if (!data) return;
+    const next = data.map((a) => (a.id === id ? { ...a, status } : a));
+    save(next);
+    mutate(next, { revalidate: false });
+  };
 
   const removeApplicant = (id: string) => {
-    if (!data) return
-    const next = data.filter((a) => a.id !== id)
-    save(next)
-    mutate(next, { revalidate: false })
-  }
+    if (!data) return;
+    const next = data.filter((a) => a.id !== id);
+    save(next);
+    mutate(next, { revalidate: false });
+  };
 
   return (
     <div className="grid gap-4">
@@ -149,20 +170,40 @@ export default function ApplicantsTable() {
                   <TableCell className="text-xs">{a.email}</TableCell>
                   <TableCell className="text-xs">{a.phone || "-"}</TableCell>
                   <TableCell>
-                    {a.status === "approved" ? "disetujui" : a.status === "declined" ? "tertolak" : "sedang di tinjau"}
+                    {a.status === "approved"
+                      ? "disetujui"
+                      : a.status === "declined"
+                        ? "tertolak"
+                        : "sedang di tinjau"}
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button size="sm" variant="outline" onClick={() => setSelected(a)}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setSelected(a)}
+                      >
                         View
                       </Button>
-                      <Button size="sm" variant="secondary" onClick={() => updateStatus(a.id, "approved")}>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => updateStatus(a.id, "approved")}
+                      >
                         Approve
                       </Button>
-                      <Button size="sm" variant="destructive" onClick={() => updateStatus(a.id, "declined")}>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => updateStatus(a.id, "declined")}
+                      >
                         Decline
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => removeApplicant(a.id)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => removeApplicant(a.id)}
+                      >
                         Hapus
                       </Button>
                     </div>
@@ -171,7 +212,10 @@ export default function ApplicantsTable() {
               ))}
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center text-sm text-muted-foreground">
+                  <TableCell
+                    colSpan={6}
+                    className="text-center text-sm text-muted-foreground"
+                  >
                     Tidak ada data
                   </TableCell>
                 </TableRow>
@@ -222,7 +266,9 @@ export default function ApplicantsTable() {
             <div className="flex gap-2">
               {selected && (
                 <>
-                  <Link href={`/registrar?id=${encodeURIComponent(selected.id)}`}>
+                  <Link
+                    href={`/registrar?id=${encodeURIComponent(selected.id)}`}
+                  >
                     <Button variant="outline">Lihat Status Publik</Button>
                   </Link>
                   <Button onClick={() => setSelected(null)}>Tutup</Button>
@@ -233,7 +279,7 @@ export default function ApplicantsTable() {
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }
 
 function Item({ label, value }: { label: string; value: React.ReactNode }) {
@@ -242,5 +288,5 @@ function Item({ label, value }: { label: string; value: React.ReactNode }) {
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-sm">{value}</div>
     </div>
-  )
+  );
 }

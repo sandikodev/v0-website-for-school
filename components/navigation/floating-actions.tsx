@@ -1,8 +1,8 @@
 /**
  * Floating Action Buttons Component
- * 
+ *
  * Displays floating action buttons for quick navigation (back, scroll to top, etc.)
- * 
+ *
  * @example
  * ```tsx
  * <FloatingActions
@@ -12,34 +12,33 @@
  * ```
  */
 
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { ArrowUp, ChevronLeft, LucideIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useScrollTop } from "@/hooks"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { ArrowUp, ChevronLeft, LucideIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useScrollTop } from "@/hooks";
+import { cn } from "@/lib/utils";
 
 export interface FloatingActionButton {
-  icon?: LucideIcon
-  label: string
-  onClick?: () => void
-  href?: string
-  className?: string
-  show?: boolean
+  icon?: LucideIcon;
+  label: string;
+  onClick?: () => void;
+  href?: string;
+  className?: string;
+  show?: boolean;
 }
 
 export interface FloatingActionsProps {
-  backButton?: FloatingActionButton & { href: string }
+  backButton?: FloatingActionButton & { href: string };
   scrollToTop?: {
-    show?: boolean
-    threshold?: number
-    label?: string
-  }
-  customButtons?: FloatingActionButton[]
-  position?: "bottom-right" | "bottom-left" | "top-right" | "top-left"
-  className?: string
+    show?: boolean;
+    threshold?: number;
+    label?: string;
+  };
+  customButtons?: FloatingActionButton[];
+  position?: "bottom-right" | "bottom-left" | "top-right" | "top-left";
+  className?: string;
 }
 
 const positionClasses = {
@@ -47,7 +46,7 @@ const positionClasses = {
   "bottom-left": "bottom-6 left-6",
   "top-right": "top-6 right-6",
   "top-left": "top-6 left-6",
-}
+};
 
 export function FloatingActions({
   backButton,
@@ -57,15 +56,15 @@ export function FloatingActions({
   className,
 }: FloatingActionsProps) {
   const { showButton: showScrollButton, scrollToTop } = useScrollTop(
-    scrollToTopConfig?.threshold
-  )
+    scrollToTopConfig?.threshold,
+  );
 
-  const shouldShowScrollTop = 
-    scrollToTopConfig?.show !== false && showScrollButton
+  const shouldShowScrollTop =
+    scrollToTopConfig?.show !== false && showScrollButton;
 
   // If nothing to show, return null
   if (!backButton && !shouldShowScrollTop && customButtons.length === 0) {
-    return null
+    return null;
   }
 
   return (
@@ -73,7 +72,7 @@ export function FloatingActions({
       className={cn(
         "fixed flex flex-col gap-3 z-50",
         positionClasses[position],
-        className
+        className,
       )}
     >
       {/* Back Button */}
@@ -83,7 +82,7 @@ export function FloatingActions({
             size="lg"
             className={cn(
               "h-14 w-14 rounded-full shadow-lg bg-white text-emerald-600 hover:bg-emerald-50 border-2 border-emerald-600",
-              backButton.className
+              backButton.className,
             )}
             title={backButton.label}
           >
@@ -98,10 +97,10 @@ export function FloatingActions({
 
       {/* Custom Buttons */}
       {customButtons.map((button, index) => {
-        const Icon = button.icon
-        const ButtonComponent = button.href ? Link : "button"
-        
-        if (button.show === false) return null
+        const Icon = button.icon;
+        const ButtonComponent = button.href ? Link : "button";
+
+        if (button.show === false) return null;
 
         return (
           <ButtonComponent
@@ -112,15 +111,15 @@ export function FloatingActions({
               size="lg"
               onClick={button.onClick}
               className={cn(
-                "h-14 w-14 rounded-full shadow-lg bg-emerald-600 hover:bg-emerald-700",
-                button.className
+                "h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary-hover",
+                button.className,
               )}
               title={button.label}
             >
               {Icon && <Icon className="h-6 w-6" />}
             </Button>
           </ButtonComponent>
-        )
+        );
       })}
 
       {/* Scroll to Top Button */}
@@ -128,13 +127,12 @@ export function FloatingActions({
         <Button
           size="lg"
           onClick={scrollToTop}
-          className="h-14 w-14 rounded-full shadow-lg bg-emerald-600 hover:bg-emerald-700 animate-in fade-in slide-in-from-bottom-5 duration-300"
+          className="h-14 w-14 rounded-full shadow-lg bg-primary hover:bg-primary-hover animate-in fade-in slide-in-from-bottom-5 duration-300"
           title={scrollToTopConfig?.label || "Kembali ke Atas"}
         >
           <ArrowUp className="h-6 w-6" />
         </Button>
       )}
     </div>
-  )
+  );
 }
-

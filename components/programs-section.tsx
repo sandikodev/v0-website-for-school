@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ProgramsSection() {
   const programs = [
@@ -11,7 +11,8 @@ export function ProgramsSection() {
     {
       icon: "👥",
       title: "Pendidikan Karakter",
-      description: "Pembentukan akhlakul karimah melalui pembiasaan ibadah, salam senyum sapa, dan kegiatan keagamaan.",
+      description:
+        "Pembentukan akhlakul karimah melalui pembiasaan ibadah, salam senyum sapa, dan kegiatan keagamaan.",
     },
     {
       icon: "🌍",
@@ -22,19 +23,22 @@ export function ProgramsSection() {
     {
       icon: "⚡",
       title: "Kegiatan Ekstrakurikuler",
-      description: "Beragam kegiatan pengembangan bakat dan minat siswa dalam bidang akademik dan non-akademik.",
+      description:
+        "Beragam kegiatan pengembangan bakat dan minat siswa dalam bidang akademik dan non-akademik.",
     },
     {
       icon: "❤️",
       title: "Lingkungan Islami",
-      description: "Suasana sekolah yang kondusif dengan nilai-nilai Islam dalam setiap aspek kehidupan sekolah.",
+      description:
+        "Suasana sekolah yang kondusif dengan nilai-nilai Islam dalam setiap aspek kehidupan sekolah.",
     },
     {
       icon: "⭐",
       title: "Prestasi Unggul",
-      description: "Pencapaian prestasi tingkat kota dan provinsi dalam berbagai bidang lomba dan kompetisi.",
+      description:
+        "Pencapaian prestasi tingkat kota dan provinsi dalam berbagai bidang lomba dan kompetisi.",
     },
-  ]
+  ];
 
   return (
     <section className="py-12 md:py-20 bg-muted/30">
@@ -44,8 +48,9 @@ export function ProgramsSection() {
             Program Unggulan Kami
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed animate-fade-in-delay-1">
-            SMP IT Masjid Syuhada menawarkan berbagai program unggulan yang dirancang untuk mengembangkan potensi siswa
-            secara optimal dalam aspek akademik, spiritual, dan karakter.
+            SMP IT Masjid Syuhada menawarkan berbagai program unggulan yang
+            dirancang untuk mengembangkan potensi siswa secara optimal dalam
+            aspek akademik, spiritual, dan karakter.
           </p>
         </div>
 
@@ -76,5 +81,5 @@ export function ProgramsSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

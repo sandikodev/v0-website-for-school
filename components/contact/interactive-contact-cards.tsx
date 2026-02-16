@@ -1,21 +1,21 @@
-"use client"
-
-import * as React from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { MapPin, Phone, Mail, Clock, Copy, ExternalLink } from "lucide-react"
-import { toast } from "sonner"
+"use client";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { MapPin, Phone, Mail, Clock, Copy, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 
 interface OfficeStatusBadgeProps {
-  isOfficeOpen: boolean
+  isOfficeOpen: boolean;
 }
 
-export default function InteractiveContactCards({ isOfficeOpen }: OfficeStatusBadgeProps) {
+export default function InteractiveContactCards({
+  isOfficeOpen,
+}: OfficeStatusBadgeProps) {
   const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text)
-    toast.success(`${label} tersalin ke clipboard!`)
-  }
+    navigator.clipboard.writeText(text);
+    toast.success(`${label} tersalin ke clipboard!`);
+  };
 
   return (
     <div className="space-y-3">
@@ -32,27 +32,40 @@ export default function InteractiveContactCards({ isOfficeOpen }: OfficeStatusBa
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-base mb-1.5 flex items-center gap-2">
                     Alamat
-                    <Badge variant="outline" className="text-xs">Lokasi</Badge>
+                    <Badge variant="outline" className="text-xs">
+                      Lokasi
+                    </Badge>
                   </h3>
                   <p className="text-sm text-muted-foreground leading-snug">
-                    Jl. I Dewa Nyoman Oka No. 28<br />
+                    Jl. I Dewa Nyoman Oka No. 28
+                    <br />
                     Kotabaru, Yogyakarta 55224
                   </p>
                 </div>
               </div>
               <div className="flex flex-col gap-1">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="ghost"
-                  onClick={() => copyToClipboard("Jl. I Dewa Nyoman Oka No. 28, Kotabaru, Yogyakarta 55224", "Alamat")}
+                  onClick={() =>
+                    copyToClipboard(
+                      "Jl. I Dewa Nyoman Oka No. 28, Kotabaru, Yogyakarta 55224",
+                      "Alamat",
+                    )
+                  }
                   className="hover:bg-emerald-50/50 hover:text-emerald-700 transition-all duration-200 h-8 w-8 p-0"
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="ghost"
-                  onClick={() => window.open("https://maps.google.com/?q=Jl.+I+Dewa+Nyoman+Oka+No.+28+Kotabaru+Yogyakarta", "_blank")}
+                  onClick={() =>
+                    window.open(
+                      "https://maps.google.com/?q=Jl.+I+Dewa+Nyoman+Oka+No.+28+Kotabaru+Yogyakarta",
+                      "_blank",
+                    )
+                  }
                   className="hover:bg-emerald-50/50 hover:text-emerald-700 transition-all duration-200 h-8 w-8 p-0"
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -74,26 +87,34 @@ export default function InteractiveContactCards({ isOfficeOpen }: OfficeStatusBa
                   <h3 className="font-bold text-base mb-1.5 flex items-center gap-2">
                     Telepon
                     {isOfficeOpen && (
-                      <Badge className="bg-green-100 text-green-700 text-xs">Online</Badge>
+                      <Badge className="bg-green-100 text-green-700 text-xs">
+                        Online
+                      </Badge>
                     )}
                   </h3>
-                  <p className="text-muted-foreground font-semibold">(0274) 563972</p>
-                  <p className="text-xs text-muted-foreground">Klik untuk menelepon</p>
+                  <p className="text-muted-foreground font-semibold">
+                    (0274) 563972
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Klik untuk menelepon
+                  </p>
                 </div>
               </div>
               <div className="flex flex-col gap-1">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="ghost"
-                  onClick={() => copyToClipboard("(0274) 563972", "Nomor telepon")}
+                  onClick={() =>
+                    copyToClipboard("(0274) 563972", "Nomor telepon")
+                  }
                   className="hover:bg-blue-50/50 hover:text-blue-700 transition-all duration-200 h-8 w-8 p-0"
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="ghost"
-                  onClick={() => window.location.href = "tel:0274563972"}
+                  onClick={() => (window.location.href = "tel:0274563972")}
                   className="hover:bg-blue-50/50 hover:text-blue-700 transition-all duration-200 h-8 w-8 p-0"
                 >
                   <Phone className="h-4 w-4" />
@@ -116,23 +137,32 @@ export default function InteractiveContactCards({ isOfficeOpen }: OfficeStatusBa
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-base mb-1.5">Email</h3>
-                  <p className="text-sm text-muted-foreground break-all">info@smpitmasjidsyuhada.sch.id</p>
-                  <p className="text-xs text-muted-foreground">Klik untuk mengirim email</p>
+                  <p className="text-sm text-muted-foreground break-all">
+                    info@smpitmasjidsyuhada.sch.id
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Klik untuk mengirim email
+                  </p>
                 </div>
               </div>
               <div className="flex flex-col gap-1">
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="ghost"
-                  onClick={() => copyToClipboard("info@smpitmasjidsyuhada.sch.id", "Email")}
+                  onClick={() =>
+                    copyToClipboard("info@smpitmasjidsyuhada.sch.id", "Email")
+                  }
                   className="hover:bg-purple-50/50 hover:text-purple-700 transition-all duration-200 h-8 w-8 p-0"
                 >
                   <Copy className="h-4 w-4" />
                 </Button>
-                <Button 
-                  size="sm" 
+                <Button
+                  size="sm"
                   variant="ghost"
-                  onClick={() => window.location.href = "mailto:info@smpitmasjidsyuhada.sch.id"}
+                  onClick={() =>
+                    (window.location.href =
+                      "mailto:info@smpitmasjidsyuhada.sch.id")
+                  }
                   className="hover:bg-purple-50/50 hover:text-purple-700 transition-all duration-200 h-8 w-8 p-0"
                 >
                   <Mail className="h-4 w-4" />
@@ -153,7 +183,9 @@ export default function InteractiveContactCards({ isOfficeOpen }: OfficeStatusBa
                 <h3 className="font-bold text-base mb-2 flex items-center gap-2">
                   Jam Operasional
                   {isOfficeOpen && (
-                    <Badge className="bg-green-100 text-green-700 text-xs">Buka</Badge>
+                    <Badge className="bg-green-100 text-green-700 text-xs">
+                      Buka
+                    </Badge>
                   )}
                 </h3>
                 <div className="space-y-1.5 text-sm">
@@ -162,7 +194,9 @@ export default function InteractiveContactCards({ isOfficeOpen }: OfficeStatusBa
                     <span className="font-semibold">07:00 - 14:30</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Sabtu - Minggu</span>
+                    <span className="text-muted-foreground">
+                      Sabtu - Minggu
+                    </span>
                     <span className="font-semibold text-red-600">Tutup</span>
                   </div>
                 </div>
@@ -172,5 +206,5 @@ export default function InteractiveContactCards({ isOfficeOpen }: OfficeStatusBa
         </Card>
       </div>
     </div>
-  )
+  );
 }

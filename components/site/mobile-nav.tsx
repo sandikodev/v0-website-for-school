@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { Home, FileText, Phone } from "lucide-react"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { Home, FileText, Phone } from "lucide-react";
 
 export function MobileBottomNav() {
-  const pathname = usePathname()
-  const isActive = (href: string) => pathname === href
+  const pathname = usePathname();
+  const isActive = (href: string) => pathname === href;
 
   // Hide global nav on dashboard pages
   if (pathname?.startsWith("/dashboard")) {
-    return null
+    return null;
   }
 
   return (
@@ -58,5 +58,5 @@ export function MobileBottomNav() {
         </li>
       </ul>
     </nav>
-  )
+  );
 }

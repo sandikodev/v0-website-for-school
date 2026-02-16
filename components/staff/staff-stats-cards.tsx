@@ -1,9 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Users, UserCheck, Award } from "lucide-react"
-import type { StaffStats } from "@/types/staff"
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, UserCheck, Award } from "lucide-react";
+import type { StaffStats } from "@/types/staff";
 
 interface StaffStatsCardsProps {
-  stats: StaffStats
+  stats: StaffStats;
 }
 
 export default function StaffStatsCards({ stats }: StaffStatsCardsProps) {
@@ -33,5 +33,5 @@ export default function StaffStatsCards({ stats }: StaffStatsCardsProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

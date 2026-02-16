@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 
 export function HeroSection() {
   return (
@@ -21,8 +21,9 @@ export function HeroSection() {
                   Mencetak Generasi Qurani
                 </p>
                 <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto lg:mx-0 animate-fade-in-delay-2">
-                  Sekolah unggulan yang mewujudkan lulusan yang unggul, cerdas, kreatif, dan berakhlakul karimah melalui
-                  pendidikan Islam terpadu.
+                  Sekolah unggulan yang mewujudkan lulusan yang unggul, cerdas,
+                  kreatif, dan berakhlakul karimah melalui pendidikan Islam
+                  terpadu.
                 </p>
               </div>
 
@@ -51,8 +52,12 @@ export function HeroSection() {
                   <div className="text-4xl sm:text-5xl mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-200">
                     🏆
                   </div>
-                  <h3 className="font-bold text-base sm:text-lg mb-2">Terakreditasi A</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Sejak tahun 2014</p>
+                  <h3 className="font-bold text-base sm:text-lg mb-2">
+                    Terakreditasi A
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Sejak tahun 2014
+                  </p>
                 </CardContent>
               </Card>
 
@@ -61,8 +66,12 @@ export function HeroSection() {
                   <div className="text-4xl sm:text-5xl mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-200">
                     👥
                   </div>
-                  <h3 className="font-bold text-base sm:text-lg mb-2">18 Guru</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Berkualifikasi S1</p>
+                  <h3 className="font-bold text-base sm:text-lg mb-2">
+                    18 Guru
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Berkualifikasi S1
+                  </p>
                 </CardContent>
               </Card>
 
@@ -71,8 +80,12 @@ export function HeroSection() {
                   <div className="text-4xl sm:text-5xl mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-200">
                     📖
                   </div>
-                  <h3 className="font-bold text-base sm:text-lg mb-2">Program Tahfidz</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">Hafalan Al-Quran</p>
+                  <h3 className="font-bold text-base sm:text-lg mb-2">
+                    Program Tahfidz
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Hafalan Al-Quran
+                  </p>
                 </CardContent>
               </Card>
 
@@ -81,8 +94,12 @@ export function HeroSection() {
                   <div className="text-4xl sm:text-5xl mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-200">
                     ❤️
                   </div>
-                  <h3 className="font-bold text-base sm:text-lg mb-2">Sejak 2004</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">20+ tahun pengalaman</p>
+                  <h3 className="font-bold text-base sm:text-lg mb-2">
+                    Sejak 2004
+                  </h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    20+ tahun pengalaman
+                  </p>
                 </CardContent>
               </Card>
             </div>
@@ -90,5 +107,5 @@ export function HeroSection() {
         </div>
       </div>
     </div>
-  )
+  );
 }

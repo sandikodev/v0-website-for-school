@@ -1,19 +1,27 @@
-"use client"
-
-import * as React from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
-import { Badge } from "@/components/ui/badge"
-import { GraduationCap, Crown, User, BookOpen, Mail, Phone } from "lucide-react"
-import type { StaffMember } from "@/types/staff"
+"use client";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { GraduationCap, Crown, User, BookOpen, Mail } from "lucide-react";
+import type { StaffMember } from "@/types/staff";
 
 interface PimpinanDetailModalProps {
-  pimpinan: StaffMember | null
-  isOpen: boolean
-  onClose: () => void
+  pimpinan: StaffMember | null;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
-export default function PimpinanDetailModal({ pimpinan, isOpen, onClose }: PimpinanDetailModalProps) {
-  if (!pimpinan) return null
+export default function PimpinanDetailModal({
+  pimpinan,
+  isOpen,
+  onClose,
+}: PimpinanDetailModalProps) {
+  if (!pimpinan) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -24,7 +32,9 @@ export default function PimpinanDetailModal({ pimpinan, isOpen, onClose }: Pimpi
               <Crown className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             </div>
             <div className="min-w-0 flex-1">
-              <DialogTitle className="text-lg sm:text-2xl font-bold truncate">{pimpinan.nama}</DialogTitle>
+              <DialogTitle className="text-lg sm:text-2xl font-bold truncate">
+                {pimpinan.nama}
+              </DialogTitle>
               <DialogDescription className="text-primary font-medium text-sm sm:text-base">
                 {pimpinan.jabatan}
               </DialogDescription>
@@ -39,21 +49,31 @@ export default function PimpinanDetailModal({ pimpinan, isOpen, onClose }: Pimpi
               <User className="h-5 w-5 text-primary" />
               Informasi Dasar
             </h3>
-            
+
             <div className="space-y-3">
               <div className="flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2">
-                <span className="text-sm text-muted-foreground font-medium">Nama Lengkap:</span>
-                <span className="text-sm font-medium sm:col-span-2">{pimpinan.nama}</span>
+                <span className="text-sm text-muted-foreground font-medium">
+                  Nama Lengkap:
+                </span>
+                <span className="text-sm font-medium sm:col-span-2">
+                  {pimpinan.nama}
+                </span>
               </div>
-              
+
               <div className="flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2">
-                <span className="text-sm text-muted-foreground font-medium">Jabatan:</span>
-                <span className="text-sm font-medium sm:col-span-2">{pimpinan.jabatan}</span>
+                <span className="text-sm text-muted-foreground font-medium">
+                  Jabatan:
+                </span>
+                <span className="text-sm font-medium sm:col-span-2">
+                  {pimpinan.jabatan}
+                </span>
               </div>
-              
+
               {pimpinan.mapel && (
                 <div className="flex flex-col sm:grid sm:grid-cols-3 gap-1 sm:gap-2">
-                  <span className="text-sm text-muted-foreground font-medium">Mata Pelajaran:</span>
+                  <span className="text-sm text-muted-foreground font-medium">
+                    Mata Pelajaran:
+                  </span>
                   <div className="sm:col-span-2">
                     <Badge variant="secondary" className="text-xs">
                       <BookOpen className="h-3 w-3 mr-1" />
@@ -71,15 +91,21 @@ export default function PimpinanDetailModal({ pimpinan, isOpen, onClose }: Pimpi
               <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               Peran & Tanggung Jawab
             </h3>
-            
+
             <div className="space-y-2 text-xs sm:text-sm text-muted-foreground">
               {pimpinan.jabatan === "Kepala Sekolah" ? (
                 <ul className="list-disc list-inside space-y-1.5 ml-2">
-                  <li>Memimpin dan mengelola keseluruhan operasional sekolah</li>
-                  <li>Menetapkan visi, misi, dan strategi pengembangan sekolah</li>
+                  <li>
+                    Memimpin dan mengelola keseluruhan operasional sekolah
+                  </li>
+                  <li>
+                    Menetapkan visi, misi, dan strategi pengembangan sekolah
+                  </li>
                   <li>Membina dan mengembangkan kompetensi tenaga pendidik</li>
                   <li>Menjalin kerjasama dengan stakeholder dan masyarakat</li>
-                  <li>Memastikan kualitas pembelajaran dan pencapaian standar</li>
+                  <li>
+                    Memastikan kualitas pembelajaran dan pencapaian standar
+                  </li>
                 </ul>
               ) : pimpinan.jabatan === "Wakil Kepala Sekolah" ? (
                 <ul className="list-disc list-inside space-y-1.5 ml-2">
@@ -102,11 +128,12 @@ export default function PimpinanDetailModal({ pimpinan, isOpen, onClose }: Pimpi
               Hubungi Pimpinan
             </h3>
             <p className="text-xs text-blue-700 leading-relaxed">
-              Untuk komunikasi resmi dengan pimpinan sekolah, silakan menghubungi melalui kantor TU atau email resmi sekolah.
+              Untuk komunikasi resmi dengan pimpinan sekolah, silakan
+              menghubungi melalui kantor TU atau email resmi sekolah.
             </p>
           </div>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

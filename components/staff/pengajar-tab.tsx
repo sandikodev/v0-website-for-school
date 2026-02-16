@@ -1,10 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { GraduationCap } from "lucide-react"
-import type { StafPengajar } from "@/types/staff"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { GraduationCap } from "lucide-react";
+import type { StafPengajar } from "@/types/staff";
 
 interface PengajarTabProps {
-  stafPengajar: StafPengajar[]
+  stafPengajar: StafPengajar[];
 }
 
 export default function PengajarTab({ stafPengajar }: PengajarTabProps) {
@@ -18,8 +18,8 @@ export default function PengajarTab({ stafPengajar }: PengajarTabProps) {
       </CardHeader>
       <CardContent>
         <p className="text-muted-foreground mb-8">
-          Seluruh pendidik di SMP IT Masjid Syuhada memenuhi kualifikasi Sarjana (S-1) sesuai dengan latar
-          belakang pendidikannya.
+          Seluruh pendidik di SMP IT Masjid Syuhada memenuhi kualifikasi Sarjana
+          (S-1) sesuai dengan latar belakang pendidikannya.
         </p>
         <div className="space-y-4">
           {stafPengajar.map((staff, index) => (
@@ -33,7 +33,9 @@ export default function PengajarTab({ stafPengajar }: PengajarTabProps) {
                     <div>
                       <h4 className="font-bold text-sm mb-1">{staff.nama}</h4>
                       {staff.jabatan !== "–" && (
-                        <p className="text-primary text-xs font-medium mb-1">{staff.jabatan}</p>
+                        <p className="text-primary text-xs font-medium mb-1">
+                          {staff.jabatan}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -47,5 +49,5 @@ export default function PengajarTab({ stafPengajar }: PengajarTabProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

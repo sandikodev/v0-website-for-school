@@ -1,37 +1,37 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
-    setIsOpen(false)
+    setIsOpen(false);
     // Check authentication status by checking API
     const checkAuth = async () => {
       try {
-        const response = await fetch('/api/auth/me')
-        setIsLoggedIn(response.ok)
-      } catch (error) {
-        setIsLoggedIn(false)
+        const response = await fetch("/api/auth/me");
+        setIsLoggedIn(response.ok);
+      } catch {
+        setIsLoggedIn(false);
       }
-    }
-    checkAuth()
-  }, [pathname])
+    };
+    checkAuth();
+  }, [pathname]);
 
   const navItems = [
     { href: "/", label: "Beranda" },
@@ -41,12 +41,14 @@ export function Navigation() {
     { href: "/facilities", label: "Fasilitas" },
     { href: "/admissions", label: "SPMB" },
     { href: "/contact", label: "Kontak" },
-  ]
+  ];
 
   return (
     <nav
       className={`sticky top-0 z-50 border-b transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-md shadow-sm" : "bg-background/80 backdrop-blur-sm"
+        isScrolled
+          ? "bg-background/95 backdrop-blur-md shadow-sm"
+          : "bg-background/80 backdrop-blur-sm"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -58,7 +60,9 @@ export function Navigation() {
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-lg text-primary">SMP IT</span>
-              <span className="text-xs text-muted-foreground">Masjid Syuhada</span>
+              <span className="text-xs text-muted-foreground">
+                Masjid Syuhada
+              </span>
             </div>
           </Link>
 
@@ -69,7 +73,9 @@ export function Navigation() {
                 key={item.href}
                 href={item.href}
                 className={`px-4 py-2 rounded-lg font-medium transition-all duration-200 hover:bg-accent/50 hover:scale-105 ${
-                  pathname === item.href ? "text-primary bg-accent/30" : "text-foreground hover:text-primary"
+                  pathname === item.href
+                    ? "text-primary bg-accent/30"
+                    : "text-foreground hover:text-primary"
                 }`}
               >
                 {item.label}
@@ -162,5 +168,5 @@ export function Navigation() {
         </div>
       </div>
     </nav>
-  )
+  );
 }

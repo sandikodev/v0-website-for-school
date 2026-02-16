@@ -29,4 +29,4 @@ export const environmentIndicatorCSS = `
 .environment-indicator.production {
   background-color: #ef4444; /* red-500 */
 }
-`
+`;

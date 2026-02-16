@@ -1,8 +1,7 @@
-"use client"
+"use client";
 
-import { Toaster } from "sonner"
+import { Toaster } from "sonner";
 
 export function ToastProvider() {
-  return <Toaster position="bottom-right" richColors />
+  return <Toaster position="bottom-right" richColors />;
 }
-

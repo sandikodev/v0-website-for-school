@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,46 +11,47 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Bell, User, LogOut, Settings, ChevronDown, Menu } from "lucide-react"
+} from "@/components/ui/dropdown-menu";
+import { Bell, User, LogOut, Settings, ChevronDown, Menu } from "lucide-react";
 
 interface AdminNavbarProps {
   user?: {
-    username: string
-    email?: string
-    role?: string
-  }
-  onMenuClick?: () => void
+    username: string;
+    email?: string;
+    role?: string;
+  };
+  onMenuClick?: () => void;
 }
 
 export function AdminNavbar({ user, onMenuClick }: AdminNavbarProps) {
-  const router = useRouter()
-  const [isScrolled, setIsScrolled] = useState(false)
+  const router = useRouter();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
-  }, [])
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = async () => {
     try {
       // Clear session cookie
-      document.cookie = 'user-session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-      
+      document.cookie =
+        "user-session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+
       // Call logout API
-      await fetch('/api/auth/logout', { method: 'POST' })
-      
+      await fetch("/api/auth/logout", { method: "POST" });
+
       // Redirect to signin
-      router.push('/signin')
+      router.push("/signin");
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error("Logout error:", error);
       // Force redirect even if API fails
-      router.push('/signin')
+      router.push("/signin");
     }
-  }
+  };
 
   return (
     <nav
@@ -72,7 +73,10 @@ export function AdminNavbar({ user, onMenuClick }: AdminNavbarProps) {
 
           {/* Logo & Brand */}
           <div className="flex items-center space-x-4">
-            <Link href="/admin/dashboard" className="flex items-center space-x-2">
+            <Link
+              href="/admin/dashboard"
+              className="flex items-center space-x-2"
+            >
               <div className="h-10 w-10 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold">
                 🎓
               </div>
@@ -99,8 +103,12 @@ export function AdminNavbar({ user, onMenuClick }: AdminNavbarProps) {
                     <User className="h-5 w-5 text-emerald-600" />
                   </div>
                   <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium text-gray-900">{user?.username || 'Admin'}</p>
-                    <p className="text-xs text-gray-500">{user?.role || 'Administrator'}</p>
+                    <p className="text-sm font-medium text-gray-900">
+                      {user?.username || "Admin"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {user?.role || "Administrator"}
+                    </p>
                   </div>
                   <ChevronDown className="h-4 w-4 text-gray-500" />
                 </Button>
@@ -109,24 +117,32 @@ export function AdminNavbar({ user, onMenuClick }: AdminNavbarProps) {
                 <DropdownMenuLabel>
                   <div>
                     <p className="font-medium">{user?.username}</p>
-                    <p className="text-xs text-gray-500">{user?.email || 'admin@school.local'}</p>
+                    <p className="text-xs text-gray-500">
+                      {user?.email || "admin@school.local"}
+                    </p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/admin/profile" className="flex items-center cursor-pointer">
+                  <Link
+                    href="/admin/profile"
+                    className="flex items-center cursor-pointer"
+                  >
                     <User className="h-4 w-4 mr-2" />
                     Profile
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/admin/settings" className="flex items-center cursor-pointer">
+                  <Link
+                    href="/admin/settings"
+                    className="flex items-center cursor-pointer"
+                  >
                     <Settings className="h-4 w-4 mr-2" />
                     Settings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={handleLogout}
                   className="text-red-600 focus:text-red-600 cursor-pointer"
                 >
@@ -139,6 +155,5 @@ export function AdminNavbar({ user, onMenuClick }: AdminNavbarProps) {
         </div>
       </div>
     </nav>
-  )
+  );
 }
-
