@@ -1,212 +1,347 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
+import { InterviewStatus } from "@prisma/client";
 
-// Mock data untuk demo interview sessions
-const mockInterviewSessions = [
-  {
-    id: "s1",
-    submissionId: "cmgkjjjpt000b112dwcpgc3ay",
-    interviewTypeId: "1",
-    status: "PENDING",
-    scheduledDate: "2025-11-01T10:00:00Z",
-    completedDate: null,
-    notes: null,
-    reviewerId: null,
-    createdAt: new Date("2024-10-25"),
-    updatedAt: new Date("2024-10-25"),
-    interviewType: {
-      id: "1",
-      name: "Interview Diniyah",
-      googleFormUrl: "https://forms.gle/diniyah-demo"
-    },
-    submission: {
-      id: "cmgkjjjpt000b112dwcpgc3ay",
-      registrationNumber: "SPMB-2025-2007",
-      namaLengkap: "Ahmad Fauzi"
-    }
-  },
-  {
-    id: "s2",
-    submissionId: "cmgkj9ypc0009112dd9om1bw9", 
-    interviewTypeId: "1",
-    status: "COMPLETED",
-    scheduledDate: "2024-10-28T14:00:00Z",
-    completedDate: "2024-10-28T14:30:00Z",
-    notes: "Lulus dengan baik, hafalan juz 30 lancar",
-    reviewerId: "admin1",
-    createdAt: new Date("2024-10-20"),
-    updatedAt: new Date("2024-10-28"),
-    interviewType: {
-      id: "1",
-      name: "Interview Diniyah", 
-      googleFormUrl: "https://forms.gle/diniyah-demo"
-    },
-    submission: {
-      id: "cmgkj9ypc0009112dd9om1bw9",
-      registrationNumber: "SPMB-2025-5790",
-      namaLengkap: "Siti Rahma"
-    }
-  },
-  {
-    id: "s3",
-    submissionId: "cmgkj9ypc0009112dd9om1bw9",
-    interviewTypeId: "2", 
-    status: "PENDING",
-    scheduledDate: "2025-11-05T09:00:00Z",
-    completedDate: null,
-    notes: null,
-    reviewerId: null,
-    createdAt: new Date("2024-10-25"),
-    updatedAt: new Date("2024-10-25"),
-    interviewType: {
-      id: "2",
-      name: "Interview Akademik",
-      googleFormUrl: "https://forms.gle/akademik-demo"
-    },
-    submission: {
-      id: "cmgkj9ypc0009112dd9om1bw9",
-      registrationNumber: "SPMB-2025-5790", 
-      namaLengkap: "Siti Rahma"
-    }
-  },
-  {
-    id: "s4",
-    submissionId: "cmgkjjjpt000b112dwcpgc3ay",
-    interviewTypeId: "3",
-    status: "REVIEWED",
-    scheduledDate: "2024-10-30T11:00:00Z",
-    completedDate: "2024-10-30T11:45:00Z", 
-    notes: "Kondisi psikologis baik, siap untuk pembelajaran",
-    reviewerId: "admin2",
-    createdAt: new Date("2024-10-22"),
-    updatedAt: new Date("2024-10-30"),
-    interviewType: {
-      id: "3",
-      name: "Interview Psikologis",
-      googleFormUrl: "https://forms.gle/psikologis-demo"
-    },
-    submission: {
-      id: "cmgkjjjpt000b112dwcpgc3ay",
-      registrationNumber: "SPMB-2025-2007",
-      namaLengkap: "Ahmad Fauzi"
-    }
-  }
-]
+import { prisma } from "@/lib/prisma";
+import {
+  ensureDefaultInterviewTypes,
+  syncDefaultInterviewForms,
+} from "@/lib/interview/typeDefaults";
+import { withTenantContext } from "@/lib/api/with-tenant-context";
+import { getSchoolIdForTenant } from "@/lib/tenant/tenant-isolation";
 
-export async function GET(request: NextRequest) {
+const DEFAULT_INCLUDE = {
+  submission: {
+    select: {
+      id: true,
+      registrationNumber: true,
+      namaLengkap: true,
+    },
+  },
+  interviewType: {
+    select: {
+      id: true,
+      name: true,
+      googleFormUrl: true,
+      defaultForm: {
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+        },
+      },
+    },
+  },
+  result: {
+    select: {
+      id: true,
+      score: true,
+      grade: true,
+      feedback: true,
+      reviewedAt: true,
+    },
+  },
+} as const;
+
+async function ensureSessionsForSubmission(submissionId: string) {
+  await prisma.$transaction(async (tx) => {
+    await ensureDefaultInterviewTypes(tx);
+    await syncDefaultInterviewForms(tx);
+
+    const submission = await tx.formSubmission.findUnique({
+      where: { id: submissionId },
+      select: { id: true },
+    });
+
+    if (!submission) {
+      return;
+    }
+
+    const existingSessions = await tx.interviewSession.findMany({
+      where: { submissionId },
+      select: { interviewTypeId: true },
+    });
+    const existingTypeIds = new Set(
+      existingSessions.map((session) => session.interviewTypeId),
+    );
+
+    const defaultedTypes = await tx.interviewType.findMany({
+      where: {
+        defaultFormId: { not: null },
+      },
+      select: { id: true },
+    });
+
+    for (const type of defaultedTypes) {
+      if (existingTypeIds.has(type.id)) continue;
+      await tx.interviewSession.create({
+        data: {
+          submissionId,
+          interviewTypeId: type.id,
+          status: InterviewStatus.PENDING,
+        },
+      });
+    }
+  });
+}
+
+function mapStatusStats(
+  sessions: Array<{ status: InterviewStatus }>,
+): Record<string, number> {
+  const base = {
+    total: sessions.length,
+    pending: 0,
+    inProgress: 0,
+    completed: 0,
+    reviewed: 0,
+    failed: 0,
+    rescheduled: 0,
+  };
+
+  sessions.forEach((session) => {
+    switch (session.status) {
+      case InterviewStatus.PENDING:
+        base.pending += 1;
+        break;
+      case InterviewStatus.IN_PROGRESS:
+        base.inProgress += 1;
+        break;
+      case InterviewStatus.COMPLETED:
+        base.completed += 1;
+        break;
+      case InterviewStatus.REVIEWED:
+        base.reviewed += 1;
+        break;
+      case InterviewStatus.FAILED:
+        base.failed += 1;
+        break;
+      case InterviewStatus.RESCHEDULED:
+        base.rescheduled += 1;
+        break;
+      default:
+        break;
+    }
+  });
+
+  return base;
+}
+
+export const GET = withTenantContext(async (request, { tenant }) => {
   try {
-    const { searchParams } = new URL(request.url)
-    const submissionId = searchParams.get('submissionId')
-    const status = searchParams.get('status')
-    const interviewTypeId = searchParams.get('interviewTypeId')
-    const search = searchParams.get('search')
+    const { searchParams } = request.nextUrl;
+    const submissionId = searchParams.get("submissionId");
+    const statusParam = searchParams.get("status");
+    const interviewTypeId = searchParams.get("interviewTypeId");
+    const search = searchParams.get("search");
 
-    let filteredSessions = [...mockInterviewSessions]
+    // Get tenant's school ID for filtering
+    const schoolId = await getSchoolIdForTenant(tenant.id);
+    if (!schoolId) {
+      return NextResponse.json(
+        { success: false, message: "School not found for tenant" },
+        { status: 404 },
+      );
+    }
 
-    // Filter by submission ID
     if (submissionId) {
-      filteredSessions = filteredSessions.filter(session => 
-        session.submissionId === submissionId
-      )
+      await ensureSessionsForSubmission(submissionId);
     }
 
-    // Filter by status
-    if (status && status !== 'all') {
-      filteredSessions = filteredSessions.filter(session => 
-        session.status === status.toUpperCase()
-      )
+    const where: Record<string, unknown> = {
+      submission: {
+        schoolId, // CRITICAL: Tenant isolation
+      },
+    };
+
+    if (submissionId) {
+      where.submissionId = submissionId;
     }
 
-    // Filter by interview type
-    if (interviewTypeId && interviewTypeId !== 'all') {
-      filteredSessions = filteredSessions.filter(session => 
-        session.interviewTypeId === interviewTypeId
-      )
+    if (statusParam && statusParam !== "all") {
+      const normalizedStatus = statusParam.toUpperCase() as keyof typeof InterviewStatus;
+      if (InterviewStatus[normalizedStatus]) {
+        where.status = InterviewStatus[normalizedStatus];
+      }
     }
 
-    // Search by name or registration number
+    if (interviewTypeId && interviewTypeId !== "all") {
+      where.interviewTypeId = interviewTypeId;
+    }
+
     if (search) {
-      const searchLower = search.toLowerCase()
-      filteredSessions = filteredSessions.filter(session =>
-        session.submission.namaLengkap.toLowerCase().includes(searchLower) ||
-        session.submission.registrationNumber.toLowerCase().includes(searchLower)
-      )
+      where.OR = [
+        {
+          submission: {
+            namaLengkap: {
+              contains: search,
+            },
+          },
+        },
+        {
+          submission: {
+            registrationNumber: {
+              contains: search.toUpperCase(),
+            },
+          },
+        },
+      ];
     }
 
-    // Calculate stats
-    const stats = {
-      total: filteredSessions.length,
-      pending: filteredSessions.filter(s => s.status === 'PENDING').length,
-      completed: filteredSessions.filter(s => s.status === 'COMPLETED').length,
-      reviewed: filteredSessions.filter(s => s.status === 'REVIEWED').length,
-      failed: filteredSessions.filter(s => s.status === 'FAILED').length
-    }
+    const sessions = await prisma.interviewSession.findMany({
+      where,
+      orderBy: [{ status: "asc" }, { updatedAt: "desc" }],
+      include: DEFAULT_INCLUDE,
+    });
+
+    const serialized = sessions.map((session) => ({
+      id: session.id,
+      submissionId: session.submissionId,
+      interviewTypeId: session.interviewTypeId,
+      status: session.status,
+      scheduledDate: session.scheduledDate?.toISOString() ?? null,
+      completedDate: session.completedDate?.toISOString() ?? null,
+      notes: session.notes,
+      createdAt: session.createdAt.toISOString(),
+      updatedAt: session.updatedAt.toISOString(),
+      submission: session.submission,
+      interviewType: {
+        id: session.interviewType?.id ?? null,
+        name: session.interviewType?.name ?? "Interview",
+        googleFormUrl: session.interviewType?.googleFormUrl ?? null,
+        defaultForm: session.interviewType?.defaultForm
+          ? {
+              id: session.interviewType.defaultForm.id,
+              slug: session.interviewType.defaultForm.slug,
+              title: session.interviewType.defaultForm.title,
+            }
+          : null,
+      },
+      result: session.result ?? null,
+    }));
+
+    const stats = mapStatusStats(sessions);
+
+    console.log(
+      `[Tenant: ${tenant.name}] Fetched ${sessions.length} interview sessions`,
+    );
 
     return NextResponse.json({
       success: true,
       data: {
-        sessions: filteredSessions,
-        stats
+        sessions: serialized,
+        stats,
       },
-      message: "Interview sessions retrieved successfully"
-    })
+    });
   } catch (error) {
-    console.error('Error fetching interview sessions:', error)
+    console.error("Error fetching interview sessions:", error);
     return NextResponse.json(
       { success: false, message: "Failed to fetch interview sessions" },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
-}
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withTenantContext(async (request, { tenant }) => {
   try {
-    const body = await request.json()
-    const { submissionId, interviewTypeId, scheduledDate, notes } = body
-
-    // Validasi input
-    if (!submissionId || !interviewTypeId) {
-      return NextResponse.json(
-        { success: false, message: "submissionId and interviewTypeId are required" },
-        { status: 400 }
-      )
-    }
-
-    // Simulasi penambahan interview session baru
-    const newSession = {
-      id: `s${mockInterviewSessions.length + 1}`,
+    const body = await request.json();
+    const {
       submissionId,
       interviewTypeId,
-      status: "PENDING",
-      scheduledDate: scheduledDate || null,
-      completedDate: null,
-      notes: notes || null,
-      reviewerId: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      interviewType: {
-        id: interviewTypeId,
-        name: "Interview Type",
-        googleFormUrl: "https://forms.gle/demo"
-      },
-      submission: {
-        id: submissionId,
-        registrationNumber: "SPMB-2025-XXXX",
-        namaLengkap: "Applicant Name"
-      }
+      scheduledDate,
+      status = InterviewStatus.PENDING,
+      notes,
+    } = body ?? {};
+
+    if (!submissionId || !interviewTypeId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "submissionId and interviewTypeId are required",
+        },
+        { status: 400 },
+      );
     }
 
-    mockInterviewSessions.push(newSession)
+    // Get tenant's school ID for validation
+    const schoolId = await getSchoolIdForTenant(tenant.id);
+    if (!schoolId) {
+      return NextResponse.json(
+        { success: false, message: "School not found for tenant" },
+        { status: 404 },
+      );
+    }
+
+    const [submission, interviewType] = await Promise.all([
+      prisma.formSubmission.findFirst({
+        where: {
+          id: submissionId,
+          schoolId, // CRITICAL: Validate submission belongs to tenant
+        },
+        select: { id: true, registrationNumber: true, namaLengkap: true },
+      }),
+      prisma.interviewType.findUnique({
+        where: { id: interviewTypeId },
+        select: {
+          id: true,
+          name: true,
+          googleFormUrl: true,
+          defaultForm: {
+            select: { id: true, slug: true, title: true },
+          },
+        },
+      }),
+    ]);
+
+    if (!submission) {
+      return NextResponse.json(
+        { success: false, message: "Submission not found or access denied" },
+        { status: 404 },
+      );
+    }
+
+    if (!interviewType) {
+      return NextResponse.json(
+        { success: false, message: "Interview type not found" },
+        { status: 404 },
+      );
+    }
+
+    const session = await prisma.interviewSession.create({
+      data: {
+        submissionId,
+        interviewTypeId,
+        status,
+        scheduledDate: scheduledDate ? new Date(scheduledDate) : null,
+        notes: notes ?? null,
+      },
+      include: DEFAULT_INCLUDE,
+    });
+
+    console.log(
+      `[Tenant: ${tenant.name}] Created interview session for submission ${submissionId}`,
+    );
 
     return NextResponse.json({
       success: true,
-      data: newSession,
-      message: "Interview session created successfully"
-    })
+      data: {
+        id: session.id,
+        submissionId: session.submissionId,
+        interviewTypeId: session.interviewTypeId,
+        status: session.status,
+        scheduledDate: session.scheduledDate?.toISOString() ?? null,
+        completedDate: session.completedDate?.toISOString() ?? null,
+        notes: session.notes,
+        createdAt: session.createdAt.toISOString(),
+        updatedAt: session.updatedAt.toISOString(),
+        submission,
+        interviewType,
+        result: session.result ?? null,
+      },
+    });
   } catch (error) {
-    console.error('Error creating interview session:', error)
+    console.error("Error creating interview session:", error);
     return NextResponse.json(
       { success: false, message: "Failed to create interview session" },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
-}
+});

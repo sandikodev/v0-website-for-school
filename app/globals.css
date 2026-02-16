@@ -31,7 +31,8 @@
 }
 
 :root {
-  /* Updated color scheme for Islamic school with emerald green theme */
+  /* Design Tokens - Default Emerald Theme */
+  /* Colors will be dynamically set by ThemeManager */
   --background: oklch(1 0 0);
   --foreground: oklch(0.25 0 0);
   --card: oklch(0.98 0 0);
@@ -40,14 +41,35 @@
   --popover-foreground: oklch(0.25 0 0);
   --primary: oklch(0.45 0.15 160);
   --primary-foreground: oklch(1 0 0);
+  --primary-hover: oklch(0.5 0.15 160);
+  --primary-active: oklch(0.4 0.15 160);
+  --primary-muted: oklch(0.95 0.03 160);
   --secondary: oklch(0.55 0.15 160);
   --secondary-foreground: oklch(1 0 0);
+  --secondary-hover: oklch(0.6 0.15 160);
+  --secondary-active: oklch(0.5 0.15 160);
   --muted: oklch(0.98 0 0);
   --muted-foreground: oklch(0.45 0 0);
   --accent: oklch(0.55 0.15 160);
   --accent-foreground: oklch(1 0 0);
+  --accent-hover: oklch(0.6 0.15 160);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(1 0 0);
+  
+  /* Semantic Colors */
+  --success: oklch(0.5 0.15 140);
+  --success-foreground: oklch(1 0 0);
+  --success-muted: oklch(0.95 0.03 140);
+  --warning: oklch(0.7 0.15 70);
+  --warning-foreground: oklch(0.25 0 0);
+  --warning-muted: oklch(0.95 0.03 70);
+  --error: oklch(0.577 0.245 27.325);
+  --error-foreground: oklch(1 0 0);
+  --error-muted: oklch(0.95 0.03 27);
+  --info: oklch(0.55 0.15 220);
+  --info-foreground: oklch(1 0 0);
+  --info-muted: oklch(0.95 0.03 220);
+  
   --border: oklch(0.92 0 0);
   --input: oklch(1 0 0);
   --ring: oklch(0.45 0.15 160 / 0.5);
@@ -65,6 +87,43 @@
   --sidebar-accent-foreground: oklch(1 0 0);
   --sidebar-border: oklch(0.92 0 0);
   --sidebar-ring: oklch(0.45 0.15 160 / 0.5);
+  
+  /* Button Variants */
+  --button-primary: oklch(0.45 0.15 160 / 0.9);
+  --button-primary-hover: oklch(0.5 0.15 160);
+  --button-primary-foreground: oklch(1 0 0);
+  --button-secondary: oklch(0.97 0 0);
+  --button-secondary-hover: oklch(0.95 0 0);
+  --button-ghost-hover: oklch(0.97 0 0 / 0.8);
+  
+  /* Spacing Tokens */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+  
+  /* Border Radius Tokens */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-full: 9999px;
+  
+  /* Shadow Tokens */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Transition Tokens */
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  --transition-slower: 500ms;
 }
 
 .dark {
@@ -85,6 +144,21 @@
   --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.637 0.237 25.331);
+  
+  /* Semantic Colors - Dark Mode */
+  --success: oklch(0.5 0.15 140);
+  --success-foreground: oklch(1 0 0);
+  --success-muted: oklch(0.2 0.03 140);
+  --warning: oklch(0.7 0.15 70);
+  --warning-foreground: oklch(0.1 0 0);
+  --warning-muted: oklch(0.2 0.03 70);
+  --error: oklch(0.396 0.141 25.723);
+  --error-foreground: oklch(0.637 0.237 25.331);
+  --error-muted: oklch(0.2 0.03 27);
+  --info: oklch(0.55 0.15 220);
+  --info-foreground: oklch(1 0 0);
+  --info-muted: oklch(0.2 0.03 220);
+  
   --border: oklch(0.2 0 0);
   --input: oklch(0.2 0 0);
   --ring: oklch(0.55 0.15 160 / 0.5);
@@ -112,14 +186,32 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-primary-muted: var(--primary-muted);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-secondary-active: var(--secondary-active);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-hover: var(--accent-hover);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-muted: var(--success-muted);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-muted: var(--warning-muted);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-error-muted: var(--error-muted);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-muted: var(--info-muted);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -239,13 +331,16 @@
 
 /* Soft pulse glow animation for checkbox */
 @keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0),
-                0 0 8px 0 rgba(16, 185, 129, 0.08);
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(16, 185, 129, 0),
+      0 0 8px 0 rgba(16, 185, 129, 0.08);
   }
   50% {
-    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.06),
-                0 0 12px 2px rgba(16, 185, 129, 0.12);
+    box-shadow:
+      0 0 0 4px rgba(16, 185, 129, 0.06),
+      0 0 12px 2px rgba(16, 185, 129, 0.12);
   }
 }
 
@@ -255,7 +350,8 @@
 
 /* Subtle pulse animation for CTA buttons */
 @keyframes pulseSubtle {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
   }
@@ -288,99 +384,126 @@
   }
 }
 
-/* Print styles - A4 size optimized - COMPACT */
+/* Print styles - A4 optimized */
 @media print {
   @page {
     size: A4;
-    margin: 1cm;
+    margin: 0.8cm 1cm;
+    orphans: 3;
+    widows: 3;
   }
 
-  /* Hide navigation and non-essential elements */
+  /* Hide non-essential UI elements */
   nav,
   header,
   footer,
   .no-print,
-  button:not(.print-button) {
+  button:not(.print-button),
+  .print-hide {
     display: none !important;
   }
 
-  /* Ensure body takes full page */
+  /* Base typography */
   body {
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
-    font-size: 11pt !important;
-    line-height: 1.3 !important;
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
   }
 
-  /* Optimize content for print - COMPACT */
   main {
     padding: 0 !important;
     margin: 0 !important;
+    max-width: 100% !important;
   }
 
-  /* Remove shadows and adjust colors for print */
   * {
     box-shadow: none !important;
     text-shadow: none !important;
   }
 
-  /* Compact cards for print */
-  .print-card {
-    border: 1px solid #e5e7eb !important;
+  /* Page breaks - prevent breaking content */
+  section,
+  .print-card,
+  [data-accordion-item],
+  [data-state] {
     page-break-inside: avoid;
-    margin-bottom: 0.4rem !important;
-    padding: 0.5rem !important;
+    break-inside: avoid;
+  }
+
+  /* Print-optimized cards */
+  .print-card {
+    border: 1px solid #d1d5db !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0.6rem !important;
+    background: #fff !important;
   }
 
   /* Compact card headers */
   .print-card h3,
-  .print-card h2 {
+  .print-card h2,
+  .print-card h4 {
     font-size: 11pt !important;
     margin-bottom: 0.3rem !important;
+    margin-top: 0 !important;
     font-weight: 600 !important;
+    page-break-after: avoid;
+    break-after: avoid;
   }
 
   /* Compact card content */
   .print-card > div {
-    padding: 0.4rem !important;
+    padding: 0.5rem !important;
   }
 
-  /* Compact text */
-  p, div, span {
-    font-size: 10pt !important;
-    line-height: 1.2 !important;
+  /* Typography */
+  p,
+  div,
+  span {
+    font-size: 9.5pt !important;
+    line-height: 1.3 !important;
+    orphans: 2;
+    widows: 2;
   }
 
-  /* Compact labels */
-  .text-sm,
-  .text-xs {
+  .text-sm {
     font-size: 9pt !important;
+  }
+
+  .text-xs {
+    font-size: 8pt !important;
   }
 
   /* Compact grids */
   .grid {
-    gap: 0.4rem !important;
+    gap: 0.5rem !important;
   }
 
-  /* Compact spacing */
-  .space-y-4 > * + *,
-  .space-y-3 > * + * {
-    margin-top: 0.3rem !important;
+  /* Spacing */
+  .space-y-3 > * + *,
+  .space-y-4 > * + * {
+    margin-top: 0.4rem !important;
   }
 
-  .space-y-6 > * + * {
+  .space-y-5 > * + * {
     margin-top: 0.5rem !important;
   }
 
-  /* Optimize badges for print */
+  .space-y-6 > * + * {
+    margin-top: 0.6rem !important;
+  }
+
+  /* Badges */
   .print-badge {
     border: 1px solid currentColor !important;
     background-color: transparent !important;
-    padding: 0.1rem 0.3rem !important;
-    font-size: 9pt !important;
+    padding: 0.15rem 0.35rem !important;
+    font-size: 8pt !important;
+    page-break-inside: avoid;
   }
 
-  /* Keep important colors */
+  /* Colors - preserve important ones, normalize backgrounds */
   .text-emerald-600,
   .text-green-700 {
     color: #059669 !important;
@@ -398,58 +521,117 @@
     color: #a16207 !important;
   }
 
-  /* Ensure text is readable */
   .text-gray-500,
   .text-gray-600,
   .text-gray-700,
   .text-gray-900 {
-    color: #000 !important;
+    color: #1f2937 !important;
   }
 
-  /* Remove background colors that don't print well */
   .bg-emerald-50,
   .bg-green-50,
   .bg-red-50,
   .bg-blue-50,
-  .bg-yellow-50 {
-    background-color: transparent !important;
+  .bg-yellow-50,
+  .bg-slate-50,
+  .bg-white\/90,
+  .bg-white\/50 {
+    background-color: #fff !important;
   }
 
-  /* Page breaks */
-  h1, h2, h3 {
+  /* Headings - prevent breaks */
+  h1,
+  h2,
+  h3,
+  h4 {
     page-break-after: avoid;
+    break-after: avoid;
   }
 
-  /* Hide action buttons except print trigger */
-  .print-hide {
-    display: none !important;
+  h1 + *,
+  h2 + *,
+  h3 + *,
+  h4 + * {
+    page-break-before: avoid;
+    break-before: avoid;
   }
 
-  /* Compact header */
+  /* Lists, tables, rows - prevent breaks */
+  ul,
+  ol,
+  table,
+  tr {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Header & Footer */
   .print-header {
-    margin-bottom: 0.5rem !important;
-    padding-bottom: 0.3rem !important;
+    margin-bottom: 0.6rem !important;
+    padding-bottom: 0.4rem !important;
+    page-break-after: avoid;
+    break-after: avoid;
+    border-bottom: 1px solid #9ca3af !important;
   }
 
   .print-header h1 {
     font-size: 14pt !important;
-    margin-bottom: 0.1rem !important;
+    margin-bottom: 0.2rem !important;
+    margin-top: 0 !important;
   }
 
   .print-header p {
     font-size: 9pt !important;
+    margin: 0 !important;
   }
 
-  /* Compact footer */
   .print-footer {
-    margin-top: 0.5rem !important;
-    padding-top: 0.3rem !important;
+    margin-top: 0.6rem !important;
+    padding-top: 0.4rem !important;
     font-size: 8pt !important;
+    page-break-before: avoid;
+    break-before: avoid;
+    border-top: 1px solid #9ca3af !important;
   }
 
-  /* Icons smaller */
+  /* Icons & Links */
   svg {
-    width: 12px !important;
-    height: 12px !important;
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  a {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+
+  /* Layout */
+  section + section {
+    margin-top: 0.6rem !important;
+  }
+
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  [id*="interview"] {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Show hidden content (except no-print) */
+  div.hidden:not(.no-print) {
+    display: block !important;
+  }
+
+  div.grid.hidden:not(.no-print) {
+    display: grid !important;
+  }
+
+  /* Hide interactive elements */
+  button[aria-expanded],
+  button.print-hide {
+    display: none !important;
   }
 }

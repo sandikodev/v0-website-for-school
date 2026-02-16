@@ -1,46 +1,45 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { AuthService } from '@/lib/auth'
+import { NextResponse } from "next/server";
+import { AuthService } from "@/lib/auth";
 
 // Create admin user API endpoint
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Create default admin user
     const adminUser = await AuthService.register({
-      username: 'admin',
-      password: 'admin123',
-      email: 'admin@school.local',
-    })
+      username: "admin",
+      password: "admin123",
+      email: "admin@school.local",
+    });
 
     // Update user role to admin
     const updatedUser = await AuthService.updateUser(adminUser.id, {
-      role: 'admin',
-    })
+      role: "admin",
+    });
 
     return NextResponse.json({
       success: true,
-      message: 'Admin user created successfully',
+      message: "Admin user created successfully",
       user: updatedUser,
-    })
-    
+    });
   } catch (error) {
-    console.error('Create admin error:', error)
-    
+    console.error("Create admin error:", error);
+
     if (error instanceof Error) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: error.message 
+        {
+          success: false,
+          message: error.message,
         },
-        { status: 400 }
-      )
+        { status: 400 },
+      );
     }
-    
+
     return NextResponse.json(
-      { 
-        success: false, 
-        message: 'Terjadi kesalahan server' 
+      {
+        success: false,
+        message: "Terjadi kesalahan server",
       },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

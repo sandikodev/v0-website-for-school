@@ -1,45 +1,73 @@
-import { prisma } from '@/lib/prisma'
-import { NextRequest, NextResponse } from 'next/server'
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
+import { withTenantContext } from "@/lib/api/with-tenant-context";
+import { getSchoolIdForTenant } from "@/lib/tenant/tenant-isolation";
 
 // GET all students
-export async function GET(request: NextRequest) {
+export const GET = withTenantContext(async (_request, { tenant }) => {
   try {
-    console.log('📚 Fetching students...')
-    
+    console.log("📚 Fetching students for tenant:", tenant.name);
+
+    // Get school for this tenant (tenant isolation)
+    const schoolId = await getSchoolIdForTenant(tenant.id);
+
+    if (!schoolId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "School not found for this tenant",
+        },
+        { status: 404 }
+      );
+    }
+
     const students = await prisma.student.findMany({
+      where: { schoolId }, // CRITICAL: Filter by tenant's school
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
-    })
-    
-    console.log(`✅ Found ${students.length} students`)
-    
+    });
+
+    console.log(`✅ Found ${students.length} students for tenant ${tenant.name}`);
+
     return NextResponse.json({
       success: true,
       data: students,
-    })
-    
-  } catch (error) {
-    console.error('❌ Error fetching students:', error)
-    
+    });
+  } catch (_error) {
+    console.error("❌ Error fetching students:", _error);
+
     return NextResponse.json(
-      { 
+      {
         success: false,
-        message: 'Failed to fetch students',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to fetch students",
+        error: _error instanceof Error ? _error.message : "Unknown error",
       },
       { status: 500 }
-    )
+    );
   }
-}
+});
 
 // POST create new student
-export async function POST(request: NextRequest) {
+export const POST = withTenantContext(async (request, { tenant }) => {
   try {
-    console.log('📝 Creating new student...')
-    
-    const body = await request.json()
-    
+    console.log("📝 Creating new student for tenant:", tenant.name);
+
+    // Get school for this tenant (tenant isolation)
+    const schoolId = await getSchoolIdForTenant(tenant.id);
+
+    if (!schoolId) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "School not found for this tenant",
+        },
+        { status: 404 }
+      );
+    }
+
+    const body = await request.json();
+
     const student = await prisma.student.create({
       data: {
         name: body.name,
@@ -50,30 +78,31 @@ export async function POST(request: NextRequest) {
         parentName: body.parentName,
         parentPhone: body.parentPhone,
         address: body.address,
-        status: body.status || 'active',
-        schoolId: body.schoolId, // Will need to get this from session/config
+        status: body.status || "active",
+        schoolId, // CRITICAL: Use tenant's school ID
       },
-    })
-    
-    console.log('✅ Student created:', student.id)
-    
-    return NextResponse.json({
-      success: true,
-      data: student,
-      message: 'Student created successfully',
-    }, { status: 201 })
-    
-  } catch (error) {
-    console.error('❌ Error creating student:', error)
-    
+    });
+
+    console.log("✅ Student created:", student.id);
+
     return NextResponse.json(
-      { 
+      {
+        success: true,
+        data: student,
+        message: "Student created successfully",
+      },
+      { status: 201 }
+    );
+  } catch (_error) {
+    console.error("❌ Error creating student:", _error);
+
+    return NextResponse.json(
+      {
         success: false,
-        message: 'Failed to create student',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        message: "Failed to create student",
+        error: _error instanceof Error ? _error.message : "Unknown error",
       },
       { status: 500 }
-    )
+    );
   }
-}
-
+});

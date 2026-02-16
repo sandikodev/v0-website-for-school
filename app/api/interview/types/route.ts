@@ -1,108 +1,76 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
 
-// Mock data untuk demo
-const mockInterviewTypes = [
-  {
-    id: "1",
-    name: "Interview Diniyah",
-    description: "Interview untuk menilai kemampuan diniyah dan hafalan Al-Quran",
-    googleFormUrl: "https://forms.gle/diniyah-demo",
-    isRequired: true,
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-15")
-  },
-  {
-    id: "2", 
-    name: "Interview Akademik",
-    description: "Interview untuk menilai kemampuan akademik dan motivasi belajar",
-    googleFormUrl: "https://forms.gle/akademik-demo",
-    isRequired: true,
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-15")
-  },
-  {
-    id: "3",
-    name: "Interview Psikologis", 
-    description: "Interview untuk menilai kondisi psikologis dan kesiapan belajar",
-    googleFormUrl: "https://forms.gle/psikologis-demo",
-    isRequired: false,
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-15")
-  },
-  {
-    id: "4",
-    name: "Interview Wawancara Orang Tua",
-    description: "Interview dengan orang tua untuk memahami dukungan keluarga",
-    googleFormUrl: "https://forms.gle/ortu-demo", 
-    isRequired: false,
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-15")
-  }
-]
+import { prisma } from "@/lib/prisma";
+import {
+  ensureDefaultInterviewTypes,
+  syncDefaultInterviewForms,
+} from "@/lib/interview/typeDefaults";
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const isRequired = searchParams.get('required')
-    
-    let filteredTypes = mockInterviewTypes
-    
-    if (isRequired === 'true') {
-      filteredTypes = mockInterviewTypes.filter(type => type.isRequired)
-    } else if (isRequired === 'false') {
-      filteredTypes = mockInterviewTypes.filter(type => !type.isRequired)
+    const { searchParams } = request.nextUrl;
+    const isRequired = searchParams.get("required");
+
+    await ensureDefaultInterviewTypes();
+    await syncDefaultInterviewForms();
+
+    const where: Record<string, unknown> = {};
+    if (isRequired === "true") {
+      where.isRequired = true;
+    } else if (isRequired === "false") {
+      where.isRequired = false;
     }
+
+    const types = await prisma.interviewType.findMany({
+      where,
+      orderBy: { createdAt: "asc" },
+    });
 
     return NextResponse.json({
       success: true,
-      data: filteredTypes,
-      message: "Interview types retrieved successfully"
-    })
+      data: types,
+      message: "Interview types retrieved successfully",
+    });
   } catch (error) {
-    console.error('Error fetching interview types:', error)
+    console.error("Error fetching interview types:", error);
     return NextResponse.json(
       { success: false, message: "Failed to fetch interview types" },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { name, description, googleFormUrl, isRequired } = body
+    const body = await request.json();
+    const { name, description, googleFormUrl, isRequired } = body ?? {};
 
-    // Validasi input
-    if (!name) {
+    if (!name || !googleFormUrl) {
       return NextResponse.json(
-        { success: false, message: "Name is required" },
-        { status: 400 }
-      )
+        { success: false, message: "Name and googleFormUrl are required" },
+        { status: 400 },
+      );
     }
 
-    // Simulasi penambahan interview type baru
-    const newType = {
-      id: (mockInterviewTypes.length + 1).toString(),
-      name,
-      description: description || null,
-      googleFormUrl: googleFormUrl || null,
-      isRequired: isRequired || false,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    }
-
-    mockInterviewTypes.push(newType)
+    const type = await prisma.interviewType.create({
+      data: {
+        name,
+        description: description ?? null,
+        googleFormUrl,
+        isRequired: typeof isRequired === "boolean" ? isRequired : true,
+      },
+    });
 
     return NextResponse.json({
       success: true,
-      data: newType,
-      message: "Interview type created successfully"
-    })
+      data: type,
+      message: "Interview type created successfully",
+    });
   } catch (error) {
-    console.error('Error creating interview type:', error)
+    console.error("Error creating interview type:", error);
     return NextResponse.json(
       { success: false, message: "Failed to create interview type" },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

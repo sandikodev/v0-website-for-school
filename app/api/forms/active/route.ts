@@ -1,29 +1,30 @@
-import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { defaultFormSchema } from '@/lib/form-schema'
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { defaultFormSchema } from "@/lib/form-schema";
+import { withTenantContext } from "@/lib/api/with-tenant-context";
+import { getSchoolIdForTenant } from "@/lib/tenant/tenant-isolation";
 
-export async function GET() {
+export const GET = withTenantContext(async (_request, { tenant }) => {
   try {
-    // Get first school
-    const school = await prisma.school.findFirst()
-    
-    if (!school) {
+    const schoolId = await getSchoolIdForTenant(tenant.id);
+
+    if (!schoolId) {
       return NextResponse.json(
-        { success: false, message: 'School not found' },
-        { status: 404 }
-      )
+        { success: false, message: "School not found for tenant" },
+        { status: 404 },
+      );
     }
 
     // Get active form configuration
     const activeConfig = await prisma.formConfiguration.findFirst({
       where: {
-        schoolId: school.id,
+        schoolId,
         isActive: true,
       },
       orderBy: {
-        updatedAt: 'desc',
+        updatedAt: "desc",
       },
-    })
+    });
 
     // If no active config, return default schema
     if (!activeConfig) {
@@ -31,15 +32,15 @@ export async function GET() {
         success: true,
         data: {
           id: null,
-          name: 'Default Form',
+          name: "Default Form",
           schema: defaultFormSchema,
           isActive: false,
         },
-      })
+      });
     }
 
     // Parse schema JSON
-    const schema = JSON.parse(activeConfig.schema)
+    const schema = JSON.parse(activeConfig.schema);
 
     return NextResponse.json({
       success: true,
@@ -51,13 +52,12 @@ export async function GET() {
         isActive: activeConfig.isActive,
         updatedAt: activeConfig.updatedAt,
       },
-    })
+    });
   } catch (error) {
-    console.error('Error fetching active form:', error)
+    console.error("Error fetching active form:", error);
     return NextResponse.json(
-      { success: false, message: 'Internal server error' },
-      { status: 500 }
-    )
+      { success: false, message: "Internal server error" },
+      { status: 500 },
+    );
   }
-}
-
+});

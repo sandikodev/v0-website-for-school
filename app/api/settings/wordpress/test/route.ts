@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Dalam production, test koneksi ke WordPress REST API
     // Untuk demo, simulasi test berhasil
-    
+
     // Simulasi delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return NextResponse.json({
       success: true,
@@ -18,15 +18,15 @@ export async function GET(request: NextRequest) {
           posts: true,
           media: true,
           categories: true,
-          tags: true
-        }
-      }
-    })
-  } catch (error) {
-    console.error('Error testing WordPress connection:', error)
+          tags: true,
+        },
+      },
+    });
+  } catch (_error) {
+    console.error("Error testing WordPress connection:", _error);
     return NextResponse.json(
       { success: false, message: "WordPress connection test failed" },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }

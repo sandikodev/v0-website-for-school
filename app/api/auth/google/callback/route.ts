@@ -1,25 +1,28 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { updateGoogleConnectionStatus } from '@/app/api/settings/google/route'
+import { NextRequest, NextResponse } from "next/server";
+import { updateGoogleConnectionStatus } from "@/app/api/settings/google/route";
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const code = searchParams.get('code')
-    const error = searchParams.get('error')
+    const { searchParams } = new URL(request.url);
+    const code = searchParams.get("code");
+    const error = searchParams.get("error");
 
     // Handle error dari Google
     if (error) {
-      console.error('Google OAuth error:', error)
+      console.error("Google OAuth error:", error);
       return NextResponse.redirect(
-        new URL(`/dashboard/settings?tab=google&error=${encodeURIComponent(error)}`, request.url)
-      )
+        new URL(
+          `/dashboard/settings?tab=google&error=${encodeURIComponent(error)}`,
+          request.url,
+        ),
+      );
     }
 
     // Validasi code
     if (!code) {
       return NextResponse.redirect(
-        new URL('/dashboard/settings?tab=google&error=no_code', request.url)
-      )
+        new URL("/dashboard/settings?tab=google&error=no_code", request.url),
+      );
     }
 
     // Dalam production, exchange code untuk access token
@@ -58,21 +61,30 @@ export async function GET(request: NextRequest) {
     // })
 
     // Untuk demo, simulasi sukses
-    console.log('Google OAuth callback received with code:', code.substring(0, 20) + '...')
-    console.log('Scopes granted:', searchParams.get('scope'))
+    console.log(
+      "Google OAuth callback received with code:",
+      code.substring(0, 20) + "...",
+    );
+    console.log("Scopes granted:", searchParams.get("scope"));
 
     // Update connection status di mock storage
-    const email = searchParams.get('authuser') || 'user@gmail.com'
-    updateGoogleConnectionStatus(true, email)
+    const email = searchParams.get("authuser") || "user@gmail.com";
+    updateGoogleConnectionStatus(true, email);
 
     // Redirect ke settings dengan success message
     return NextResponse.redirect(
-      new URL(`/dashboard/settings?tab=google&success=true&email=${encodeURIComponent(email)}`, request.url)
-    )
+      new URL(
+        `/dashboard/settings?tab=google&success=true&email=${encodeURIComponent(email)}`,
+        request.url,
+      ),
+    );
   } catch (error) {
-    console.error('Error handling Google OAuth callback:', error)
+    console.error("Error handling Google OAuth callback:", error);
     return NextResponse.redirect(
-      new URL('/dashboard/settings?tab=google&error=callback_failed', request.url)
-    )
+      new URL(
+        "/dashboard/settings?tab=google&error=callback_failed",
+        request.url,
+      ),
+    );
   }
 }

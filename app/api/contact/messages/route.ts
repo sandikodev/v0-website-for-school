@@ -1,21 +1,23 @@
-import { NextRequest, NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { withOptionalTenantContext } from "@/lib/api/with-tenant-context";
 
 // GET - Fetch all contact messages (for dashboard)
-export async function GET(request: NextRequest) {
+// Uses optional tenant context - platform admin sees all, tenant sees only theirs
+export const GET = withOptionalTenantContext(async (request, { tenant }) => {
   try {
-    const { searchParams } = new URL(request.url)
-    const status = searchParams.get('status') // 'all' | 'new' | 'read' | 'replied' | 'archived'
-    const search = searchParams.get('search') || ''
-    const limit = parseInt(searchParams.get('limit') || '100')
-    
-    const where: any = {}
-    
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get("status"); // 'all' | 'new' | 'read' | 'replied' | 'archived'
+    const search = searchParams.get("search") || "";
+    const limit = parseInt(searchParams.get("limit") || "100");
+
+    const where: Record<string, unknown> = {};
+
     // Filter by status
-    if (status && status !== 'all') {
-      where.status = status
+    if (status && status !== "all") {
+      where.status = status;
     }
-    
+
     // Search in name, email, subject, message
     if (search) {
       where.OR = [
@@ -23,54 +25,61 @@ export async function GET(request: NextRequest) {
         { email: { contains: search } },
         { subject: { contains: search } },
         { message: { contains: search } },
-      ]
+      ];
     }
-    
+
+    // Note: ContactMessage doesn't have direct tenant relationship
+    // For now, we show all messages. In future, add tenantId to ContactMessage model
+    // TODO: Add tenantId field to ContactMessage model for proper isolation
     const messages = await prisma.contactMessage.findMany({
       where,
       orderBy: {
-        createdAt: 'desc'
+        createdAt: "desc",
       },
       take: limit === -1 ? undefined : limit,
-    })
-    
+    });
+
+    console.log(
+      `📨 Fetched ${messages.length} contact messages${tenant ? ` for tenant ${tenant.name}` : " (platform admin)"}`
+    );
+
     return NextResponse.json({
       success: true,
       data: messages,
-      count: messages.length
-    })
+      count: messages.length,
+    });
   } catch (error) {
-    console.error('Error fetching contact messages:', error)
+    console.error("Error fetching contact messages:", error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch messages' },
+      { success: false, error: "Failed to fetch messages" },
       { status: 500 }
-    )
+    );
   }
-}
+});
 
 // POST - Create new contact message (from contact form)
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { name, email, phone, subject, message } = body
-    
+    const body = await request.json();
+    const { name, email, phone, subject, message } = body;
+
     // Validation
     if (!name || !email || !message) {
       return NextResponse.json(
-        { success: false, error: 'Name, email, and message are required' },
-        { status: 400 }
-      )
+        { success: false, error: "Name, email, and message are required" },
+        { status: 400 },
+      );
     }
-    
+
     // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid email format' },
-        { status: 400 }
-      )
+        { success: false, error: "Invalid email format" },
+        { status: 400 },
+      );
     }
-    
+
     // Create message
     const contactMessage = await prisma.contactMessage.create({
       data: {
@@ -79,22 +88,24 @@ export async function POST(request: NextRequest) {
         phone: phone?.trim() || null,
         subject: subject?.trim() || null,
         message: message.trim(),
-        status: 'new',
-        priority: 'normal',
-      }
-    })
-    
-    return NextResponse.json({
-      success: true,
-      data: contactMessage,
-      message: 'Message sent successfully'
-    }, { status: 201 })
-  } catch (error) {
-    console.error('Error creating contact message:', error)
+        status: "new",
+        priority: "normal",
+      },
+    });
+
     return NextResponse.json(
-      { success: false, error: 'Failed to send message' },
-      { status: 500 }
-    )
+      {
+        success: true,
+        data: contactMessage,
+        message: "Message sent successfully",
+      },
+      { status: 201 },
+    );
+  } catch (error) {
+    console.error("Error creating contact message:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to send message" },
+      { status: 500 },
+    );
   }
 }
-

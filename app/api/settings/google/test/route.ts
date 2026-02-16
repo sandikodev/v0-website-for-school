@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Dalam production, test koneksi ke Google API
     // Untuk demo, simulasi test berhasil
-    
+
     // Simulasi delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return NextResponse.json({
       success: true,
@@ -16,15 +16,15 @@ export async function GET(request: NextRequest) {
         apiAccess: {
           drive: true,
           sheets: true,
-          forms: true
-        }
-      }
-    })
-  } catch (error) {
-    console.error('Error testing Google connection:', error)
+          forms: true,
+        },
+      },
+    });
+  } catch (_error) {
+    console.error("Error testing Google connection:", _error);
     return NextResponse.json(
       { success: false, message: "Google connection test failed" },
-      { status: 500 }
-    )
+      { status: 500 },
+    );
   }
 }
