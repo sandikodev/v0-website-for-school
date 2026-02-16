@@ -28,18 +28,21 @@ export default async function PlatformLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Get current pathname from headers
+  // Get current pathname from headers (set by proxy.ts)
   const headersList = await headers();
   const pathname = headersList.get('x-pathname') || '';
-  
-  console.log("[Platform Layout] Pathname:", pathname);
 
   // Public routes - no auth required
-  const publicRoutes = ['/signin', '/signup'];
-  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+  const publicRoutes = ['/signin', '/signup', '/api/auth'];
+  const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+
+  console.log("[Platform Layout] Accessing:", {
+    pathname,
+    isPublicRoute,
+    host: headersList.get('host')
+  });
 
   if (isPublicRoute) {
-    console.log("[Platform Layout] Public route, allowing access");
     return (
       <div className="min-h-screen bg-background">
         {children}
@@ -56,10 +59,10 @@ export default async function PlatformLayout({
     redirect("/signin");
   }
 
-  console.log("[Platform Layout] User authenticated:", { 
-    id: user.id, 
-    role: user.role, 
-    tenantId: user.tenantId 
+  console.log("[Platform Layout] User authenticated:", {
+    id: user.id,
+    role: user.role,
+    tenantId: user.tenantId
   });
 
   return (
