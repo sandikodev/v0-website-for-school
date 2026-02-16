@@ -5,14 +5,14 @@ import { getTenantContext } from "@/lib/tenant/get-tenant-context";
 // DELETE /api/tenant/domains/[id] - Remove domain
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Get tenant context from session or request headers (from proxy)
     const tenant = await getTenantContext();
-    
+
     if (!tenant) {
       return NextResponse.json(
         {

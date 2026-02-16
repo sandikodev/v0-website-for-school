@@ -59,11 +59,14 @@ export function withTenantContext<TParams = unknown>(
 
   return async (
     request: NextRequest,
-    routeContext?: { params: TParams }
+    routeContext?: { params: TParams | Promise<TParams> }
   ): Promise<NextResponse> => {
     try {
       // Get tenant context from session or headers (set by proxy)
       const tenant = await getTenantContext();
+
+      // Unwrap params for Next.js 15+
+      const params = routeContext?.params ? await routeContext.params : undefined;
 
       // If tenant is required but not found, return error
       if (!tenant && required) {
@@ -80,7 +83,7 @@ export function withTenantContext<TParams = unknown>(
       // Call handler with tenant context
       return handler(request, {
         tenant: tenant!,
-        params: routeContext?.params,
+        params: params as TParams,
       });
     } catch (error) {
       console.error("[withTenantContext] Error:", error);
@@ -122,14 +125,17 @@ export function withOptionalTenantContext<TParams = unknown>(
 ) {
   return async (
     request: NextRequest,
-    routeContext?: { params: TParams }
+    routeContext?: { params: TParams | Promise<TParams> }
   ): Promise<NextResponse> => {
     try {
       const tenant = await getTenantContext();
 
+      // Unwrap params for Next.js 15+
+      const params = routeContext?.params ? await routeContext.params : undefined;
+
       return handler(request, {
         tenant,
-        params: routeContext?.params,
+        params: params as TParams,
       });
     } catch (error) {
       console.error("[withOptionalTenantContext] Error:", error);

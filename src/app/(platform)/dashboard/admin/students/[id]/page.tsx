@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { Button } from "@/components/ui/button";
@@ -56,10 +56,11 @@ interface Student {
 }
 
 export default function StudentDetailPage({
-  params,
+  params: paramsPromise,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const params = use(paramsPromise);
   const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- authenticated user typing pending
   const [user, setUser] = useState<any>(null);

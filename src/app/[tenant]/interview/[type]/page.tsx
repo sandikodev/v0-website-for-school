@@ -11,18 +11,20 @@ import { InterviewFormClient } from "./form-client";
 import { getInterviewFormBySlug } from "@/lib/interview/form-service";
 
 interface InterviewPageProps {
-  params: {
+  params: Promise<{
     type: string;
-  };
-  searchParams?: {
+    tenant: string;
+  }>;
+  searchParams: Promise<{
     session?: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({
   params,
 }: InterviewPageProps): Promise<Metadata> {
-  const config = getInterviewConfig(params.type);
+  const { type } = await params;
+  const config = getInterviewConfig(type);
   if (!config) {
     return {
       title: "Interview tidak ditemukan",
@@ -40,7 +42,7 @@ export default async function InterviewPage({
   params,
   searchParams,
 }: InterviewPageProps) {
-  const sessionId = (await searchParams)?.session;
+  const { session: sessionId } = await searchParams;
   if (!sessionId) {
     notFound();
   }
@@ -50,7 +52,7 @@ export default async function InterviewPage({
     notFound();
   }
 
-  const formSlug = params.type;
+  const { type: formSlug } = await params;
 
   const [formFromSlug, defaultForm] = await Promise.all([
     getInterviewFormBySlug(formSlug),
@@ -78,7 +80,7 @@ export default async function InterviewPage({
 
   const initialValues = normalizeInterviewValues(
     config,
-  rawValues as InterviewValues | null,
+    rawValues as InterviewValues | null,
   );
 
   return (
