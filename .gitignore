@@ -1,7 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
+/.pnpm-store
 
 # next.js
 /.next/
@@ -10,14 +9,19 @@
 # production
 /build
 
-# debug
+# debug & logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # env files
-.env*
+.env
+.env.local
+.env.*.local
+!.env.development
+!.env.example
 
 # vercel
 .vercel
@@ -25,6 +29,33 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# SQLite Database
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# IDE - VSCode
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+
+# IDE - Cursor (CRITICAL: Contains API Keys in mcp.json)
+.cursor/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+desktop.ini
+
+# Testing
+/playwright-report
+/test-results
+/coverage
+
 # Uploads
 public/uploads/*
 !public/uploads/.gitkeep
