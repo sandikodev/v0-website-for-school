@@ -1,0 +1,53 @@
+{
+  "mcpServers": {
+    "deepseek": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "deepseek-mcp-server"
+      ],
+      "env": {
+        "DEEPSEEK_API_KEY": "sk-6fdf8870d0ce47f4b7c144f35f2d58d9"
+      }
+    },
+    "deepseek-thinker": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "deepseek-thinker-mcp"
+      ],
+      "env": {
+        "USE_OLLAMA": "true"
+      }
+    },
+    "llm-ollama-llama3": {
+      "url": "http://127.0.0.1:8080",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "type": "http",
+      "capabilities": {
+        "streaming": true,
+        "batching": false
+      },
+      "serverInfo": {
+        "name": "mcp-llm",
+        "version": "0.2.0"
+      }
+    },
+    "ollama-mcp": {
+      "url": "http://127.0.0.1:3456",
+      "headers": {
+        "Content-Type": "application/json"
+      }
+    },
+    "ollama": {
+      "command": "npx",
+      "args": ["-y", "ollama-mcp"],
+      "env": {
+        "OLLAMA_HOST": "http://127.0.0.1:11434",
+        "OLLAMA_API_KEY": "32608995c184493eaa080fd7924c8e18.wwm6jTBu07UTY2VMq1TkRZlk"
+      }
+    }
+  }
+}

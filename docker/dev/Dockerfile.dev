@@ -1,5 +1,9 @@
-# Development Dockerfile for School Website
-FROM node:18-alpine
+# ================================
+# Development Dockerfile for Next.js
+# AkseSekolah Platform - Development
+# ================================
+
+FROM node:20-alpine AS development
 
 # Install dependencies
 RUN apk add --no-cache libc6-compat
@@ -7,28 +11,33 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 
-# Copy package files
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Enable corepack for package manager
-RUN corepack enable
+# Copy package files and prisma schema
+COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma/
 
 # Install dependencies
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then npm install; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+RUN pnpm install
 
-# Copy source code
-COPY . .
+# Generate Prisma Client
+RUN pnpm exec prisma generate
+
+# Note: Source code will be mounted via volumes in docker-compose
+# This allows hot reload without rebuilding the image
 
 # Expose port
 EXPOSE 3000
 
 # Set environment
 ENV NODE_ENV=development
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-# Start development server
-CMD ["sh", "-c", "if [ -f yarn.lock ]; then yarn dev; elif [ -f package-lock.json ]; then npm run dev; elif [ -f pnpm-lock.yaml ]; then pnpm run dev; else echo 'No package manager found!'; exit 1; fi"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Start development server with hot reload
+CMD ["pnpm", "dev"]

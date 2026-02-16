@@ -1,0 +1,10 @@
+{
+  "agent": {
+    "use_local_analysis": true,
+    "limit_context_size": true,
+    "search_strategy": "grep"
+  },
+  "prisma": {
+    "optimize_duplicate_model_scan": true
+  }
+}

@@ -1,71 +1,81 @@
-# Base Dockerfile for School Website
-FROM node:18-alpine AS base
+# ================================
+# Multi-stage Dockerfile for Next.js
+# AkseSekolah Platform - Production
+# ================================
 
-# Install dependencies only when needed
-FROM base AS deps
+# Stage 1: Dependencies
+FROM node:20-alpine AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Enable corepack for package manager
-RUN corepack enable
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then npm install; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# Copy package files and prisma schema
+COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma/
 
-# Rebuild the source code only when needed
-FROM base AS builder
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Generate Prisma Client
+RUN pnpm exec prisma generate
+
+# Stage 2: Builder
+FROM node:20-alpine AS builder
 WORKDIR /app
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED 1
+# Set environment variables for build
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
-RUN \
-  if [ -f yarn.lock ]; then yarn build; \
-  elif [ -f package-lock.json ]; then npm run build; \
-  elif [ -f pnpm-lock.yaml ]; then npm run build; \
-  else echo "Lockfile not found." && exit 1; \
-  fi
+# Build Next.js application
+RUN pnpm build
 
-# Production image, copy all the files and run next
-FROM base AS runner
+# Stage 3: Runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
+# Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/public ./public
-
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
+# Copy standalone build first (includes node_modules and server.js)
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Copy and setup entrypoint script
-COPY docker/entrypoint-prod.sh /app/entrypoint-prod.sh
-RUN chmod +x /app/entrypoint-prod.sh
+# Copy public folder and other necessary files
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/prisma ./prisma
 
+# Create necessary directories
+RUN mkdir -p /app/public/uploads && chown -R nextjs:nodejs /app/public/uploads
+RUN mkdir -p /app/data && chown -R nextjs:nodejs /app/data
+RUN mkdir -p /app/logs && chown -R nextjs:nodejs /app/logs
+
+# Switch to non-root user
 USER nextjs
 
+# Expose port
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
-CMD ["/app/entrypoint-prod.sh"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Start the application
+CMD ["node", "server.js"]

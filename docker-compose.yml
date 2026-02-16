@@ -1,28 +1,27 @@
 # ============================================
-# AkseSekolah.id - Production Environment
+# AkseSekolah.id - Quick Start
 # ============================================
 #
-# Usage:
-#   docker compose -f docker/prod/docker-compose.prod.yml up -d
-#   docker compose -f docker/prod/docker-compose.prod.yml down
-#   docker compose -f docker/prod/docker-compose.prod.yml logs -f
+# This is a convenience file that points to the appropriate
+# docker-compose file based on your needs.
 #
-# Features:
-# - Production build (pnpm build)
-# - Optimized image
-# - Health checks
-# - Resource limits
-# - Auto-restart
-# - External nginx network
+# For development:
+#   docker compose -f docker/dev/docker-compose.dev.yml up
+#
+# For production:
+#   docker compose -f docker/prod/docker-compose.prod.yml up -d
+#
+# Or use this file for production (default):
+#   docker compose up -d
 
 services:
-  aksesekolah-prod:
+  aksesekolah:
     build:
-      context: ../../
+      context: .
       dockerfile: docker/Dockerfile
       target: runner
     image: clients-aksesekolah:latest
-    container_name: clients-aksesekolah-app-prod
+    container_name: clients-aksesekolah-app
     restart: unless-stopped
     
     environment:
@@ -40,12 +39,9 @@ services:
       - NEXT_PUBLIC_DASHBOARD_URL=https://dashboard.${DOMAIN:-aksesekolah.id}
     
     volumes:
-      # Data persistence
-      - ../../data:/app/data
-      - ../../prisma:/app/prisma
-      - ../../public/uploads:/app/public/uploads
-      # Logs
-      - ../../logs:/app/logs
+      - ./data:/app/data
+      - ./prisma:/app/prisma
+      - ./public/uploads:/app/public/uploads
     
     networks:
       - nginx-net
@@ -56,18 +52,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: "1.0"
-        reservations:
-          memory: 512M
-          cpus: "0.5"
-    
-    labels:
-      - "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy=true"
 
 networks:
   nginx-net:
